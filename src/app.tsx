@@ -9,6 +9,8 @@ import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 import { ThemeProvider } from 'src/theme/theme-provider';
 
 import { Iconify } from 'src/components/iconify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +41,7 @@ export default function App() {
     <ThemeProvider>
       <Router />
       {githubButton}
+      <ToastContainer/>
     </ThemeProvider>
   );
 }
