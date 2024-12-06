@@ -130,7 +130,10 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
           <Box component="ul" gap={0.5} display="flex" flexDirection="column">
             {data.map((item) => {
               const isActived = item.path === pathname;
-
+              // console.log(item.path);
+              // console.log(pathname);
+              // console.log(item.path, pathname, isActived);
+              
               return (
                 <ListItem disableGutters disablePadding key={item.title}>
                   <ListItemButton
@@ -175,8 +178,6 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
       </Scrollbar>
 
       {slots?.bottomArea}
-
-      <NavUpgrade />
     </>
   );
 }
