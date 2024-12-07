@@ -101,10 +101,16 @@ export function CategoriesView() {
       setOpen(false);
       setUpdate(!update);
     } catch (error) {
+      console.log(error);
+      
       if (error.status === 401) {
         nav('/');
+        showErrorToast("Unauthorized");
       }
-      showErrorToast(error.message);
+      else {
+        showErrorToast(error.response.data.message);
+
+      }
     }
   }
 

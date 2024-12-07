@@ -135,6 +135,7 @@ export function ProductsView() {
         <div>
           <Button
               variant="contained"
+              color="inherit"
               onClick={() => setCurrPage(1)}
             >
               Back
