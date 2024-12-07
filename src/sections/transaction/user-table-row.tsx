@@ -12,8 +12,6 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { ProductProps } from './utils';
-import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -28,13 +26,12 @@ export type UserProps = {
 };
 
 type UserTableRowProps = {
-  row: ProductProps;
+  row: UserProps;
   selected: boolean;
   onSelectRow: () => void;
 };
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
-  const nav = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,38 +42,35 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     setOpenPopover(null);
   }, []);
 
-  const handleProductDetail = () => {
-    nav('/products/' + row.productId);
-  }
-
   return (
     <>
-      <style>
-          {`
-          .hover-pointer {
-              cursor: pointer;
-          }
-          .hover-pointer:hover {
-              cursor: pointer;
-          }
-          `}
-      </style>
-      <TableRow className='hover-pointer' hover tabIndex={-1} role="checkbox" selected={selected} onClick={handleProductDetail}>
+      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
-            {/* <Avatar alt={row.productName} /> */}
-            <img src={`${import.meta.env.VITE_BACKEND_API}${row.defaultImage}`} width={100} height={100}/>
-            {row.productName}
+            <Avatar alt={row.name} src={row.avatarUrl} />
+            {row.name}
           </Box>
         </TableCell>
 
-        <TableCell>{row.product_category.productCategoryName}</TableCell>
+        <TableCell>{row.company}</TableCell>
 
-        {/* <TableCell>{row.}</TableCell> */}
+        <TableCell>{row.role}</TableCell>
+
+        <TableCell align="center">
+          {row.isVerified ? (
+            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
+          ) : (
+            '-'
+          )}
+        </TableCell>
+
+        <TableCell>
+          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
+        </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>

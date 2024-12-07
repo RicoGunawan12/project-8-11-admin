@@ -87,7 +87,7 @@ export function CategoriesView() {
   const handleInsertCategory = async () => {
     try {
       const body = {
-        category
+        productCategoryName: category
       }
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/categories`, body,
         {
@@ -108,8 +108,7 @@ export function CategoriesView() {
         showErrorToast("Unauthorized");
       }
       else {
-        showErrorToast(error.response.data.message);
-
+        showErrorToast(error.response.data.errors[0].msg);
       }
     }
   }

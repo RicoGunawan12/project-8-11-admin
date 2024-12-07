@@ -2,9 +2,11 @@ import { Button, MenuItem, Select, SelectChangeEvent, TextareaAutosize, TextFiel
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ImageInput from "src/components/input/ImageInput";
 import { useToaster } from "src/components/toast/Toast";
+import { DashboardContent } from "src/layouts/dashboard";
+import { ProductProps } from "../utils";
 
 type InsertProductProps = {
     changePage: (curr: number) => void
@@ -24,8 +26,10 @@ type VariantProps = {
     sku: string;
 }
 
-function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
+function UpdateProductView() {
+    const { id } = useParams<{ id: string }>();
     const nav = useNavigate();
+    const [product, setProduct] = useState<ProductProps>();
     const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string}[]>([]);
     
 
@@ -77,6 +81,16 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
             showErrorToast(error.message);
           }
         }
+
+        async function getProducts() {
+            try {
+              const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`);
+              setProduct(response.data);
+            } catch (error) {
+              showErrorToast(error.message);
+            }
+          }
+        getProducts();
         getCategories();
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
@@ -124,8 +138,6 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
               setVariants(
                 [{ sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
               )
-              changePage(1);
-              handleUpdate();
         } catch (error) {
             console.log(error);
             
@@ -137,9 +149,18 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
       }
 
   return (
-    <div>
+    <DashboardContent>
+        <div>
+            <Button
+                variant="contained"
+                color="inherit"
+                onClick={() => nav('/products')}
+            >
+                Back
+            </Button>
+        </div>
         <Typography variant="h4" style={{ textAlign: 'center', marginBottom: '20px' }} flexGrow={1}>
-            Insert Product
+            Product Detail
         </Typography>
 
         <div style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', }}>
@@ -159,19 +180,20 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                         name="productName"
                         label="Product Name"
                         InputLabelProps={{ shrink: true }}
+                        value={product?.productName}
                         onChange={(e) => setProductName(e.target.value)}
                         sx={{ mb: 3 }}
                     />
                     
                     <Select
                         onChange={handleChange}
-                        defaultValue=" "
+                        defaultValue={product?.product_category.productCategoryName}
                         fullWidth
                     >
                         <MenuItem value=" ">Product Category</MenuItem>
                         {
                             categories.map((cat: { productCategoryId: string, productCategoryName: string}) => 
-                                <MenuItem key={cat.productCategoryId} value={cat.productCategoryName}>{cat.productCategoryName}</MenuItem>
+                                <MenuItem key={cat.productCategoryName} value={cat.productCategoryName}>{cat.productCategoryName}</MenuItem>
                             )
                         }
                     </Select>
@@ -181,6 +203,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                         aria-label="minimum height"  
                         minRows={3}  
                         placeholder="Product Description"
+                        value={product?.productDescription}
                         onFocus={handleFocus} 
                         onBlur={handleBlur}
                         onChange={(e) => setDescription(e.target.value)}
@@ -192,7 +215,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
 
         {
-            variants.map((variant, index) => 
+            product?.product_variants.map((variant, index) => 
                 <div key={index} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
                     <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
                         Variant {index + 1}
@@ -207,7 +230,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                     handleInputChange(index, "variantImage", file);
                                 }}
                                 name="Variant Image" 
-                                initialFile={variant.variantImage}
+                                // initialFile={variant.variantImage}
                             />
                         </div>
 
@@ -219,6 +242,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                 InputLabelProps={{ shrink: true }}
                                 onChange={(e) => handleInputChange(index, "productSize", e.target.value)}
                                 sx={{ mb: 3 }}
+                                value={variant.productSize}
                             />
 
                             <TextField
@@ -228,6 +252,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                 InputLabelProps={{ shrink: true }}
                                 onChange={(e) => handleInputChange(index, "productColor", e.target.value)}
                                 sx={{ mb: 3 }}
+                                value={variant.productColor}
                             />
 
                             <div style={{ display: 'flex', gap: '20px'}}>
@@ -237,6 +262,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                         id="outlined-adornment-amount"
                                         startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
                                         label="Amount"
+                                        value={variant.productPrice}
                                         onChange={(e) => handleInputChange(index, "productPrice", parseInt(e.target.value))}
                                     />
                                 </FormControl>
@@ -247,6 +273,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                     style={{ height: '55px'}}
                                     placeholder="Stock"
                                     type="number"
+                                    value={variant.productStock}
                                     onChange={(e) => handleInputChange(index, "productStock", parseInt(e.target.value))}
                                 />
                             </div>
@@ -265,6 +292,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                 style={{ height: '55px'}}
                                 placeholder="Weight"
                                 type="number"
+                                value={variant.productWeight}
                                 onChange={(e) => handleInputChange(index, "productWeight", parseInt(e.target.value))}
                             />
                             <OutlinedInput
@@ -273,6 +301,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                 style={{ height: '55px'}}
                                 placeholder="Length"
                                 type="number"
+                                value={variant.productLength}
                                 onChange={(e) => handleInputChange(index, "productLength", parseInt(e.target.value))}
                             />
                             <OutlinedInput
@@ -281,6 +310,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                 style={{ height: '55px'}}
                                 placeholder="Width"
                                 type="number"
+                                value={variant.productWidth}
                                 onChange={(e) => handleInputChange(index, "productWidth", parseInt(e.target.value))}
                             />
                             <OutlinedInput
@@ -289,6 +319,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                 style={{ height: '55px'}}
                                 placeholder="Height"
                                 type="number"
+                                value={variant.productHeight}
                                 onChange={(e) => handleInputChange(index, "productHeight", parseInt(e.target.value))}
                             />
                         </div>
@@ -303,12 +334,12 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
         <div style={{ position: 'fixed', bottom: '0', backgroundColor: 'white', zIndex: '1', width:'77.5%', boxShadow: '0px -2px 6px rgba(0, 0, 0, 0.2)' }}>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'end', marginTop: '20px', marginBottom: '20px', paddingRight: '40px'}}>
-                <Button variant="contained" onClick={handleInsertProduct}>Insert Product</Button>
+                <Button variant="contained" onClick={handleInsertProduct}>Update Product</Button>
             </div>
         </div>
 
-    </div>
+    </DashboardContent>
   )
 }
 
-export default InsertProductView;
+export default UpdateProductView;

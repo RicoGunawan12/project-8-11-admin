@@ -59,7 +59,7 @@ function ImageInput({ onChange, name, initialFile }: InputFileProps) {
             <img
               src={previewUrl}
             //   className="flex h-[140px] w-[100px] rounded-md border-[1px] border-[gray] object-cover object-center"
-              style={{ display:'flex', width:'15vw', height:'15vw', borderRadius:'4px #DBDCDC', objectPosition: 'center', objectFit: 'cover' }}
+              style={{ display:'flex', width:'20vw', height:'15vw', borderRadius:'4px #DBDCDC', objectPosition: 'center', objectFit: 'cover' }}
             />
           ) : (
             <div 

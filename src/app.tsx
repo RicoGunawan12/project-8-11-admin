@@ -40,7 +40,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <Router />
-      {githubButton}
+      {/* {githubButton} */}
       <ToastContainer/>
     </ThemeProvider>
   );

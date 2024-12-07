@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -20,21 +20,40 @@ import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
+import { emptyRows, applyFilter, getComparator, ProductProps } from '../utils';
 
 import type { UserProps } from '../user-table-row';
 import InsertProductView from './insert-product-view';
+import axios from 'axios';
+import { useToaster } from 'src/components/toast/Toast';
 
 // ----------------------------------------------------------------------
 
 export function ProductsView() {
   const [currPage, setCurrPage] = useState(1);
+  const [products, setProducts] = useState([]);
+  const [update, setUpdate] = useState(false);
+  const { showErrorToast, showSuccessToast } = useToaster();
   const table = useTable();
+
+  useEffect(() => {
+    async function getProducts() {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products`);
+        setProducts(response.data);
+        console.log(response.data);
+      } catch (error) {
+        showErrorToast(error.message);
+      }
+    }
+    getProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [update]);
 
   const [filterName, setFilterName] = useState('');
 
-  const dataFiltered: UserProps[] = applyFilter({
-    inputData: _users,
+  const dataFiltered: ProductProps[] = applyFilter({
+    inputData: products,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -86,11 +105,10 @@ export function ProductsView() {
                       )
                     }
                     headLabel={[
-                      { id: 'name', label: 'Name' },
-                      { id: 'company', label: 'Company' },
-                      { id: 'role', label: 'Role' },
-                      { id: 'isVerified', label: 'Verified', align: 'center' },
-                      { id: 'status', label: 'Status' },
+                      { id: 'productName', label: 'Product Name' },
+                      { id: 'productCategory', label: 'Product Category' },
+                      // { id: 'promo', label: 'Promo' },
+                      // { id: 'promoExpiry', label: 'Promo Expiry' },
                       { id: '' },
                     ]}
                   />
@@ -102,10 +120,10 @@ export function ProductsView() {
                       )
                       .map((row) => (
                         <UserTableRow
-                          key={row.id}
+                          key={row.productId}
                           row={row}
-                          selected={table.selected.includes(row.id)}
-                          onSelectRow={() => table.onSelectRow(row.id)}
+                          selected={table.selected.includes(row.productId)}
+                          onSelectRow={() => table.onSelectRow(row.productId)}
                         />
                       ))}
 
@@ -141,7 +159,7 @@ export function ProductsView() {
               Back
           </Button>
           
-          <InsertProductView changePage={setCurrPage}/>
+          <InsertProductView changePage={setCurrPage} handleUpdate={() => setUpdate(!update)}/>
         </div>
       }
     </DashboardContent>

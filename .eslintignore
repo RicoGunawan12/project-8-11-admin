@@ -34,3 +34,7 @@ public/*
 
 # misc
 **/jsconfig.json
+
+dist/
+build/
+*.tsx

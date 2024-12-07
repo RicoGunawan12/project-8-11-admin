@@ -52,29 +52,8 @@ export function getComparator<Key extends keyof any>(
 
 // ----------------------------------------------------------------------
 
-export type ProductProps = {
-  productId: string
-  productName: string
-  productDescription: string;
-  defaultImage: string;
-  product_category: { productCategoryName: string }
-  product_variants: {
-    productVariantId: string;
-    sku: string;
-    productSize: string;
-    productColor: string;
-    productPrice: number;
-    productStock: number;
-    productImage: string;
-    productWeight: number;
-    productLength: number;
-    productWidth: number;
-    productHeight: number;
-  }[]
-}
-
 type ApplyFilterProps = {
-  inputData: ProductProps[];
+  inputData: UserProps[];
   filterName: string;
   comparator: (a: any, b: any) => number;
 };
@@ -92,7 +71,7 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 
   if (filterName) {
     inputData = inputData.filter(
-      (user) => user.productName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 
