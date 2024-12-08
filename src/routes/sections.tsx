@@ -8,6 +8,7 @@ import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import UpdateProductView from 'src/sections/product/view/update-product-view';
+import UpdateBlogView from 'src/sections/blog/view/update-blog-view';
 
 // ----------------------------------------------------------------------
 
@@ -19,6 +20,7 @@ export const CategoriesPage = lazy(() => import('src/pages/categories'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const TransactionsPage = lazy(() => import('src/pages/transaction'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const VoucherPage = lazy(() => import('src/pages/voucher'));
 
 // ----------------------------------------------------------------------
 
@@ -53,6 +55,9 @@ export function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'products/:id', element: <UpdateProductView /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: 'blog/:id', element: <UpdateBlogView /> },
+        { path: 'voucher', element: <VoucherPage /> },
+        
       ],
     },
     {
