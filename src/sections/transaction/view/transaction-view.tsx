@@ -236,6 +236,8 @@ export function TransactionView() {
                 <div>
                   {
                     transaction.transaction_details.map((detail) => {
+                      console.log(detail.product_variant);
+                      
                       return <div key={detail.transactionDetailId}>
                         <ProductComponent 
                           productImage={detail.product_variant.productImage} 
@@ -263,6 +265,7 @@ export function TransactionView() {
                 <div style={{ marginRight: '150px'}}>
                   <div style={{ fontWeight: 'bold' }}>Kurir</div>
                   <div style={{ fontSize: '14px'}}>{transaction.expedition} - {transaction.shippingType}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold'}}>Delivery fee: Rp {transaction.deliveryFee}</div>
                 </div>
               </div>
     

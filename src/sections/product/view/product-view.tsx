@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -27,6 +28,8 @@ import InsertProductView from './insert-product-view';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
 import { FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextField } from '@mui/material';
+import { maxHeaderSize } from 'node:http';
+import Cookies from 'js-cookie';
 
 // ----------------------------------------------------------------------
 
@@ -36,9 +39,11 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 'clamp(300px, 50%, 700px)',
+  width: 'clamp(500px, 80%, 1000px)',
   bgcolor: 'background.paper',
   // border: '2px solid #000',
+  maxHeight: '800px',
+  overflowY: 'auto',
   borderRadius: 2,
   boxShadow: 24,
   py: 4,
@@ -46,6 +51,7 @@ const style = {
 };
 
 export function ProductsView() {
+  const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -81,7 +87,6 @@ export function ProductsView() {
 
   const notFound = !dataFiltered.length && !!filterName;
 
-
   const handleEditVariant = async (id: string) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`);
@@ -93,8 +98,48 @@ export function ProductsView() {
   } 
 
   const handleUpdateVariant = async () => {
-
+    if (!product) {
+      
+      return;
+    }
+     try {
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/update/variant`, product?.product_variants, {
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+      });
+      // setProduct(response.data);
+      showSuccessToast("Variant updated!");
+      setProduct(undefined);
+      handleClose();
+    } catch (error) {
+      if (error.status === 401) {
+        nav('/')
+      }
+      console.log(error);
+      
+      showErrorToast(error.message);
+    }
   }
+
+  const handleInputChange = (
+    index: number,
+    field: keyof ProductProps['product_variants'][0], // Type fixed for better readability
+    value: string | number
+  ) => {
+    if (!product) return;
+    if (typeof value === 'number' && value < 0) return;
+
+    const updatedVariants = [...product.product_variants];
+    updatedVariants[index] = {
+      ...updatedVariants[index],
+      [field]: value,
+    };
+
+    setProduct((prev) => prev ? { ...prev, product_variants: updatedVariants } : prev);
+    
+  };
 
   return (
     <DashboardContent>
@@ -215,21 +260,21 @@ export function ProductsView() {
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%', marginTop:'20px'}}>
             <table>
               {
-                product?.product_variants.map((variant) => {
+                product?.product_variants.map((variant, index) => {
                   return <tr key={variant.productVariantId}>
                         <td>{`${variant.productSize} - ${variant.productColor}`}</td>
                         <td style={{ padding: '10px', width: '250px'}}>
-                          <div style={{ display: 'flex', gap: '10px' }}>
-                            <Button style={{ fontSize: '16px'}}>-</Button>
+                          <div style={{ display: 'flex', gap: '5px' }}>
+                            <Button style={{ fontSize: '16px'}} onClick={(e) => handleInputChange(index, "productStock", variant.productStock - 1)}>-</Button>
                             <OutlinedInput
                                 endAdornment={<InputAdornment position="end">pcs</InputAdornment>}
                                 style={{ height: '55px'}}
                                 placeholder="Stock"
                                 type="number"
                                 value={variant.productStock}
-                                // onChange={(e) => handleInputChange(index, "productStock", parseInt(e.target.value))}
+                                onChange={(e) => handleInputChange(index, "productStock", parseInt(e.target.value))}
                                 />
-                            <Button style={{ fontSize: '16px'}}>+</Button>
+                            <Button style={{ fontSize: '16px'}} onClick={(e) => handleInputChange(index, "productStock", variant.productStock + 1)}>+</Button>
                           </div>
                         </td>
                         <td>
@@ -240,7 +285,7 @@ export function ProductsView() {
                                 startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
                                 label="Amount"
                                 value={variant.productPrice}
-                                // onChange={(e) => handleInputChange(index, "productPrice", parseInt(e.target.value))}
+                                onChange={(e) => handleInputChange(index, "productPrice", parseInt(e.target.value))}
                             />
                         </FormControl>
                         </td>
