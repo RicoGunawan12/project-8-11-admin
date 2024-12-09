@@ -23,7 +23,7 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
-import { BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Chip } from '@mui/material';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
 import { useNavigate } from 'react-router-dom';
@@ -118,6 +118,16 @@ const statusMap = [
   'Success'
 ]
 
+type Status = 'Unpaid' | 'Waiting for shipping' | 'Shipping' | 'Done' | 'Cancelled';
+
+const statusColors: Record<Status, 'default' | 'warning' | 'primary' | 'success' | 'error'> = {
+  Unpaid: 'default', // Gray
+  'Waiting for shipping': 'warning', // Yellow
+  Shipping: 'primary', // Blue
+  Done: 'success', // Green
+  Cancelled: 'error', // Red
+};
+
 export function TransactionView() {
   const nav = useNavigate();
   const table = useTable();
@@ -155,12 +165,23 @@ export function TransactionView() {
         },
       });
     } catch (error) {
+      console.log(error);
+      
       if (error.status === 401) {
         nav('/');        
       }
       showErrorToast(error.message);
     }
   }
+
+  const getStatusColor = (status: string): 'default' | 'warning' | 'primary' | 'success' | 'error' => {
+    if (status in statusColors) {
+      console.log(statusColors[status as Status]);
+      
+      return statusColors[status as Status]; // Narrow the type here
+    }
+    return 'default'; // Return undefined for invalid statuses
+  };
 
   return (
     <DashboardContent>
@@ -194,10 +215,12 @@ export function TransactionView() {
           transactions.length === 0 ? 
             <div style={{ textAlign: 'center' }}>There is no data</div>
           :
-          transactions.map((transaction) => {
+          transactions.map((transaction: TransactionProps) => {
             return <Box key={transaction.transactionId} bgcolor={'white'} borderRadius={'10px'} padding={'20px 40px'} marginBottom={'40px'} boxShadow={'0 4px 8px rgba(0, 0, 0, 0.1)'}>
-              <div style={{ display:'flex', gap: '20px', borderBottom: 'solid 0.2px gray', paddingBottom: '5px'}}>
-                <div>{ transaction.status }</div>
+              <div style={{ display:'flex', alignItems:'center', gap: '20px', borderBottom: 'solid 0.2px gray', paddingBottom: '10px'}}>
+                <div>
+                  <Chip label={ transaction.status } size='small' color={getStatusColor(transaction.status)}/>
+                </div>
                 <div>/</div>
                 <div>{ transaction.transactionId }</div>
                 <div>/</div>
@@ -250,7 +273,7 @@ export function TransactionView() {
     
               <div style={{ display:'flex', justifyContent: 'flex-end', marginTop: '20px'}}>
                 {
-                  transaction.status === "Pending" ?                  
+                  transaction.status === "Waiting for shipping" ?                  
                   <Button variant='contained' onClick={() => handleRequestPickUp(transaction.transactionId)}>Request Pickup</Button>
                   :
                   ""

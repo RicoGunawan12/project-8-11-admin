@@ -14,6 +14,7 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ProductProps } from './utils';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -31,9 +32,10 @@ type UserTableRowProps = {
   row: ProductProps;
   selected: boolean;
   onSelectRow: () => void;
+  handleEditVariant: (id: string) => void
 };
 
-export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+export function UserTableRow({ row, selected, onSelectRow, handleEditVariant }: UserTableRowProps) {
   const nav = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -61,12 +63,12 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           }
           `}
       </style>
-      <TableRow className='hover-pointer' hover tabIndex={-1} role="checkbox" selected={selected} onClick={handleProductDetail}>
+      <TableRow className='hover-pointer' hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row" onClick={handleProductDetail}>
           <Box gap={2} display="flex" alignItems="center">
             {/* <Avatar alt={row.productName} /> */}
             <img src={`${import.meta.env.VITE_BACKEND_API}${row.defaultImage}`} width={100} height={100}/>
@@ -74,9 +76,9 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           </Box>
         </TableCell>
 
-        <TableCell>{row.product_category.productCategoryName}</TableCell>
+        <TableCell onClick={handleProductDetail}>{row.product_category.productCategoryName}</TableCell>
 
-        {/* <TableCell>{row.}</TableCell> */}
+        <TableCell><Button onClick={() => handleEditVariant(row.productId)}>Edit Variant</Button></TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>

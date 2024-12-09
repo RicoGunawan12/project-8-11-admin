@@ -14,7 +14,7 @@ type InsertProductProps = {
 };
 
 type VariantProps = {
-    variantImage: File | null;
+    productImage: File | null;
     productSize: string;
     productColor: string;
     productPrice: number;
@@ -45,11 +45,11 @@ function UpdateProductView() {
         setCategory(event.target.value as string);
     };
     const [variants, setVariants] = useState<VariantProps[]>([
-        { sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 },
+        { sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 },
     ]);
 
     const handleAddVariant = () => {
-        setVariants([...variants, { sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]);
+        setVariants([...variants, { sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]);
     };
 
     const handleInputChange = <T extends keyof VariantProps>(index: number, field: T, value: VariantProps[T]) => {
@@ -86,6 +86,7 @@ function UpdateProductView() {
             try {
               const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`);
               setProduct(response.data);
+              setDefaultImage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${response.data.defaultImage}`));
             } catch (error) {
               showErrorToast(error.message);
             }
@@ -106,12 +107,12 @@ function UpdateProductView() {
         }
 
         variants.forEach((variant, index) => {
-            if (variant.variantImage) {
-                const fileExtension = variant.variantImage.name.split(".").pop(); // Get file extension
+            if (variant.productImage) {
+                const fileExtension = variant.productImage.name.split(".").pop(); // Get file extension
                 const newFileName = `${productName} - ${variant.productSize} - ${variant.productColor}.${fileExtension}`;
         
-                const renamedFile = new File([variant.variantImage], newFileName, {
-                    type: variant.variantImage.type,
+                const renamedFile = new File([variant.productImage], newFileName, {
+                    type: variant.productImage.type,
                 });
         
                 formData.append("productImage", renamedFile);
@@ -136,7 +137,7 @@ function UpdateProductView() {
 
               showSuccessToast(response.data.message);
               setVariants(
-                [{ sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
+                [{ sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
               )
         } catch (error) {
             console.log(error);
@@ -146,6 +147,24 @@ function UpdateProductView() {
             }
             showErrorToast(error.response.data.message);
         }
+      }
+
+
+      async function convertToFile(url: string) {
+        // Fetch the image as a Blob
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch image');
+        }
+      
+        // Convert the response to a Blob
+        const blob = await response.blob();
+      
+        // Create a new File object from the Blob
+        const file = new File([blob], "test", { type: blob.type });
+      
+        return file;
       }
 
   return (
@@ -188,6 +207,7 @@ function UpdateProductView() {
                     <Select
                         onChange={handleChange}
                         defaultValue={product?.product_category.productCategoryName}
+                        value={product?.product_category.productCategoryName}
                         fullWidth
                     >
                         <MenuItem value=" ">Product Category</MenuItem>
@@ -227,7 +247,7 @@ function UpdateProductView() {
                                 onChange={(e) => {
                                     const target = e.target as HTMLInputElement;
                                     const file = target.files?.[0] || null;
-                                    handleInputChange(index, "variantImage", file);
+                                    handleInputChange(index, "productImage", file);
                                 }}
                                 name="Variant Image" 
                                 // initialFile={variant.variantImage}

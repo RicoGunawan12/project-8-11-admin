@@ -267,7 +267,7 @@ export function CategoriesView() {
           </Typography>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
-            <div style={{ display: 'flex', marginTop: '20px'}}>
+            <div style={{ display: 'flex', marginTop: '35px', gap: '20px'}}>
               <TextField
                 fullWidth
                 name="category"
@@ -300,7 +300,7 @@ export function CategoriesView() {
           </Typography>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
-            <div style={{ display: 'flex', marginTop: '20px'}}>
+            <div style={{ display: 'flex', marginTop: '20px', gap: '20px'}}>
               <TextField
                 fullWidth
                 name="category"
