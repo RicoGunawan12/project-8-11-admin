@@ -9,7 +9,7 @@ import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import UpdateProductView from 'src/sections/product/view/update-product-view';
 import UpdateBlogView from 'src/sections/blog/view/update-blog-view';
-import UpdateVoucherView from 'src/sections/voucher/view/update-voucher-view';
+import { DeliveryView } from 'src/sections/delivery/view';
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +22,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const TransactionsPage = lazy(() => import('src/pages/transaction'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const VoucherPage = lazy(() => import('src/pages/voucher'));
+export const DeliveryPage = lazy(() => import('src/pages/delivery'));
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +58,7 @@ export function Router() {
         { path: 'products/:id', element: <UpdateProductView /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'blog/:id', element: <UpdateBlogView /> },
+        { path: 'delivery', element: <DeliveryView /> },
         { path: 'voucher', element: <VoucherPage /> },
         { path: 'voucher/:id', element: <UpdateVoucherView /> },
         
