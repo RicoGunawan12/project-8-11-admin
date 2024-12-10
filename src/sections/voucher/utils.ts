@@ -53,7 +53,7 @@ export function getComparator<Key extends keyof any>(
 // ----------------------------------------------------------------------
 
 type ApplyFilterProps = {
-  inputData: { voucherId: string, voucherName: string}[];
+  inputData: VoucherProps[];
   filterName: string;
   comparator: (a: any, b: any) => number;
 };
@@ -71,9 +71,19 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 
   if (filterName) {
     inputData = inputData.filter(
-      (user) => user.voucherName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (user) => user.voucherCode.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 
   return inputData;
+}
+
+export type VoucherProps = {
+  voucherId : string,
+  voucherType: string,
+  voucherCode : string,
+  voucherStartDate : string
+  voucherEndDate : string,
+  maxDiscount : number,
+  discount : number
 }

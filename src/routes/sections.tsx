@@ -9,6 +9,7 @@ import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import UpdateProductView from 'src/sections/product/view/update-product-view';
 import UpdateBlogView from 'src/sections/blog/view/update-blog-view';
+import UpdateVoucherView from 'src/sections/voucher/view/update-voucher-view';
 
 // ----------------------------------------------------------------------
 
@@ -57,6 +58,7 @@ export function Router() {
         { path: 'blog', element: <BlogPage /> },
         { path: 'blog/:id', element: <UpdateBlogView /> },
         { path: 'voucher', element: <VoucherPage /> },
+        { path: 'voucher/:id', element: <UpdateVoucherView /> },
         
       ],
     },

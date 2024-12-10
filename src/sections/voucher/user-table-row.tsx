@@ -12,6 +12,7 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
+import { VoucherProps } from './utils';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ export type UserProps = {
 };
 
 type UserTableRowProps = {
-  row: { voucherId: string, voucherName: string};
+  row: VoucherProps;
   selected: boolean;
   onSelectRow: () => void;
   handleDelete: (id: string) => void;
@@ -44,16 +45,16 @@ export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleU
         </TableCell>
 
         <TableCell>{row.voucherId}</TableCell>
-        <TableCell>{row.voucherName}</TableCell>
+        <TableCell>{row.voucherCode}</TableCell>
 
 
         <TableCell>
-          <MenuItem onClick={() => handleUpdate(row.voucherId, row.voucherName)}>
+          <MenuItem onClick={() => handleUpdate(row.voucherId, row.voucherCode)}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
 
-          <MenuItem onClick={() => handleDelete(row.voucherId)} sx={{ color: 'error.main' }}>
+          <MenuItem onClick={() => handleDelete(row.voucherCode)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>

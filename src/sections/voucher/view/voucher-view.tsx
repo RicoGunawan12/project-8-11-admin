@@ -1,81 +1,54 @@
-import { useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
-import { useToaster } from 'src/components/toast/Toast';
-
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
-import Modal from '@mui/material/Modal';
-import TablePagination from '@mui/material/TablePagination';
-import { TextField } from '@mui/material';
-import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
-
-import { _users } from 'src/_mock';
-import { DashboardContent } from 'src/layouts/dashboard';
-
-import { Iconify } from 'src/components/iconify';
-import { Scrollbar } from 'src/components/scrollbar';
-
-import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
-import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
-
-// ----------------------------------------------------------------------
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { applyFilter, emptyRows, getComparator, VoucherProps } from "../utils";
+import { useToaster } from "src/components/toast/Toast";
+import axios from "axios";
+import { DashboardContent } from "src/layouts/dashboard";
+import { Box, Button, Card, Modal, Table, TableBody, TableContainer, TablePagination, Typography } from "@mui/material";
+import { UserTableToolbar } from "../user-table-toolbar";
+import { Scrollbar } from "src/components/scrollbar";
+import { UserTableHead } from "../user-table-head";
+import { UserTableRow } from "../user-table-row";
+import { TableEmptyRows } from "../table-empty-rows";
+import { TableNoData } from "../table-no-data";
+import InsertVoucherView from "./insert-voucher-view";
+import { Iconify } from "src/components/iconify";
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  height: 250,
+  width: 'clamp(500px, 80%, 1000px)',
   bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  maxHeight: '800px',
+  overflowY: 'auto',
   borderRadius: 2,
   boxShadow: 24,
-  pt: 4,
+  py: 4,
   px: 4
-};
+};  
 
 export function VoucherView() {
+
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [currUpdateId, setCurrUpdateId] = useState('');
-  const [currUpdateName, setCurrUpdateName] = useState('');
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const handleOpenUpdate = (id: string, name: string) => {
-    setCurrUpdateId(id);
-    setCurrUpdateName(name);
-    setOpenUpdate(true);
-  }
-  const handleCloseUpdate = () => setOpenUpdate(false);
-
-  const table = useTable();
-  const { showErrorToast, showSuccessToast } = useToaster();
+  const [currPage, setCurrPage] = useState(1);
+  const [vouchers, setVouchers] = useState<VoucherProps[]>([]);
+  const [voucher, setVoucher] = useState<VoucherProps>();
   const [update, setUpdate] = useState(false);
-  const [filterName, setFilterName] = useState('');
-  const [vouchers, setVouchers] = useState<{ voucherId: string, voucherName: string }[]>([]);
-  const [voucher, setVoucher] = useState('');
-  const [voucherType, setVoucherType] = useState('');
-  const [voucherTypeName, setVoucherTypeName] = useState('')
+  const { showErrorToast, showSuccessToast } = useToaster();
+  const table = useTable();
 
   useEffect(() => {
     async function getVouchers() {
-      console.log("Asdwa")
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/vouchers/getAllVouchers`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/vouchers`);
         setVouchers(response.data);
-        console.log(response.data);
       } catch (error) {
         showErrorToast(error.message);
       }
@@ -84,92 +57,9 @@ export function VoucherView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [update]);
 
-  const handleInsertVoucher = async () => {
-    try {
-      const body = {
-        productVoucherName: voucher
-      }
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/vouchers/createVouchers`, body,
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
-          },
-        }
-      );
+  const [filterName, setFilterName] = useState('');
 
-      showSuccessToast(response.data.message);
-      setOpen(false);
-      setUpdate(!update);
-    } catch (error) {
-      console.log(error);
-
-      if (error.status === 401) {
-        nav('/');
-        showErrorToast("Unauthorized");
-      }
-      else {
-        showErrorToast(error.response.data.errors[0].msg);
-      }
-    }
-  }
-
-  const handleDeleteVoucher = async (id: string) => {
-    try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/vouchers/deleteVoucher/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
-          },
-        }
-      );
-
-      showSuccessToast(response.data.message);
-      setUpdate(!update);
-    } catch (error) {
-      if (error.status === 401) {
-        nav('/');
-      }
-      showErrorToast(error.message);
-    }
-  }
-
-  const [openVoucherTypeModal, setOpenVoucherTypeModal] = useState(false);
-  const handleOpenVoucherTypeModal = () => setOpenVoucherTypeModal(true);
-  const handleCloseVoucherTypeModal = () => setOpenVoucherTypeModal(false);
-
-  const handleInsertVoucherType = async () => {
-    try {
-      const body = {
-        voucherTypes: [
-          {
-            voucherTypeName: voucherType,
-            voucherTypeCode: voucherTypeName
-          }
-        ]
-      };
-
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/voucherTypes/createVoucherTypes`, body, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
-        },
-      });
-
-      showSuccessToast(response.data.message);
-      setOpenVoucherTypeModal(false);
-      setUpdate(!update);
-    } catch (error) {
-      console.log(error);
-
-      if (error.status === 401) {
-        nav('/');
-        showErrorToast('Unauthorized');
-      } else {
-        showErrorToast(error.response.data.errors[0].msg);
-      }
-    }
-  };
-
-  const dataFiltered: { voucherId: string, voucherName: string }[] = applyFilter({
+  const dataFiltered: VoucherProps[] = applyFilter({
     inputData: vouchers,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
@@ -177,102 +67,130 @@ export function VoucherView() {
 
   const notFound = !dataFiltered.length && !!filterName;
 
+  const handleEditVoucher = async (id: string, code : string) => {
+    console.log(code)
+    try {
+      nav(`/voucher/${code}`)
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  };
+
+  const handleDeleteVoucher = async (id: string) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/vouchers`, {
+        data: {
+          code: id
+        }
+      });
+      showSuccessToast('Voucher deleted successfully');
+      setUpdate(!update); // Trigger data refresh
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  };
+
   return (
     <DashboardContent>
-      <Box display="flex" alignItems="center" mb={5}>
-        <Typography variant="h4" flexGrow={1}>
-          Vouchers
-        </Typography>
+      {currPage === 1 ? (
+        <div>
+          <Box display="flex" alignItems="center" mb={5}>
+            <Typography variant="h4" flexGrow={1}>
+              Vouchers
+            </Typography>
+            <Button
+              variant="contained"
+              color="inherit"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={() => setCurrPage(0)}
+            >
+              New Voucher
+            </Button>
+          </Box>
+
+          <Card>
+            <UserTableToolbar
+              numSelected={table.selected.length}
+              filterName={filterName}
+              onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setFilterName(event.target.value);
+                table.onResetPage();
+              }}
+            />
+
+            <Scrollbar>
+              <TableContainer sx={{ overflow: 'unset' }}>
+                <Table sx={{ minWidth: 800 }}>
+                  <UserTableHead
+                    order={table.order}
+                    orderBy={table.orderBy}
+                    rowCount={vouchers.length}
+                    numSelected={table.selected.length}
+                    onSort={table.onSort}
+                    onSelectAllRows={(checked) =>
+                      table.onSelectAllRows(
+                        checked,
+                        vouchers.map((voucher) => voucher.voucherId)
+                      )
+                    }
+                    headLabel={[
+                      { id: 'voucherId', label: 'Voucher Id' },
+                      { id: 'voucherCode', label: 'Voucher Code' },
+                      { id: 'action', label: 'Action' },
+                    ]}
+                  />
+                  <TableBody>
+                    {dataFiltered
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row, index) => (
+                        <UserTableRow
+                          key={row.voucherId}
+                          row={row}
+                          selected={table.selected.includes(row.voucherId)}
+                          onSelectRow={() => table.onSelectRow(row.voucherId)}
+                          handleDelete={handleDeleteVoucher}
+                          handleUpdate={handleEditVoucher}
+                        />
+                      ))}
+
+                    <TableEmptyRows
+                      height={68}
+                      emptyRows={emptyRows(table.page, table.rowsPerPage, vouchers.length)}
+                    />
+
+                    {notFound && <TableNoData searchQuery={filterName} />}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Scrollbar>
+
+            <TablePagination
+              component="div"
+              page={table.page}
+              count={vouchers.length}
+              rowsPerPage={table.rowsPerPage}
+              onPageChange={table.onChangePage}
+              rowsPerPageOptions={[5, 10, 25]}
+              onRowsPerPageChange={table.onChangeRowsPerPage}
+            />
+          </Card>
+        </div>
+      ) : (
         <div>
           <Button
             variant="contained"
             color="inherit"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={handleOpen}
+            onClick={() => setCurrPage(1)}
           >
-            New Voucher
+            Back
           </Button>
-          <Button
-            variant="contained"
-            color="inherit"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={handleOpenVoucherTypeModal}
-            sx={{ ml: 2 }}
-          >
-            New Voucher Type
-          </Button>
+
+          <InsertVoucherView changePage={setCurrPage} handleUpdate={() => setUpdate(!update)} />
         </div>
-      </Box>
-
-      <Card>
-        <UserTableToolbar
-          numSelected={table.selected.length}
-          filterName={filterName}
-          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFilterName(event.target.value);
-            table.onResetPage();
-          }}
-        />
-
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
-                order={table.order}
-                orderBy={table.orderBy}
-                rowCount={_users.length}
-                numSelected={table.selected.length}
-                onSort={table.onSort}
-                onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(
-                    checked,
-                    _users.map((user) => user.id)
-                  )
-                }
-                headLabel={[
-                  { id: 'voucherId', label: 'Voucher ID' },
-                  { id: 'voucher', label: 'Voucher' },
-                  { id: 'action', label: 'Action' }
-                ]}
-              />
-              <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.voucherId}
-                      row={row}
-                      selected={table.selected.includes(row.voucherId)}
-                      onSelectRow={() => table.onSelectRow(row.voucherId)}
-                      handleDelete={handleDeleteVoucher}
-                      handleUpdate={handleOpenUpdate}
-                    />
-                  ))}
-
-                <TableEmptyRows
-                  height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, _users.length)}
-                />
-
-                {notFound && <TableNoData searchQuery={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
-
-        <TablePagination
-          component="div"
-          page={table.page}
-          count={_users.length}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
-      </Card>
+      )}
 
       <Modal
         open={open}
@@ -282,78 +200,18 @@ export function VoucherView() {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Insert New Voucher
+            Update Voucher
           </Typography>
 
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '80%' }}>
-            <div style={{ display: 'flex', marginTop: '20px' }}>
-              <TextField
-                fullWidth
-                name="voucher"
-                label="Voucher"
-                InputLabelProps={{ shrink: true }}
-                onChange={(e) => setVoucher(e.target.value)}
-              />
-
-              <Button variant="contained" onClick={handleInsertVoucher}>Insert</Button>
-            </div>
-
-            <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
-              <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
-            </div>
-          </div>
-
+          {/* Add voucher-specific modal content */}
+          <Button variant="contained" style={{ margin: '20px 0' }} onClick={handleClose}>
+            Update
+          </Button>
         </Box>
       </Modal>
-
-      <Modal
-        open={openVoucherTypeModal}
-        onClose={handleCloseVoucherTypeModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Insert New Voucher Type
-          </Typography>
-
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '80%' }}>
-            <div style={{ display: 'flex', marginTop: '20px' }}>
-              <TextField
-                fullWidth
-                name="voucherType"
-                label="Voucher Type"
-                InputLabelProps={{ shrink: true }}
-                onChange={(e) => setVoucherType(e.target.value)}
-              />
-
-              <TextField
-                fullWidth
-                name="voucherTypeName"
-                label="Voucher Type Name"
-                InputLabelProps={{ shrink: true }}
-                onChange={(e) => setVoucherTypeName(e.target.value)}
-              />
-
-              <Button variant="contained" onClick={handleInsertVoucherType}>
-                Insert
-              </Button>
-            </div>
-
-            <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
-              <Button color="error" variant="contained" onClick={handleCloseVoucherTypeModal}>
-                Close
-              </Button>
-            </div>
-          </div>
-        </Box>
-      </Modal>
-
     </DashboardContent>
   );
 }
-
-// ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);
@@ -371,39 +229,52 @@ export function useTable() {
     [order, orderBy]
   );
 
-  const onSelectAllRows = useCallback((checked: boolean, data: string[]) => {
+  const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
     if (checked) {
-      setSelected(data);
-    } else {
-      setSelected([]);
+      setSelected(newSelecteds);
+      return;
     }
+    setSelected([]);
   }, []);
 
-  const onSelectRow = useCallback((id: string) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-    );
-  }, []);
+  const onSelectRow = useCallback(
+    (inputValue: string) => {
+      const newSelected = selected.includes(inputValue)
+        ? selected.filter((value) => value !== inputValue)
+        : [...selected, inputValue];
 
-  const onChangePage = useCallback((event: unknown, newPage: number) => setPage(newPage), []);
-  const onChangeRowsPerPage = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => setRowsPerPage(+event.target.value),
-    []
+      setSelected(newSelected);
+    },
+    [selected]
   );
 
-  const onResetPage = useCallback(() => setPage(0), []);
+  const onResetPage = useCallback(() => {
+    setPage(0);
+  }, []);
+
+  const onChangePage = useCallback((event: unknown, newPage: number) => {
+    setPage(newPage);
+  }, []);
+
+  const onChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      onResetPage();
+    },
+    [onResetPage]
+  );
 
   return {
     page,
-    orderBy,
-    rowsPerPage,
-    selected,
     order,
     onSort,
-    onSelectAllRows,
+    orderBy,
+    selected,
+    rowsPerPage,
     onSelectRow,
+    onResetPage,
     onChangePage,
+    onSelectAllRows,
     onChangeRowsPerPage,
-    onResetPage
   };
 }

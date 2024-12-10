@@ -14,6 +14,7 @@ import { Iconify } from 'src/components/iconify';
 import InsertBlogView from './insert-blog-view';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
+import PostComponent from '../post-component';
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ type BlogPost = {
   postId: number;
   postTitle: string;
   postContent: string;
+  postImage : string
 };
 
 export function BlogView() {
@@ -71,8 +73,6 @@ export function BlogView() {
                 <Link to={`${window.location.pathname}/${post.postId}`} style={{ textDecoration: 'none' }}>
                   <Box
                     sx={{
-                      border: 1,
-                      borderRadius: 2,
                       p: 3,
                       bgcolor: 'background.paper',
                       '&:hover': {
@@ -80,9 +80,7 @@ export function BlogView() {
                       },
                     }}
                   >
-                    <Typography variant="h6" gutterBottom>
-                      {post.postTitle}
-                    </Typography>
+                    <PostComponent postContent={post.postContent} postImage={post.postImage} postTitle={post.postTitle}/>
                   </Box>
                 </Link>
                     
@@ -90,14 +88,14 @@ export function BlogView() {
             ))}
           </Grid>
 
-          <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} />
+          {/* <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} /> */}
         </div>
       ) : (
         <div>
           <Button variant="contained" color="inherit" onClick={() => setCurrPage(1)}>
             Back
           </Button>
-          <InsertBlogView changePage={setCurrPage} handleUpdate={() => setUpdate} />
+          <InsertBlogView changePage={setCurrPage} handleUpdate={() => setUpdate(!update)} />
         </div>
       )}
     </DashboardContent>
