@@ -57,12 +57,11 @@ export type ProductProps = {
   productName: string
   productDescription: string;
   defaultImage: string;
-  isBestSeller: boolean;
+  product_category: { productCategoryName: string },
   isPromo: boolean;
   productPromo: number;
   startDate: Date;
   endDate: Date;
-  product_category: { productCategoryName: string }
   product_variants: {
     productVariantId: string;
     sku: string;

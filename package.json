@@ -32,6 +32,7 @@
     "@iconify/react": "^5.0.2",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.7",
+    "@mui/x-date-pickers": "^7.23.1",
     "@swc/core": "^1.10.0",
     "@tinymce/tinymce-react": "^5.1.1",
     "apexcharts": "^3.52.0",

@@ -34,8 +34,18 @@ export const navData = [
     icon: icon('ic-cart'),
   },
   {
+    title: 'Promo',
+    path: '/promos',
+    icon: icon('ic-cart'),
+  },
+  {
     title: 'Blog',
     path: '/blog',
+    icon: icon('ic-blog'),
+  },
+  {
+    title: 'Page',
+    path: '/pages',
     icon: icon('ic-blog'),
   },
   {
@@ -47,6 +57,11 @@ export const navData = [
     title: 'Delivery',
     path: '/delivery',
     icon: icon('ic-cart'),
+  },
+  {
+    title: 'Contact',
+    path: '/contacts',
+    icon: icon('ic-blog'),
   },
   {
     title: 'Sign in',

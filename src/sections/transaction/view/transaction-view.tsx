@@ -86,7 +86,11 @@ interface TransactionProps {
         productName: string
         productDescription: string
         defaultImage: string
-        ref_product_category_id: string
+        ref_product_category_id: string;
+        isPromo: boolean;
+        productPromo: number;
+        startDate: Date;
+        endDate: Date;
       }
     }
   }[],

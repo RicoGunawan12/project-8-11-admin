@@ -14,7 +14,9 @@ import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { ProductProps } from './utils';
 import { useNavigate } from 'react-router-dom';
-import { Button, Switch } from '@mui/material';
+import { Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Switch } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -32,14 +34,17 @@ type UserTableRowProps = {
   row: ProductProps;
   selected: boolean;
   onSelectRow: () => void;
-  handleEditVariant: (id: string) => void;
-  handleDeleteProduct: (id: string) => void;
-  handleUpdateBestSeller: (id: string, isBestSeller: boolean) => void;
+  handleUpdatePromo: (id: string, isPromo: boolean, productPromo: number, startDate: Dayjs | null, endDate: Dayjs | null) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, handleDeleteProduct, handleUpdateBestSeller }: UserTableRowProps) {
+export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: UserTableRowProps) {
   const nav = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+  
+  const [isPromo, setIsPromo] = useState<boolean | false>(row.isPromo);
+  const [productPromo, setProductPromo] = useState(row.productPromo);
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs(row.startDate ? row.startDate : new Date()));
+  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs(row.endDate ? row.endDate :new Date()));
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -66,10 +71,6 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
           `}
       </style>
       <TableRow className='hover-pointer' hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
-        </TableCell>
-
         <TableCell component="th" scope="row" onClick={handleProductDetail}>
           <Box gap={2} display="flex" alignItems="center">
             {/* <Avatar alt={row.productName} /> */}
@@ -78,22 +79,34 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
           </Box>
         </TableCell>
 
-        <TableCell onClick={handleProductDetail}>{row.product_category.productCategoryName}</TableCell>
+        <TableCell><Switch checked={isPromo} onChange={(e) => { setIsPromo(e.target.checked)}} /></TableCell>
 
-        <TableCell><Button onClick={() => handleEditVariant(row.productId)}>Edit Variant</Button></TableCell>
+        <TableCell>
+          <FormControl>
+              <InputLabel htmlFor="outlined-adornment-amount">Price</InputLabel>
+              <OutlinedInput
+                  id="outlined-adornment-amount"
+                  startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
+                  label="Amount"
+                  value={productPromo}
+                  onChange={(e) => setProductPromo(isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value) )}
+              />
+          </FormControl>
+        </TableCell>
+        <TableCell><DatePicker onChange={(newDate) => setStartDate(newDate)} label="Start date" value={startDate} /></TableCell>
+        <TableCell><DatePicker onChange={(newDate) => setEndDate(newDate)} label="End date" value={endDate} /></TableCell>
+        <TableCell><Button onClick={() => handleUpdatePromo(row.productId, isPromo, productPromo, startDate, endDate)}>Update</Button></TableCell>
 
-        <TableCell><Switch onChange={(e) =>  handleUpdateBestSeller(row.productId, e.target.checked)} /></TableCell>
-
-        <TableCell align="right">
-          {/* <IconButton onClick={handleOpenPopover}>
+        {/* <TableCell align="right">
+          <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton> */}
+          </IconButton>
           
           <MenuItem onClick={() => handleDeleteProduct(row.productId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       {/* <Popover
