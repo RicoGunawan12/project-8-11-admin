@@ -64,6 +64,7 @@ export function Router() {
         { path: 'blog/:id', element: <UpdateBlogView /> },
         { path: 'delivery', element: <DeliveryView /> },
         { path: 'voucher', element: <VoucherPage /> },
+        { path: 'voucher/:id', element: <UpdateVoucherView /> },
         
       ],
     },
