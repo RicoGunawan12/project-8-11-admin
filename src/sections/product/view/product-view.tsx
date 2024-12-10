@@ -188,10 +188,10 @@ export function ProductsView() {
                     headLabel={[
                       { id: 'productName', label: 'Product Name' },
                       { id: 'productCategory', label: 'Product Category' },
-                      { id: '' },
+                      { id: 'variant', label: 'Update Variant Price & Stock' },
                       // { id: 'promo', label: 'Promo' },
                       // { id: 'promoExpiry', label: 'Promo Expiry' },
-                      { id: '' },
+                      { id: 'action' },
                     ]}
                   />
                   <TableBody>

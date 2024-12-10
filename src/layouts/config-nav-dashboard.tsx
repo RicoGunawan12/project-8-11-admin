@@ -44,13 +44,13 @@ export const navData = [
     icon: icon('ic-voucher'),
   },
   {
-    title: 'Sign in',
-    path: '/sign-in',
-    icon: icon('ic-lock'),
+    title: 'Delivery',
+    path: '/delivery',
+    icon: icon('ic-cart'),
   },
   {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic-disabled'),
+    title: 'Sign in',
+    path: '/',
+    icon: icon('ic-lock'),
   },
 ];
