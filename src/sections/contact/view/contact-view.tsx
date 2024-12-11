@@ -39,7 +39,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 'clamp(500px, 80%, 1000px)',
+  width: 'clamp(200px, 80%, 500px)',
   bgcolor: 'background.paper',
   // border: '2px solid #000',
   maxHeight: '800px',
@@ -50,68 +50,126 @@ const style = {
   px: 4
 };
 
-export function PromoView() {
+export function ContactView() {
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const handleOpenUpdate = () => setOpenUpdate(true);
+  const handleCloseUpdate = () => setOpenUpdate(false);
   
   const [currPage, setCurrPage] = useState(1);
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState<ProductProps>();
+  const [contacts, setContacts] = useState<{contactId: string, contact: string, contactAccount: string}[]>([]);
+
+  const [contact, setContact] = useState("");
+  const [contactAccount, setContactAccount] = useState("");
+  const [contactId, setContactId] = useState("");
+
   const [update, setUpdate] = useState(false);
   const { showErrorToast, showSuccessToast } = useToaster();
   const table = useTable();
 
   useEffect(() => {
-    async function getProducts() {
+    async function getContacts() {
+      
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products`);
-        setProducts(response.data);
-        console.log(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/contacts`);
+        setContacts(response.data.contacts);
       } catch (error) {
         showErrorToast(error.message);
       }
     }
-    getProducts();
+    getContacts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [update]);
 
   const [filterName, setFilterName] = useState('');
 
-  const dataFiltered: ProductProps[] = applyFilter({
-    inputData: products,
+  const dataFiltered: {contactId: string, contact: string, contactAccount: string}[] = applyFilter({
+    inputData: contacts,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  const handleUpdatePromo = async (id: string, isPromo: boolean, productPromo: number, startDate: Dayjs | null, endDate: Dayjs | null) => {
-    console.log(isPromo);
+  const handleInsertContact = async () => {
     try {
-      
       const body = {
-        id: id,
-        isPromo: isPromo,
-        productPromo: productPromo,
-        startDate: startDate?.format("YYYY-MM-DD"),
-        endDate: endDate?.format("YYYY-MM-DD")
+        contact,
+        contactAccount
       }
-      console.log(body);
       
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/promo/${id}`, body, {
-          headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
-          },
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/contacts`, body, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
       });
-      showSuccessToast("Promo applied!");
+      showSuccessToast("New contact added!");
+      handleClose()
+      setContact("");
+      setContactAccount("");
+      setUpdate(!update)
+    } catch (error) {
+      if (error.status === 401) {
+        nav('/')
+      }
+      showErrorToast(error.message);
+    }
+  }
+
+  const handleUpdate = async (id: string, contact: string, contactAccount: string) => {
+    handleOpenUpdate();
+    setContact(contact);
+    setContactAccount(contactAccount);
+    setContactId(id);
+  }
+
+  const handleUpdateContact = async () => {
+    try {
+      const body = {
+        contact,
+        contactAccount
+      }
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${contactId}`, body, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      });
+      console.log(response);
+      
+      showSuccessToast("Contact updated!");
+      setContact("");
+      setContactAccount("");
+      setContactId("");
+      setUpdate(!update)
+      handleCloseUpdate()
     } catch (error) {
       console.log(error);
       
       if (error.status === 401) {
-        nav('/');
+        nav('/')
+      }
+      showErrorToast(error.response.data.message);
+    }
+  }
+
+  const handleDeleteContact = async (id: string) => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      });
+      
+      showSuccessToast("Contact deleted!");
+      setUpdate(!update)
+    } catch (error) {
+      if (error.status === 401) {
+        nav('/')
       }
       showErrorToast(error.response.data.message);
     }
@@ -124,8 +182,10 @@ export function PromoView() {
         <div>
           <Box display="flex" alignItems="center" mb={5}>
             <Typography variant="h4" flexGrow={1}>
-              Promo
+              Contact
             </Typography>
+
+            <Button color='inherit' variant='contained' onClick={handleOpen}>+ New Contact</Button>
           </Box>
 
           <Card>
@@ -154,15 +214,9 @@ export function PromoView() {
                       )
                     }
                     headLabel={[
-                      { id: 'productName', label: 'Product Name' },
+                      { id: 'contact', label: 'Contact' },
                       // { id: 'productCategory', label: 'Product Category' },
-                      { id: 'promo', label: 'Promo' },
-                      { id: 'discount', label: 'Discount' },
-                      // { id: 'promo', label: 'Promo' },
-                      // { id: 'promoExpiry', label: 'Promo Expiry' },
-                      { id: 'startDate', label: 'Start Date' },
-                      { id: 'endDate', label: 'End Date' },
-                      { id: 'action', label: 'Action' },
+                      { id: 'contactAccount', label: 'Contact Account' },
                     ]}
                   />
                   <TableBody>
@@ -173,11 +227,12 @@ export function PromoView() {
                       )
                       .map((row, index) => (
                         <UserTableRow
-                          key={row.productId}
+                          key={row.contactId}
                           row={row}
-                          selected={table.selected.includes(row.productId)}
-                          onSelectRow={() => table.onSelectRow(row.productId)}
-                          handleUpdatePromo={handleUpdatePromo}
+                          selected={table.selected.includes(row.contactId)}
+                          onSelectRow={() => table.onSelectRow(row.contactId)}
+                          handleUpdateContact={handleUpdate}
+                          handleDeleteContact={handleDeleteContact}
                         />
                       ))}
 
@@ -215,6 +270,94 @@ export function PromoView() {
           
         </div>
       }
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Insert New Contact
+          </Typography>
+
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
+            <div style={{ marginTop: '35px', gap: '20px'}}>
+              <TextField
+                fullWidth
+                name="contact"
+                label="Contact"
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setContact(e.target.value)}
+                style={{ marginBottom: '20px'}}
+                placeholder='Twitter'
+              />
+
+              <TextField
+                fullWidth
+                name="contactAccount"
+                label="Contact Account"
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setContactAccount(e.target.value)}
+                style={{ marginBottom: '20px'}}
+                placeholder='https://test.com'
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap:'20px', width: '100%', justifyContent: 'end' }}>
+              <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
+              <Button variant="contained" onClick={handleInsertContact}>Insert</Button>
+            </div>
+          </div>
+
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openUpdate}
+        onClose={handleCloseUpdate}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Update Contact
+          </Typography>
+
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
+            <div style={{ marginTop: '35px', gap: '20px'}}>
+              <TextField
+                fullWidth
+                name="contact"
+                label="Contact"
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setContact(e.target.value)}
+                style={{ marginBottom: '20px'}}
+                placeholder='Twitter'
+                value={contact}
+              />
+
+              <TextField
+                fullWidth
+                name="contactAccount"
+                label="Contact Account"
+                InputLabelProps={{ shrink: true }}
+                onChange={(e) => setContactAccount(e.target.value)}
+                style={{ marginBottom: '20px'}}
+                placeholder='https://test.com'
+                value={contactAccount}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap:'20px', width: '100%', justifyContent: 'end' }}>
+              <Button color="error" variant="contained" onClick={handleCloseUpdate}>Close</Button>
+              <Button variant="contained" onClick={handleUpdateContact}>Update</Button>
+            </div>
+          </div>
+
+        </Box>
+      </Modal>
 
     </DashboardContent>
   );

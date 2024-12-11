@@ -78,7 +78,7 @@ export type ProductProps = {
 }
 
 type ApplyFilterProps = {
-  inputData: ProductProps[];
+  inputData: { contactId: string, contact: string, contactAccount: string }[];
   filterName: string;
   comparator: (a: any, b: any) => number;
 };
@@ -96,7 +96,7 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 
   if (filterName) {
     inputData = inputData.filter(
-      (user) => user.productName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (user) => user.contact.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 

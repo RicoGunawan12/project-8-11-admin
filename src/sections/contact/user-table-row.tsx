@@ -31,20 +31,17 @@ export type UserProps = {
 };
 
 type UserTableRowProps = {
-  row: ProductProps;
+  row: {contactId: string, contact: string, contactAccount: string};
   selected: boolean;
   onSelectRow: () => void;
-  handleUpdatePromo: (id: string, isPromo: boolean, productPromo: number, startDate: Dayjs | null, endDate: Dayjs | null) => void;
+  handleUpdateContact: (id: string, contact: string, contactAccount: string) => void;
+  handleDeleteContact: (id: string) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: UserTableRowProps) {
+export function UserTableRow({ row, selected, onSelectRow, handleUpdateContact, handleDeleteContact }: UserTableRowProps) {
   const nav = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   
-  const [isPromo, setIsPromo] = useState<boolean | false>(row.isPromo);
-  const [productPromo, setProductPromo] = useState(row.productPromo);
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs(row.startDate ? row.startDate : new Date()));
-  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs(row.endDate ? row.endDate :new Date()));
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -54,9 +51,6 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: 
     setOpenPopover(null);
   }, []);
 
-  const handleProductDetail = () => {
-    nav('/products/' + row.productId);
-  }
 
   return (
     <>
@@ -71,31 +65,22 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: 
           `}
       </style>
       <TableRow className='hover-pointer' hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell component="th" scope="row" onClick={handleProductDetail}>
+        <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
-            {/* <Avatar alt={row.productName} /> */}
-            <img src={`${import.meta.env.VITE_BACKEND_API}${row.defaultImage}`} width={100} height={100}/>
-            {row.productName}
+            <Avatar src={`/assets/contact/${row.contact}.png`} alt={row.contact} />
+            {row.contact}
           </Box>
         </TableCell>
 
-        <TableCell><Switch checked={isPromo} onChange={(e) => { setIsPromo(e.target.checked)}} /></TableCell>
-
+        <TableCell><a href={row.contactAccount} target="_blank">{row.contactAccount}</a></TableCell>
+        <TableCell><Button onClick={() => handleUpdateContact(row.contactId, row.contact, row.contactAccount)}>Update</Button></TableCell>
         <TableCell>
-          <FormControl>
-              <InputLabel htmlFor="outlined-adornment-amount">Price</InputLabel>
-              <OutlinedInput
-                  id="outlined-adornment-amount"
-                  startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  label="Amount"
-                  value={productPromo}
-                  onChange={(e) => setProductPromo(isNaN(parseInt(e.target.value)) ? 0 : parseInt(e.target.value) )}
-              />
-          </FormControl>
+          <MenuItem onClick={() => handleDeleteContact(row.contactId)} sx={{ color: 'error.main' }}>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
         </TableCell>
-        <TableCell><DatePicker onChange={(newDate) => setStartDate(newDate)} label="Start date" value={startDate} /></TableCell>
-        <TableCell><DatePicker onChange={(newDate) => setEndDate(newDate)} label="End date" value={endDate} /></TableCell>
-        <TableCell><Button onClick={() => handleUpdatePromo(row.productId, isPromo, productPromo, startDate, endDate)}>Update</Button></TableCell>
+
 
         {/* <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>

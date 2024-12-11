@@ -1,1 +1,1 @@
-export * from './promo-view';
+export * from './contact-view';
