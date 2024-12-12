@@ -117,7 +117,7 @@ interface TransactionProps {
 
 const statusMap = [
   '',
-  'Pending',
+  'Waiting for shipping',
   'Shipping',
   'Success'
 ]
@@ -136,6 +136,7 @@ export function TransactionView() {
   const nav = useNavigate();
   const table = useTable();
   const [value, setValue] = useState(0);
+  const [update, setUpdate] = useState(false);
   const [transactions, setTransactions] = useState<TransactionProps[]>([]);
   const { showSuccessToast, showErrorToast } = useToaster();
 
@@ -150,6 +151,7 @@ export function TransactionView() {
         setTransactions(response.data.transactions);
         console.log(response.data);
       } catch (error) {
+        
         if (error.status === 401) {
           nav('/');        
         }
@@ -168,6 +170,8 @@ export function TransactionView() {
           Authorization: `Bearer ${Cookies.get('token')}`,
         },
       });
+      showSuccessToast("Pick up requested!");
+      setUpdate(!update)
     } catch (error) {
       console.log(error);
       
@@ -180,7 +184,7 @@ export function TransactionView() {
 
   const getStatusColor = (status: string): 'default' | 'warning' | 'primary' | 'success' | 'error' => {
     if (status in statusColors) {
-      console.log(statusColors[status as Status]);
+      // console.log(statusColors[status as Status]);
       
       return statusColors[status as Status]; // Narrow the type here
     }
@@ -199,6 +203,8 @@ export function TransactionView() {
         showLabels
         value={value}
         onChange={(event, newValue) => {
+          console.log(newValue);
+          
           setValue(newValue);
         }}
         sx={{

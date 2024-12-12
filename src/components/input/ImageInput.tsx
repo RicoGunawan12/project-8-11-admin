@@ -7,9 +7,10 @@ export interface InputFileProps {
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ) => void;
   initialFile?: File | null;
+  imageString?: string | null;
 }
 
-function ImageInput({ onChange, name, initialFile }: InputFileProps) {
+function ImageInput({ onChange, name, initialFile, imageString }: InputFileProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -25,11 +26,17 @@ function ImageInput({ onChange, name, initialFile }: InputFileProps) {
   };
 
   useEffect(() => {
+    console.log(initialFile);
+    
     if (initialFile) {
       const url = URL.createObjectURL(initialFile);
       setPreviewUrl(url);
-
       return () => URL.revokeObjectURL(url);
+    }
+    else {
+      console.log(imageString);
+      
+      setPreviewUrl(imageString ? import.meta.env.VITE_BACKEND_API + imageString : "")
     }
   }, [initialFile]);
 

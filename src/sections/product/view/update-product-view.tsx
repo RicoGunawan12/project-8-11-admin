@@ -87,6 +87,8 @@ function UpdateProductView() {
               const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`);
               setProduct(response.data);
               setDefaultImage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${response.data.defaultImage}`));
+              console.log(response.data);
+              
             } catch (error) {
               showErrorToast(error.message);
             }
@@ -235,8 +237,10 @@ function UpdateProductView() {
 
 
         {
-            product?.product_variants.map((variant, index) => 
-                <div key={index} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
+            product?.product_variants.map((variant, index) => {
+                console.log(variant);
+                
+                return <div key={index} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
                     <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
                         Variant {index + 1}
                     </Typography>
@@ -250,7 +254,8 @@ function UpdateProductView() {
                                     handleInputChange(index, "productImage", file);
                                 }}
                                 name="Variant Image" 
-                                // initialFile={variant.variantImage}
+                                // initialFile={}
+                                imageString={variant.productImage}
                             />
                         </div>
 
@@ -345,7 +350,7 @@ function UpdateProductView() {
                         </div>
                     </div>
                 </div>
-            )
+            })
         }
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '20px', marginBottom: '20px'}}>

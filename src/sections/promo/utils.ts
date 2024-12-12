@@ -1,3 +1,4 @@
+
 import type { UserProps } from './user-table-row';
 
 // ----------------------------------------------------------------------
@@ -77,8 +78,25 @@ export type ProductProps = {
   }[]
 }
 
+export type PromoProps = {
+  promoId: string
+  promoName: string
+  promoAmount: number
+  startDate: Date
+  endDate: Date
+  PromoDetails: {
+    promoId: string
+    productId: string
+    Products: {
+      productName: string
+      defaultImage: string
+    }
+  }
+}
+
+
 type ApplyFilterProps = {
-  inputData: ProductProps[];
+  inputData: PromoProps[];
   filterName: string;
   comparator: (a: any, b: any) => number;
 };
@@ -96,7 +114,7 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 
   if (filterName) {
     inputData = inputData.filter(
-      (user) => user.productName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (user) => user.promoName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 

@@ -99,7 +99,6 @@ export function ProductsView() {
 
   const handleUpdateVariant = async () => {
     if (!product) {
-      
       return;
     }
      try {

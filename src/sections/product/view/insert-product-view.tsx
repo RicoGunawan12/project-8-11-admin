@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Iconify } from "src/components/iconify";
 import ImageInput from "src/components/input/ImageInput";
 import { useToaster } from "src/components/toast/Toast";
 
@@ -136,6 +137,10 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         }
       }
 
+      const handleDeleteVariant = (idx: number) => {
+        setVariants(prevVariants => prevVariants.filter((_, index) => index !== idx));
+      }
+
   return (
     <div>
         <Typography variant="h4" style={{ textAlign: 'center', marginBottom: '20px' }} flexGrow={1}>
@@ -194,9 +199,20 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         {
             variants.map((variant, index) => 
                 <div key={index} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
-                    <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
-                        Variant {index + 1}
-                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between'}}>
+                        <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
+                            Variant {index + 1}
+                        </Typography>
+                        {
+                            index > 0 ?
+                            <MenuItem  onClick={() => handleDeleteVariant(index)} sx={{ color: 'error.main' }}>
+                                <Iconify icon="solar:trash-bin-trash-bold" />
+                                Delete
+                            </MenuItem>
+                            :
+                            ""
+                        }
+                    </div>
 
                     <div style={{ display: 'flex', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                         <div>

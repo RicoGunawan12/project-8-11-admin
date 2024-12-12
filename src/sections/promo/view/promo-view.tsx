@@ -21,7 +21,7 @@ import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator, ProductProps } from '../utils';
+import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
 import axios from 'axios';
@@ -30,6 +30,7 @@ import { FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextFiel
 import { maxHeaderSize } from 'node:http';
 import Cookies from 'js-cookie';
 import { Dayjs } from 'dayjs';
+import InsertPromoView from './insert-promo-view';
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +51,22 @@ const style = {
   px: 4
 };
 
+export type PromoProps = {
+  promoId: string
+  promoName: string
+  promoAmount: number
+  startDate: Date
+  endDate: Date
+  PromoDetails: {
+    promoId: string
+    productId: string
+    Products: {
+      productName: string
+      defaultImage: string
+    }
+  }
+}
+
 export function PromoView() {
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
@@ -58,7 +75,7 @@ export function PromoView() {
   
   const [currPage, setCurrPage] = useState(1);
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState<ProductProps>();
+  const [promos, setPromos] = useState<PromoProps[]>([]);
   const [update, setUpdate] = useState(false);
   const { showErrorToast, showSuccessToast } = useToaster();
   const table = useTable();
@@ -66,8 +83,8 @@ export function PromoView() {
   useEffect(() => {
     async function getProducts() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products`);
-        setProducts(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/promos`);
+        setPromos(response?.data.promos);
         console.log(response.data);
       } catch (error) {
         showErrorToast(error.message);
@@ -79,33 +96,33 @@ export function PromoView() {
 
   const [filterName, setFilterName] = useState('');
 
-  const dataFiltered: ProductProps[] = applyFilter({
-    inputData: products,
+  const dataFiltered: PromoProps[] = applyFilter({
+    inputData: promos,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  const handleUpdatePromo = async (id: string, isPromo: boolean, productPromo: number, startDate: Dayjs | null, endDate: Dayjs | null) => {
-    console.log(isPromo);
+  // const handleUpdatePromo = async (id: string, isPromo: boolean, productPromo: number, startDate: Dayjs | null, endDate: Dayjs | null) => {
+  const handleUpdatePromo = async () => {
     try {
       
-      const body = {
-        id: id,
-        isPromo: isPromo,
-        productPromo: productPromo,
-        startDate: startDate?.format("YYYY-MM-DD"),
-        endDate: endDate?.format("YYYY-MM-DD")
-      }
-      console.log(body);
+      // const body = {
+      //   id: id,
+      //   isPromo: isPromo,
+      //   productPromo: productPromo,
+      //   startDate: startDate?.format("YYYY-MM-DD"),
+      //   endDate: endDate?.format("YYYY-MM-DD")
+      // }
+      // console.log(body);
       
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/promo/${id}`, body, {
-          headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-      });
+      // const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/promo/${id}`, body, {
+      //     headers: {
+      //         "Content-Type": "application/json",
+      //         Authorization: `Bearer ${Cookies.get("token")}`,
+      //     },
+      // });
       showSuccessToast("Promo applied!");
     } catch (error) {
       console.log(error);
@@ -126,6 +143,10 @@ export function PromoView() {
             <Typography variant="h4" flexGrow={1}>
               Promo
             </Typography>
+
+            <div>
+              <Button color='inherit' variant='contained' onClick={() => setCurrPage(0)}>+ New Promo</Button>
+            </div>
           </Box>
 
           <Card>
@@ -154,10 +175,9 @@ export function PromoView() {
                       )
                     }
                     headLabel={[
-                      { id: 'productName', label: 'Product Name' },
+                      { id: 'promoName', label: 'Promo Name' },
                       // { id: 'productCategory', label: 'Product Category' },
-                      { id: 'promo', label: 'Promo' },
-                      { id: 'discount', label: 'Discount' },
+                      { id: 'promoAmount', label: 'Promo Amount' },
                       // { id: 'promo', label: 'Promo' },
                       // { id: 'promoExpiry', label: 'Promo Expiry' },
                       { id: 'startDate', label: 'Start Date' },
@@ -173,10 +193,10 @@ export function PromoView() {
                       )
                       .map((row, index) => (
                         <UserTableRow
-                          key={row.productId}
+                          key={row.promoId}
                           row={row}
-                          selected={table.selected.includes(row.productId)}
-                          onSelectRow={() => table.onSelectRow(row.productId)}
+                          selected={table.selected.includes(row.promoId)}
+                          onSelectRow={() => table.onSelectRow(row.promoId)}
                           handleUpdatePromo={handleUpdatePromo}
                         />
                       ))}
@@ -212,7 +232,8 @@ export function PromoView() {
             >
               Back
           </Button>
-          
+                        
+          <InsertPromoView changePage={setCurrPage} handleUpdate={handleUpdatePromo}/>
         </div>
       }
 
