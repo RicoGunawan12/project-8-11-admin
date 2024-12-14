@@ -21,32 +21,35 @@ import { useToaster } from 'src/components/toast/Toast';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { SvgColor } from 'src/components/svg-color';
+import { Editor } from '@tinymce/tinymce-react';
 
 // ----------------------------------------------------------------------
 
-export function PageView() {
+export function AboutView() {
   const nav = useNavigate();
   const [value, setValue] = useState(0);
-  // const [transactions, setTransactions] = useState<TransactionProps[]>([]);
-  const [content, setContent] = useState<any[]>([]);
-  const [id, setId] = useState("");
   const [response, setResponse] = useState<any>();
+  const [content, setContent] = useState("");
+  const [id, setId] = useState("");
+  const [title, setTitle] = useState("");
   const [update, setUpdate] = useState(false);
   const { showSuccessToast, showErrorToast } = useToaster();
 
   useEffect(() => {
     async function getContent() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/pages`);
-        setResponse(response.data.pages[0]);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/pages/about`);
+        console.log(response.data.response);
         if (value === 0) {
-          setContent(response.data.pages[0].contentJSONEng);
+          setContent(response.data.response[0].contentEng);
+          setTitle(response.data.response[0].titleEng);
         }
         else {
-          setContent(response.data.pages[0].contentJSONIndo);
-
+          setContent(response.data.response[0].contentIndo);
+          setTitle(response.data.response[0].titleIndo);
         }
-        setId(response.data.pages[0].pageId);
+        setResponse(response.data.response[0])
+        setId(response.data.response[0].pageId);
       } catch (error) {
         showErrorToast(error.message);
       }
@@ -54,33 +57,24 @@ export function PageView() {
     getContent();
   }, [update]);
   
-  const handleContentChange = (index: number, field: string, value: string) => {
-    setContent((prevContent) => {
-      const updatedContent = [...prevContent];
-      updatedContent[index] = {
-        ...updatedContent[index],
-        [field]: value,
-      };
-      return updatedContent;
-    });
-  };
   
   const handleUpdateEngPage = async () => {
     try {
       const body = {
-        contentJSONEng: content
+        contentEng: content,
+        titleEng: title
       }
       console.log(body);
       
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/eng/${id}`, body, {
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/about/eng/${id}`, body, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${Cookies.get('token')}`,
         },
       });
       
+      setUpdate(!update)
       showSuccessToast("Pages updated!");
-      setUpdate(!update);
       
     } catch (error) {
       console.log(error);
@@ -95,19 +89,19 @@ export function PageView() {
   const handleUpdateIndoPage = async () => {
     try {
       const body = {
-        contentJSONIndo: content
+        contentIndo: content,
+        titleIndo: title
       }
       console.log(body);
       
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/indo/${id}`, body, {
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/about/indo/${id}`, body, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${Cookies.get('token')}`,
         },
       });
-      
+      setUpdate(!update)
       showSuccessToast("Pages updated!");
-      setUpdate(!update);
       
     } catch (error) {
       console.log(error);
@@ -137,9 +131,8 @@ export function PageView() {
           showLabels
           value={value}
           onChange={(event, newValue) => {
-            setContent(newValue === 0 ? response.contentJSONEng : response.contentJSONIndo)
-            console.log(newValue);
-            
+            setContent(newValue === 0 ? response.contentEng : response.contentIndo)
+            setTitle(newValue === 0 ? response.titleEng : response.titleIndo)
             setValue(newValue);
           }}
           sx={{
@@ -155,43 +148,42 @@ export function PageView() {
 
 
         <div>
-          {
-            content.map((con, index) => {
-              console.log(con.page);
-              
-              if (con.page === "About Us Page") return ""
-              return <div key={index}>
-                <div style={{ margin: '10px 0', fontWeight: 'bold'}}>Section {index + 1}</div>
                 
-                <div style={{ marginBottom: '50px', display: 'flex', gap:'20px', alignItems: 'center'}}>
-                  <div style={{ width: '50%' }}>
-                    <div>
-                      <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "title", e.target.value)} value={content[index].title} label={"Title"} variant="outlined" />
-                    </div>
-                    <TextareaAutosize
-                        style={{ borderRadius: '10px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
-                        aria-label="minimum height"  
-                        minRows={3}  
-                        value={content[index].content}
-                        placeholder="Description"
-                        onChange={(e) => handleContentChange(index, "content", e.target.value)}
-                    />
-                  </div>
-
-                  <div style={{ width: '50%' }}>
-                    <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
-                  </div>
-                </div>
+          <div style={{ marginBottom: '50px', display: 'flex', gap:'20px', alignItems: 'center'}}>
+            <div style={{ width: '50%' }}>
+              <div>
+                <TextField fullWidth id="outlined-basic"  label={"Title"} value={title} onChange={(e) => setTitle(e.target.value)} variant="outlined" />
               </div>
-            })
-          }
+              <div style={{marginTop: '20px'}}>
+                <Editor
+                  apiKey={`${import.meta.env.VITE_TINYMCE_API_KEY}`}
+                  init={{
+                    height: 300,
+                    menubar: false,
+                    plugins: 'lists link image table',
+                    toolbar:
+                      'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent',
+                  }}
+                  onEditorChange={(content) => setContent(content)}
+                  value={content}
+                />
+              </div>
+
+            </div>
+
+            <div style={{ width: '50%' }}>
+              <img src={`/public/assets/pages/AboutUs1.png`}/>
+            </div>
+          </div>
+
+          
           
         </div>
       </div>
       
       <div style={{ position: 'fixed', bottom: '0', backgroundColor: 'white', zIndex: '1', width:'77.5%', boxShadow: '0px -2px 6px rgba(0, 0, 0, 0.2)' }}>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'end', marginTop: '20px', marginBottom: '20px', paddingRight: '40px'}}>
-              <Button variant="contained" onClick={value === 1 ? handleUpdateIndoPage : handleUpdateEngPage}>Update Product</Button>
+              <Button variant="contained" onClick={value === 0 ? handleUpdateEngPage : handleUpdateIndoPage}>Update Product</Button>
           </div>
       </div>
       

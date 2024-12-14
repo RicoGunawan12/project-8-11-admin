@@ -36,6 +36,7 @@ import ProductComponent from '../product-component';
 
 interface TransactionProps {
   transactionId: string
+  readableId: string
   userId: string
   addressId: string
   voucherId: string
@@ -191,6 +192,27 @@ export function TransactionView() {
     return 'default'; // Return undefined for invalid statuses
   };
 
+  const handlePrintLabel = async (transactionId: string) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/transactions/print/label`, {
+        transactionId
+      }, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      });
+      // showSuccessToast("Pick up requested!");
+      setUpdate(!update)
+    } catch (error) {
+      console.log(error);
+      
+      if (error.status === 401) {
+        nav('/');        
+      }
+      showErrorToast(error.message);
+    }
+  }
+
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
@@ -232,7 +254,7 @@ export function TransactionView() {
                   <Chip label={ transaction.status } size='small' color={getStatusColor(transaction.status)}/>
                 </div>
                 <div>/</div>
-                <div>{ transaction.transactionId }</div>
+                <div>{ transaction.readableId }</div>
                 <div>/</div>
                 <div style={{ display:'flex', alignItems: 'center'}}>
                   <SvgColor width="20px" height="20px" src={`/assets/icons/navbar/ic-user.svg`} />
@@ -270,6 +292,7 @@ export function TransactionView() {
                   <div style={{ fontWeight: 'bold' }}>Alamat</div>
                   <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressProvince}</div>
                   <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressCity}</div>
+                  <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressDetail}</div>
                 </div>
     
                 <div style={{ marginRight: '150px'}}>
@@ -288,6 +311,9 @@ export function TransactionView() {
                 {
                   transaction.status === "Waiting for shipping" ?                  
                   <Button variant='contained' onClick={() => handleRequestPickUp(transaction.transactionId)}>Request Pickup</Button>
+                  :
+                  transaction.status === "Waiting for shipping" ?
+                  <Button variant='contained' onClick={() => handlePrintLabel(transaction.transactionId)}>Print Label</Button>
                   :
                   ""
                 }

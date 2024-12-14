@@ -17,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Switch } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import { PromoProps } from './view';
 
 // ----------------------------------------------------------------------
 
@@ -31,14 +30,38 @@ export type UserProps = {
   isVerified: boolean;
 };
 
+
+type PromoProps = {
+  promoId: string
+  promoName: string
+  promoAmount: number
+  startDate: Date
+  endDate: Date
+  promo_details: {
+    promoId: string
+    productId: string
+    product: {
+      productName: string
+      defaultImage: string
+      product_variants: {
+        productImage: string
+        productSize: string
+        productColor: string
+        productPrice: number
+      }[]
+    }
+  }[]
+}
+
 type UserTableRowProps = {
   row: PromoProps;
   selected: boolean;
   onSelectRow: () => void;
-  handleUpdatePromo: (id: string, isPromo: boolean, productPromo: number, startDate: Dayjs | null, endDate: Dayjs | null) => void;
+  handlePromoDetail: (row: PromoProps) => void;
+  handleDeletePromo: (promoId: string) => void
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: UserTableRowProps) {
+export function UserTableRow({ row, selected, onSelectRow, handlePromoDetail, handleDeletePromo }: UserTableRowProps) {
   const nav = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   
@@ -72,7 +95,7 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: 
           `}
       </style>
       <TableRow className='hover-pointer' hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell component="th" scope="row">
+        <TableCell  onClick={() => handlePromoDetail(row)} component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
             {/* <Avatar alt={row.productName} /> */}
             {/* <img src={`${import.meta.env.VITE_BACKEND_API}${row.defaultImage}`} width={100} height={100}/> */}
@@ -80,10 +103,15 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: 
           </Box>
         </TableCell>
 
-        <TableCell>Rp {row.promoAmount}</TableCell>
-        <TableCell>{row.startDate.toString()}</TableCell>
-        <TableCell>{row.endDate.toString()}</TableCell>
-        {/* <TableCell><Switch checked={isPromo} onChange={(e) => { setIsPromo(e.target.checked)}} /></TableCell> */}
+        <TableCell onClick={() => handlePromoDetail(row)}>Rp {row.promoAmount}</TableCell>
+        <TableCell onClick={() => handlePromoDetail(row)}>{new Date(row.startDate).toDateString()}</TableCell>
+        <TableCell onClick={() => handlePromoDetail(row)}>{new Date(row.endDate).toDateString()}</TableCell>
+        <TableCell>
+          <MenuItem onClick={() => handleDeletePromo(row.promoId)} sx={{ color: 'error.main' }}>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
+        </TableCell>
 
         {/* <TableCell>
           <FormControl>
@@ -106,7 +134,7 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdatePromo }: 
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
           
-          <MenuItem onClick={() => handleDeleteProduct(row.productId)} sx={{ color: 'error.main' }}>
+          <MenuItem onClick={() => handleDeletePromo(row.productId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>

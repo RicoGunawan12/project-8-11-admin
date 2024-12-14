@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
-import { ContactView } from 'src/sections/contact/view';
+import { AboutView } from 'src/sections/about/view';
 
 
 // ----------------------------------------------------------------------
@@ -13,7 +13,7 @@ export default function Page() {
         <title> {`Contacts - ${CONFIG.appName}`}</title>
       </Helmet>
 
-      <ContactView/>
+      <AboutView/>
     </>
   );
 }

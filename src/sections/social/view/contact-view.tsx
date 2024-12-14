@@ -50,7 +50,7 @@ const style = {
   px: 4
 };
 
-export function ContactView() {
+export function SocialView() {
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);

@@ -85,6 +85,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
                 },
             });
             showSuccessToast("New promo added!");
+            handleUpdate()
             changePage(1)
         } catch (error) {
             console.log(error);

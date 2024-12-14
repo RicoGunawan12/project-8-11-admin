@@ -14,6 +14,7 @@ type InsertProductProps = {
 };
 
 type VariantProps = {
+    productVariantId: string
     productImage: File | null;
     productSize: string;
     productColor: string;
@@ -45,11 +46,11 @@ function UpdateProductView() {
         setCategory(event.target.value as string);
     };
     const [variants, setVariants] = useState<VariantProps[]>([
-        { sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 },
+        { productVariantId: "", sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 },
     ]);
 
     const handleAddVariant = () => {
-        setVariants([...variants, { sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]);
+        setVariants([...variants, { productVariantId: "", sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]);
     };
 
     const handleInputChange = <T extends keyof VariantProps>(index: number, field: T, value: VariantProps[T]) => {
@@ -86,6 +87,18 @@ function UpdateProductView() {
             try {
               const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`);
               setProduct(response.data);
+              console.log(response.data);
+              
+              setProductName(response.data.productName)
+              setCategory(response.data.product_category.productCategoryName)
+              setDescription(response.data.productDescription)
+             const updatedVariants = await Promise.all(
+                response.data.product_variants.map(async (variant: any) => {
+                    variant.productImage = await convertToFile(`${import.meta.env.VITE_BACKEND_API}${variant.productImage}`);
+                    return variant;
+                })
+            );
+            setVariants(updatedVariants);
               setDefaultImage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${response.data.defaultImage}`));
               console.log(response.data);
               
@@ -99,7 +112,7 @@ function UpdateProductView() {
       }, []);
 
 
-      const handleInsertProduct = async () => {
+      const handleUpdateProduct = async () => {
         const formData = new FormData();
         formData.append("productName", productName);
         formData.append("productCategoryName", category);
@@ -130,7 +143,7 @@ function UpdateProductView() {
         try {
               
 
-              const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/products`, formData, {
+              const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/${product?.productId}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${Cookies.get('token')}`
@@ -138,9 +151,10 @@ function UpdateProductView() {
               });
 
               showSuccessToast(response.data.message);
-              setVariants(
-                [{ sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
-              )
+            //   setVariants(
+            //     [{ sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
+            //   )
+            nav('/products');
         } catch (error) {
             console.log(error);
             
@@ -201,15 +215,15 @@ function UpdateProductView() {
                         name="productName"
                         label="Product Name"
                         InputLabelProps={{ shrink: true }}
-                        value={product?.productName}
+                        value={productName}
                         onChange={(e) => setProductName(e.target.value)}
                         sx={{ mb: 3 }}
                     />
                     
                     <Select
                         onChange={handleChange}
-                        defaultValue={product?.product_category.productCategoryName}
-                        value={product?.product_category.productCategoryName}
+                        // defaultValue={product?.product_category.productCategoryName}
+                        value={category}
                         fullWidth
                     >
                         <MenuItem value=" ">Product Category</MenuItem>
@@ -225,7 +239,7 @@ function UpdateProductView() {
                         aria-label="minimum height"  
                         minRows={3}  
                         placeholder="Product Description"
-                        value={product?.productDescription}
+                        value={description}
                         onFocus={handleFocus} 
                         onBlur={handleBlur}
                         onChange={(e) => setDescription(e.target.value)}
@@ -237,10 +251,10 @@ function UpdateProductView() {
 
 
         {
-            product?.product_variants.map((variant, index) => {
+            variants.map((variant, index) => {
                 console.log(variant);
                 
-                return <div key={index} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
+                return <div key={variant.productVariantId} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
                     <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
                         Variant {index + 1}
                     </Typography>
@@ -254,8 +268,8 @@ function UpdateProductView() {
                                     handleInputChange(index, "productImage", file);
                                 }}
                                 name="Variant Image" 
-                                // initialFile={}
-                                imageString={variant.productImage}
+                                initialFile={variant.productImage}
+                                // imageString={variant.productImage}
                             />
                         </div>
 
@@ -354,12 +368,12 @@ function UpdateProductView() {
         }
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '20px', marginBottom: '20px'}}>
-            <Button variant="contained" onClick={handleAddVariant}>+ New Variant</Button>
+            {/* <Button variant="contained" onClick={handleAddVariant}>+ New Variant</Button> */}
         </div>
 
         <div style={{ position: 'fixed', bottom: '0', backgroundColor: 'white', zIndex: '1', width:'77.5%', boxShadow: '0px -2px 6px rgba(0, 0, 0, 0.2)' }}>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'end', marginTop: '20px', marginBottom: '20px', paddingRight: '40px'}}>
-                <Button variant="contained" onClick={handleInsertProduct}>Update Product</Button>
+                <Button variant="contained" onClick={handleUpdateProduct}>Update Product</Button>
             </div>
         </div>
 

@@ -44,8 +44,13 @@ export const navData = [
     icon: icon('ic-blog'),
   },
   {
-    title: 'Page',
+    title: 'Main Page',
     path: '/pages',
+    icon: icon('ic-blog'),
+  },
+  {
+    title: 'About Page',
+    path: '/about',
     icon: icon('ic-blog'),
   },
   {
@@ -59,13 +64,8 @@ export const navData = [
     icon: icon('ic-cart'),
   },
   {
-    title: 'Contact',
-    path: '/contacts',
+    title: 'Social Media',
+    path: '/social',
     icon: icon('ic-blog'),
-  },
-  {
-    title: 'Sign in',
-    path: '/',
-    icon: icon('ic-lock'),
   },
 ];

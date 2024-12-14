@@ -26,7 +26,7 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 import type { UserProps } from '../user-table-row';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
-import { FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextField } from '@mui/material';
+import { Avatar, FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextField } from '@mui/material';
 import { maxHeaderSize } from 'node:http';
 import Cookies from 'js-cookie';
 import { Dayjs } from 'dayjs';
@@ -40,7 +40,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 'clamp(500px, 80%, 1000px)',
+  width: 'clamp(400px, 80%, 600px)',
   bgcolor: 'background.paper',
   // border: '2px solid #000',
   maxHeight: '800px',
@@ -57,14 +57,20 @@ export type PromoProps = {
   promoAmount: number
   startDate: Date
   endDate: Date
-  PromoDetails: {
+  promo_details: {
     promoId: string
     productId: string
-    Products: {
+    product: {
       productName: string
       defaultImage: string
+      product_variants: {
+        productImage: string
+        productSize: string
+        productColor: string
+        productPrice: number
+      }[]
     }
-  }
+  }[]
 }
 
 export function PromoView() {
@@ -75,6 +81,7 @@ export function PromoView() {
   
   const [currPage, setCurrPage] = useState(1);
   const [products, setProducts] = useState([]);
+  const [promo, setPromo] = useState<PromoProps>();
   const [promos, setPromos] = useState<PromoProps[]>([]);
   const [update, setUpdate] = useState(false);
   const { showErrorToast, showSuccessToast } = useToaster();
@@ -85,7 +92,7 @@ export function PromoView() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/promos`);
         setPromos(response?.data.promos);
-        console.log(response.data);
+        console.log(promos);
       } catch (error) {
         showErrorToast(error.message);
       }
@@ -132,6 +139,28 @@ export function PromoView() {
       }
       showErrorToast(error.response.data.message);
     }
+  }
+
+  const handleDeletePromo = async (promoId: string) => {
+    try {
+        const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/promos/${promoId}`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`,
+          },
+        });
+        setUpdate(!update);
+        showSuccessToast("Promo deleted!");
+      } catch (error) {
+        if (error.status === 401) {
+          nav('/');
+        }
+        showErrorToast(error.message);
+      }
+  }
+
+  const handlePromoDetail = async (promo: PromoProps) => {
+    setPromo(promo);
+    handleOpen();
   }
 
   return (
@@ -197,7 +226,8 @@ export function PromoView() {
                           row={row}
                           selected={table.selected.includes(row.promoId)}
                           onSelectRow={() => table.onSelectRow(row.promoId)}
-                          handleUpdatePromo={handleUpdatePromo}
+                          handlePromoDetail={handlePromoDetail}
+                          handleDeletePromo={handleDeletePromo}
                         />
                       ))}
 
@@ -222,6 +252,60 @@ export function PromoView() {
               onRowsPerPageChange={table.onChangeRowsPerPage}
             />
           </Card>
+
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h5" component="h2">
+                Promo Detail
+              </Typography>
+
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
+                <Typography style={{ margin: '15px 0'}} id="modal-modal-title" variant="h6" component="h2">
+                  Promo Amount: Rp { promo?.promoAmount }
+                </Typography>
+                <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                  {
+                    promo?.promo_details.map((det, index) => {
+                      console.log(det)
+                      return <div key={det.productId} style={{ width: '100%' }}>
+                        <div style={{ margin: '10px 0' }}>Product {index + 1}</div>
+                        <div style={{ display:'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+                          <Avatar style={{ width: '70px', height: '70px' }} src={import.meta.env.VITE_BACKEND_API + det.product.defaultImage} alt={det.product.productName} />
+                          <div>{det.product.productName}</div>
+                        </div>
+
+                        {
+                          det.product.product_variants.map((v) => {
+                            return <div style={{ display:'flex', alignItems: 'center', width: '100%', marginTop: '10px', justifyContent: 'space-between', padding: '10px 40px'}}>
+                              <div style={{ display:'flex', alignItems: 'center', gap: '10px' }}>
+                                <Avatar style={{ width: '70px', height: '70px' }} src={import.meta.env.VITE_BACKEND_API + v.productImage} alt={det.product.productName} />
+                                <div>{v.productSize} - {v.productColor}</div>
+                              </div>
+
+                              <div style={{ display:'flex', gap: '10px'}}>
+                                <div><s style={{ color: 'gray' }}>Rp { v.productPrice }</s></div>
+                                <div style={{ color: 'red', fontWeight: 'bold', fontSize: '20px' }}>Rp { v.productPrice - promo.promoAmount < 0 ? 0 : v.productPrice - promo.promoAmount }</div>
+                              </div>
+                            </div>
+                          })
+                        }
+                      </div>
+                    })
+                  }
+                </div>
+
+                <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
+                  <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
+                </div>
+              </div>
+
+            </Box>
+          </Modal>
         </div>
         :
         <div>
@@ -233,7 +317,7 @@ export function PromoView() {
               Back
           </Button>
                         
-          <InsertPromoView changePage={setCurrPage} handleUpdate={handleUpdatePromo}/>
+          <InsertPromoView changePage={setCurrPage} handleUpdate={() => setUpdate(!update)}/>
         </div>
       }
 

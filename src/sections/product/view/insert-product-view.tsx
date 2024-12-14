@@ -13,6 +13,7 @@ type InsertProductProps = {
 };
 
 type VariantProps = {
+    id: number;
     variantImage: File | null;
     productSize: string;
     productColor: string;
@@ -28,7 +29,7 @@ type VariantProps = {
 function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
     const nav = useNavigate();
     const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string}[]>([]);
-    
+    const [curr, setCurr] = useState(0);
 
     const [defaultImage, setDefaultImage] = useState<File | null>(null);
     const handleFileChange = async (e: any) => {
@@ -42,12 +43,28 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         setCategory(event.target.value as string);
     };
     const [variants, setVariants] = useState<VariantProps[]>([
-        { sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 },
+        { id: 0, sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 },
     ]);
 
     const handleAddVariant = () => {
-        setVariants([...variants, { sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]);
+        setVariants([
+            ...variants,
+            {
+                id: variants.length > 0 ? variants[variants.length - 1].id + 1 : 0, // Increment `id`
+                sku: "test",
+                variantImage: null,
+                productSize: "",
+                productColor: "",
+                productPrice: 0,
+                productStock: 0,
+                productWeight: 0,
+                productLength: 0,
+                productWidth: 0,
+                productHeight: 0,
+            },
+        ]);
     };
+
 
     const handleInputChange = <T extends keyof VariantProps>(index: number, field: T, value: VariantProps[T]) => {
         const updatedVariants = [...variants];
@@ -79,7 +96,6 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
           }
         }
         getCategories();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
 
 
@@ -123,7 +139,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
               showSuccessToast(response.data.message);
               setVariants(
-                [{ sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
+                [{ id: 0, sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
               )
               changePage(1);
               handleUpdate();
@@ -138,7 +154,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
       }
 
       const handleDeleteVariant = (idx: number) => {
-        setVariants(prevVariants => prevVariants.filter((_, index) => index !== idx));
+        setVariants(prevVariants => prevVariants.filter(variant => variant.id !== idx));
       }
 
   return (
@@ -198,14 +214,14 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
         {
             variants.map((variant, index) => 
-                <div key={index} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
+                <div key={variant.id} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
                     <div style={{ display: 'flex', justifyContent: 'space-between'}}>
                         <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
                             Variant {index + 1}
                         </Typography>
                         {
                             index > 0 ?
-                            <MenuItem  onClick={() => handleDeleteVariant(index)} sx={{ color: 'error.main' }}>
+                            <MenuItem  onClick={() => handleDeleteVariant(variant.id)} sx={{ color: 'error.main' }}>
                                 <Iconify icon="solar:trash-bin-trash-bold" />
                                 Delete
                             </MenuItem>

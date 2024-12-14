@@ -84,14 +84,20 @@ export type PromoProps = {
   promoAmount: number
   startDate: Date
   endDate: Date
-  PromoDetails: {
+  promo_details: {
     promoId: string
     productId: string
-    Products: {
+    product: {
       productName: string
       defaultImage: string
+      product_variants: {
+        productImage: string
+        productSize: string
+        productColor: string
+        productPrice: number
+      }[]
     }
-  }
+  }[]
 }
 
 

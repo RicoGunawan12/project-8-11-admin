@@ -17,6 +17,7 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
   const [voucherEndDate, setVoucherEndDate] = useState<string>('');
   const [maxDiscount, setMaxDiscount] = useState<number>(0);
   const [discount, setDiscount] = useState<number>(0);
+  const [quota, setQuota] = useState<number>(0);
 
   const nav = useNavigate();
   const { showErrorToast, showSuccessToast } = useToaster();
@@ -31,6 +32,7 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
             voucherEndDate,
             maxDiscount,
             discount,
+            quota
         }]
       };
 
@@ -219,6 +221,34 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
           type="number"
           value={discount}
           onChange={(e) => setDiscount(Number(e.target.value))}
+          sx={{
+            '& .MuiInputBase-root': {
+              backgroundColor: '#fff',
+              borderRadius: '8px',
+            },
+            '& .MuiInputLabel-root': {
+              color: '#333',
+            },
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: '#ddd',
+              },
+              '&:hover fieldset': {
+                borderColor: '#007BFF',
+              },
+            },
+          }}
+        />
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <TextField
+          label="Quota"
+          variant="outlined"
+          fullWidth
+          type="number"
+          value={quota}
+          onChange={(e) => setQuota(Number(e.target.value))}
           sx={{
             '& .MuiInputBase-root': {
               backgroundColor: '#fff',
