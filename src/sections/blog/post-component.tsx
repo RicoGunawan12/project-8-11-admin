@@ -18,7 +18,7 @@ function PostComponent({ postImage, postTitle, postContent }: Props) {
         marginBottom: '15px',
         backgroundColor: '#fff',
         transition: 'all 0.3s ease',
-        border: '2px'
+        border: '2px',
       }}
       onMouseOver={(e) => (e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)')}
       onMouseOut={(e) => (e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)')}
@@ -30,6 +30,7 @@ function PostComponent({ postImage, postTitle, postContent }: Props) {
           borderRadius: '50%',
           overflow: 'hidden',
           border: '2px solid #ddd',
+          flexShrink: 0, // Prevent the image from shrinking
         }}
       >
         <img
@@ -39,7 +40,7 @@ function PostComponent({ postImage, postTitle, postContent }: Props) {
         />
       </div>
 
-      <div style={{ marginLeft: '20px', flex: 1 }}>
+      <div style={{ marginLeft: '20px', flex: 1, minWidth: 0 }}>
         <div
           style={{
             fontSize: '18px',
@@ -71,5 +72,6 @@ function PostComponent({ postImage, postTitle, postContent }: Props) {
     </div>
   );
 }
+
 
 export default PostComponent;
