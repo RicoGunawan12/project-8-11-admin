@@ -29,6 +29,7 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
+import { TextareaAutosize } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -37,28 +38,30 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  height: 250,
+  width: 500,
+  minHeight: 350,
   bgcolor: 'background.paper',
   // border: '2px solid #000',
   borderRadius: 2,
   boxShadow: 24,
-  pt: 4,
+  py: 4,
   px: 4
 };
 
-export function CategoriesView() {
+export function FAQView() {
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const [currUpdateId, setCurrUpdateId] = useState('');
-  const [currUpdateName, setCurrUpdateName] = useState('');
+  const [currUpdateFaqQuestion, setCurrUpdateFaqQuestion] = useState('');
+  const [currUpdateFaqAnswer, setCurrUpdateFaqAnswer] = useState('');
   const [openUpdate, setOpenUpdate] = useState(false);
-  const handleOpenUpdate = (id: string, name: string) => {
+  const handleOpenUpdate = (id: string, faqQuestion: string, faqAnswer: string) => {
     setCurrUpdateId(id);
-    setCurrUpdateName(name);
+    setCurrUpdateFaqQuestion(faqQuestion);
+    setCurrUpdateFaqAnswer(faqAnswer);
     setOpenUpdate(true);
   }
   const handleCloseUpdate = () => setOpenUpdate(false);
@@ -67,29 +70,31 @@ export function CategoriesView() {
   const { showErrorToast, showSuccessToast } = useToaster();
   const [update, setUpdate] = useState(false);
   const [filterName, setFilterName] = useState('');
-  const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string}[]>([]);
-  const [category, setCategory] = useState('');
+  const [faqs, setFAQs] = useState<{ faqId: string, faqQuestion: string, faqAnswer: string }[]>([]);
+  const [faqQuestion, setFaqQuestion] = useState('');
+  const [faqAnswer, setFaqAnswer] = useState('');
   
   useEffect(() => {
-    async function getCategories() {
+    async function getFAQs() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/categories`);
-        setCategories(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/faqs`);
+        setFAQs(response.data.allFAQ);
         console.log(response.data);
       } catch (error) {
         showErrorToast(error.message);
       }
     }
-    getCategories();
+    getFAQs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [update]);
 
-  const handleInsertCategory = async () => {
+  const handleInsertFAQ = async () => {
     try {
       const body = {
-        productCategoryName: category
+        faqQuestion,
+        faqAnswer
       }
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/categories`, body,
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/faqs`, body,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get('token')}`,
@@ -113,20 +118,22 @@ export function CategoriesView() {
     }
   }
 
-  const handleUpdateCategory = async () => {
+  const handleUpdateFAQ = async () => {
     try {
       const body = {
-        productCategoryName: currUpdateName
+        faqQuestion: currUpdateFaqQuestion,
+        faqAnswer: currUpdateFaqAnswer,
       }
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/categories/${currUpdateId}`, body,
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${currUpdateId}`, body,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get('token')}`,
           },
         }
       );
+      setCurrUpdateFaqAnswer('');
+      setCurrUpdateFaqQuestion('');
       setCurrUpdateId('');
-      setCurrUpdateName('');
       showSuccessToast(response.data.message);
       setOpenUpdate(false);
       setUpdate(!update);
@@ -138,12 +145,9 @@ export function CategoriesView() {
     }
   }
 
-  const handleDeleteCategory = async (id: string) => {
+  const handleDeleteFAQ = async (id: string) => {
     try {
-      const body = {
-        category
-      }
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/categories/${id}`,
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get('token')}`,
@@ -161,8 +165,8 @@ export function CategoriesView() {
     }
   }
 
-  const dataFiltered: { productCategoryId: string, productCategoryName: string}[] = applyFilter({
-    inputData: categories,
+  const dataFiltered: { faqId: string, faqQuestion: string, faqAnswer: string }[] = applyFilter({
+    inputData: faqs,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -173,7 +177,7 @@ export function CategoriesView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Categories
+          FAQ
         </Typography>
         <Button
           variant="contained"
@@ -181,7 +185,7 @@ export function CategoriesView() {
           startIcon={<Iconify icon="mingcute:add-line" />}
           onClick={handleOpen}
         >
-          New Category
+          New FAQ
         </Button>
       </Box>
 
@@ -212,7 +216,8 @@ export function CategoriesView() {
                 }
                 headLabel={[
                   // { id: 'categoryId', label: 'Category ID' },
-                  { id: 'category', label: 'Category' },
+                  { id: 'faq', label: 'FAq' },
+                  { id: 'answer', label: 'Answer' },
                   { id: 'action', label: 'Action' }
                 ]}
               />
@@ -224,11 +229,11 @@ export function CategoriesView() {
                   )
                   .map((row) => (
                     <UserTableRow
-                      key={row.productCategoryId}
+                      key={row.faqId}
                       row={row}
-                      selected={table.selected.includes(row.productCategoryId)}
-                      onSelectRow={() => table.onSelectRow(row.productCategoryId)}
-                      handleDelete={handleDeleteCategory}
+                      selected={table.selected.includes(row.faqId)}
+                      onSelectRow={() => table.onSelectRow(row.faqId)}
+                      handleDelete={handleDeleteFAQ}
                       handleUpdate={handleOpenUpdate}
                     />
                   ))}
@@ -267,20 +272,33 @@ export function CategoriesView() {
           </Typography>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
-            <div style={{ display: 'flex', marginTop: '35px', gap: '20px'}}>
-              <TextField
-                fullWidth
-                name="category"
-                label="Category"
-                InputLabelProps={{ shrink: true }}
-                onChange={(e) => setCategory(e.target.value)}
-              />
+            <div>
+              <div style={{ marginTop: '35px'}}>
+                <TextField
+                  fullWidth
+                  name="question"
+                  label="Question"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={(e) => setFaqQuestion(e.target.value)}
+                />
 
-              <Button variant="contained" onClick={handleInsertCategory}>Insert</Button>
+              </div>
+              <div style={{ marginTop: '10px'}}>
+                <TextareaAutosize
+                    style={{ borderRadius: '10px', border:'1px solid gray', width: '100%', marginTop: '15px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
+                    aria-label="minimum height"  
+                    minRows={3}  
+                    // value={detail}
+                    placeholder="Answer"
+                    onChange={(e) => setFaqAnswer(e.target.value)}
+                />
+
+              </div>
             </div>
 
-            <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'end', gap: '10px', marginTop: '20px' }}>
               <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
+              <Button variant="contained" onClick={handleInsertFAQ}>Insert</Button>
             </div>
           </div>
 
@@ -296,25 +314,38 @@ export function CategoriesView() {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Update Category
+            Update FAQ
           </Typography>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
-            <div style={{ display: 'flex', marginTop: '20px', gap: '20px'}}>
-              <TextField
-                fullWidth
-                name="category"
-                label="Category"
-                InputLabelProps={{ shrink: true }}
-                value={currUpdateName}
-                onChange={(e) => setCurrUpdateName(e.target.value)}
-              />
+            <div>
+              <div style={{ marginTop: '35px'}}>
+                <TextField
+                  fullWidth
+                  name="question"
+                  label="Question"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={(e) => setCurrUpdateFaqQuestion(e.target.value)}
+                  value={currUpdateFaqQuestion}
+                />
 
-              <Button variant="contained" onClick={handleUpdateCategory}>Update</Button>
+              </div>
+              <div style={{ marginTop: '10px'}}>
+                <TextareaAutosize
+                    style={{ borderRadius: '10px', border:'1px solid gray', width: '100%', marginTop: '15px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
+                    aria-label="minimum height"  
+                    minRows={3}  
+                    value={currUpdateFaqAnswer}
+                    placeholder="Answer"
+                    onChange={(e) => setCurrUpdateFaqAnswer(e.target.value)}
+                />
+
+              </div>
             </div>
 
-            <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'end', gap: '10px', marginTop: '20px' }}>
               <Button color="error" variant="contained" onClick={handleCloseUpdate}>Close</Button>
+              <Button variant="contained" onClick={handleUpdateFAQ}>Update</Button>
             </div>
           </div>
 

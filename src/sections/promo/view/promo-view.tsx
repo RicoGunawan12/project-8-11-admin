@@ -94,7 +94,7 @@ export function PromoView() {
         setPromos(response?.data.promos);
         console.log(promos);
       } catch (error) {
-        showErrorToast(error.message);
+        showErrorToast(error.response.data.message);
       }
     }
     getProducts();
@@ -154,7 +154,7 @@ export function PromoView() {
         if (error.status === 401) {
           nav('/');
         }
-        showErrorToast(error.message);
+        showErrorToast(error.response.data.message);
       }
   }
 

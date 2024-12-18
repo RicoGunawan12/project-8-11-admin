@@ -159,6 +159,33 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
   return (
     <div>
+        <style>
+            {`
+            .responsive-container {
+                position: fixed;
+                bottom: 0;
+                background-color: white;
+                z-index: 1;
+                width: calc(100vw - 300px - var(--layout-dashboard-content-px)*2 - 80px); /* Default width */
+                box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            @media (max-width: 1200px) {
+                .responsive-container {
+                width: calc(100vw - 24px); /* Full width for smaller screens */
+                }
+            }
+
+            .button-container {
+                width: 100%;
+                display: flex;
+                justify-content: end;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                padding-right: 40px;
+            }
+            `}
+        </style>
         <Typography variant="h4" style={{ textAlign: 'center', marginBottom: '20px' }} flexGrow={1}>
             Insert Product
         </Typography>
@@ -168,9 +195,9 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                 Basic Information
             </Typography>
 
-            <div style={{ display: 'flex', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                 <div>
-                    <ImageInput onChange={handleFileChange} name="Default Image" initialFile={defaultImage}/>
+                    <ImageInput  onChange={handleFileChange} name="Default Image" initialFile={defaultImage} width="250px" height="250px"/>
                 </div>
 
 
@@ -230,7 +257,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                         }
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                         <div>
                             <ImageInput 
                                 onChange={(e) => {
@@ -239,6 +266,8 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                     handleInputChange(index, "variantImage", file);
                                 }}
                                 name="Variant Image" 
+                                width="250px" 
+                                height="250px"
                                 initialFile={variant.variantImage}
                             />
                         </div>
@@ -333,9 +362,11 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
             <Button variant="contained" onClick={handleAddVariant}>+ New Variant</Button>
         </div>
 
-        <div style={{ position: 'fixed', bottom: '0', backgroundColor: 'white', zIndex: '1', width:'77.5%', boxShadow: '0px -2px 6px rgba(0, 0, 0, 0.2)' }}>
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'end', marginTop: '20px', marginBottom: '20px', paddingRight: '40px'}}>
-                <Button variant="contained" onClick={handleInsertProduct}>Insert Product</Button>
+        <div className="responsive-container">
+            <div className="button-container">
+            <Button variant="contained" onClick={handleInsertProduct}>
+                Insert Product
+            </Button>
             </div>
         </div>
 

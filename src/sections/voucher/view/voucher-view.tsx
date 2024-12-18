@@ -134,8 +134,13 @@ export function VoucherView() {
                       )
                     }
                     headLabel={[
-                      { id: 'voucherId', label: 'Voucher Id' },
+                      { id: 'voucherType', label: 'Voucher Type' },
                       { id: 'voucherCode', label: 'Voucher Code' },
+                      { id: 'voucherStartDate', label: 'Voucher Start Date' },
+                      { id: 'voucherEndDate', label: 'Voucher End Date' },
+                      { id: 'maxDiscount', label: 'Max Discount' },
+                      { id: 'discount', label: 'Discount' },
+                      { id: 'quota', label: 'Quota' },
                       { id: 'action', label: 'Action' },
                     ]}
                   />

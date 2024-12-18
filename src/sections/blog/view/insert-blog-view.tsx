@@ -69,6 +69,8 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
             setSelectedImage(file);
           }}
           name="Blog Thumbnail"
+          width="250px" 
+          height="250px"
         />
         {selectedImage && (
           <Typography variant="body2" color="textSecondary">

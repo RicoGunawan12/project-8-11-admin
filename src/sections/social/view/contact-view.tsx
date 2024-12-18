@@ -30,6 +30,7 @@ import { FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextFiel
 import { maxHeaderSize } from 'node:http';
 import Cookies from 'js-cookie';
 import { Dayjs } from 'dayjs';
+import ImageInput from 'src/components/input/ImageInput';
 
 // ----------------------------------------------------------------------
 
@@ -62,10 +63,11 @@ export function SocialView() {
   
   const [currPage, setCurrPage] = useState(1);
   const [products, setProducts] = useState([]);
-  const [contacts, setContacts] = useState<{contactId: string, contact: string, contactAccount: string}[]>([]);
+  const [contacts, setContacts] = useState<{contactId: string, contact: string, contactAccount: string, contactImage: string}[]>([]);
 
   const [contact, setContact] = useState("");
   const [contactAccount, setContactAccount] = useState("");
+  const [contactImage, setContactImage] = useState<File | null>(null);
   const [contactId, setContactId] = useState("");
 
   const [update, setUpdate] = useState(false);
@@ -88,7 +90,7 @@ export function SocialView() {
 
   const [filterName, setFilterName] = useState('');
 
-  const dataFiltered: {contactId: string, contact: string, contactAccount: string}[] = applyFilter({
+  const dataFiltered: {contactId: string, contact: string, contactAccount: string, contactImage: string}[] = applyFilter({
     inputData: contacts,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
@@ -98,13 +100,16 @@ export function SocialView() {
 
   const handleInsertContact = async () => {
     try {
-      const body = {
-        contact,
-        contactAccount
+      const body = new FormData();
+      body.append('contact', contact);
+      body.append('contactAccount', contactAccount);
+      if (contactImage) {
+        body.append('contactImage', contactImage);
       }
       
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/contacts`, body, {
         headers: {
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${Cookies.get('token')}`,
         },
       });
@@ -119,6 +124,12 @@ export function SocialView() {
       }
       showErrorToast(error.message);
     }
+  }
+
+  const handleChangeImage = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0] || null;
+    setContactImage(file);
   }
 
   const handleUpdate = async (id: string, contact: string, contactAccount: string) => {
@@ -182,11 +193,53 @@ export function SocialView() {
         <div>
           <Box display="flex" alignItems="center" mb={5}>
             <Typography variant="h4" flexGrow={1}>
-              Contact
+              Social Media
             </Typography>
 
             <Button color='inherit' variant='contained' onClick={handleOpen}>+ New Contact</Button>
           </Box>
+
+
+          <Box>
+            <Typography variant="h6" flexGrow={1}>
+              Contact
+            </Typography>
+
+            <Box display="flex" gap={5} mt={3} mb={3}>
+              <Box>
+                <TextField
+                  fullWidth
+                  name="contactAccount"
+                  label="Email"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={(e) => setContactAccount(e.target.value)}
+                  placeholder='tyeso@gmail.com'
+                  value={contactAccount}
+                />
+                <Typography variant="caption">
+                  This email is used to receive message from customer through gmail
+                </Typography>
+              </Box>
+
+              <Box>
+                <TextField
+                  fullWidth
+                  name="contactAccount"
+                  label="Phone"
+                  InputLabelProps={{ shrink: true }}
+                  onChange={(e) => setContactAccount(e.target.value)}
+                  placeholder='+628132456789'
+                  value={contactAccount}
+                />
+                <Typography variant="caption">
+                  This phone is used to redirect customer to Whatsapp
+                </Typography>
+              </Box>
+            </Box>
+            <Button color='inherit' variant='contained' onClick={handleOpen}>Update Contact</Button>
+          </Box>
+
+          
 
           <Card>
             <UserTableToolbar
@@ -284,6 +337,11 @@ export function SocialView() {
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
             <div style={{ marginTop: '35px', gap: '20px'}}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px'}}>
+                <ImageInput onChange={handleChangeImage} initialFile={contactImage} name="Contact image" width="250px" height="250px"/>
+              </div>
+
+
               <TextField
                 fullWidth
                 name="contact"

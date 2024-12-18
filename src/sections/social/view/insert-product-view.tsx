@@ -149,7 +149,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
             <div style={{ display: 'flex', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                 <div>
-                    <ImageInput onChange={handleFileChange} name="Default Image" initialFile={defaultImage}/>
+                    <ImageInput onChange={handleFileChange} name="Default Image" initialFile={defaultImage} width="250px" height="250px"/>
                 </div>
 
 
@@ -208,6 +208,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                 }}
                                 name="Variant Image" 
                                 initialFile={variant.variantImage}
+                                width="250px" height="250px"
                             />
                         </div>
 

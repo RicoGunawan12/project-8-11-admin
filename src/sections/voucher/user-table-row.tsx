@@ -44,8 +44,13 @@ export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleU
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell>{row.voucherId}</TableCell>
+        <TableCell>{row.voucherType}</TableCell>
         <TableCell>{row.voucherCode}</TableCell>
+        <TableCell>{row.voucherStartDate.substring(0, 10)}</TableCell>
+        <TableCell>{row.voucherEndDate.substring(0, 10)}</TableCell>
+        <TableCell>{row.maxDiscount}</TableCell>
+        <TableCell>{row.discount}</TableCell>
+        <TableCell>{row.quota}</TableCell>
 
 
         <TableCell>

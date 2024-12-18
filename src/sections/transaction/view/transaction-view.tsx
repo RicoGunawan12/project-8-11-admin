@@ -248,76 +248,86 @@ export function TransactionView() {
             <div style={{ textAlign: 'center' }}>There is no data</div>
           :
           transactions.map((transaction: TransactionProps) => {
-            return <Box key={transaction.transactionId} bgcolor={'white'} borderRadius={'10px'} padding={'20px 40px'} marginBottom={'40px'} boxShadow={'0 4px 8px rgba(0, 0, 0, 0.1)'}>
-              <div style={{ display:'flex', alignItems:'center', gap: '20px', borderBottom: 'solid 0.2px gray', paddingBottom: '10px'}}>
-                <div>
-                  <Chip label={ transaction.status } size='small' color={getStatusColor(transaction.status)}/>
-                </div>
-                <div>/</div>
-                <div>{ transaction.readableId }</div>
-                <div>/</div>
-                <div style={{ display:'flex', alignItems: 'center'}}>
-                  <SvgColor width="20px" height="20px" src={`/assets/icons/navbar/ic-user.svg`} />
-                  { transaction.user.username}
-                </div>
-                <div>/</div>
-                <div>{ new Date(transaction.transactionDate).toLocaleDateString() }</div>
-              </div>
-              
-              <div style={{ display:'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-                <div>
-                  {
-                    transaction.transaction_details.map((detail) => {
-                      console.log(detail.product_variant);
-                      
-                      return <div key={detail.transactionDetailId}>
-                        <ProductComponent 
-                          productImage={detail.product_variant.productImage} 
-                          productName={
-                            `
-                            ${detail.product_variant.product.productName} -
-                            ${detail.product_variant.productColor} -
-                            ${detail.product_variant.productSize}
-                            `
-                          }
-                          quantity={detail.quantity} 
-                          productPrice={detail.product_variant.productPrice}
-                        />
-                      </div>
-                    })
-                  }
+            return <Box key={transaction.transactionId} overflow={'auto'} bgcolor={'white'} min-height={'400px'} borderRadius={'10px'} padding={'20px 40px'} marginBottom={'40px'} boxShadow={'0 4px 8px rgba(0, 0, 0, 0.1)'}>
+              <div style={{minWidth: '1000px'}}>
+                <div style={{ display:'flex', alignItems:'center', gap: '20px', borderBottom: 'solid 0.2px gray', paddingBottom: '10px'}}>
+                  <div>
+                    <Chip label={ transaction.status } size='small' color={getStatusColor(transaction.status)}/>
+                  </div>
+                  <div>/</div>
+                  <div>{ transaction.readableId }</div>
+                  <div>/</div>
+                  <div style={{ display:'flex', alignItems: 'center'}}>
+                    <SvgColor width="20px" height="20px" src={`/assets/icons/navbar/ic-user.svg`} />
+                    { transaction.user.username}
+                  </div>
+                  <div>/</div>
+                  <div>{ new Date(transaction.transactionDate).toLocaleDateString() }</div>
                 </div>
                 
-                <div>
-                  <div style={{ fontWeight: 'bold' }}>Alamat</div>
-                  <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressProvince}</div>
-                  <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressCity}</div>
-                  <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressDetail}</div>
+                <div style={{ display:'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                  <div>
+                    {
+                      transaction.transaction_details.map((detail) => {
+                        console.log(detail.product_variant);
+                        
+                        return <div key={detail.transactionDetailId}>
+                          <ProductComponent 
+                            productImage={detail.product_variant.productImage} 
+                            productName={
+                              `
+                              ${detail.product_variant.product.productName} -
+                              ${detail.product_variant.productColor} -
+                              ${detail.product_variant.productSize}
+                              `
+                            }
+                            quantity={detail.quantity} 
+                            productPrice={detail.product_variant.productPrice}
+                          />
+                        </div>
+                      })
+                    }
+                  </div>
+                  
+                  <div style={{ width: '200px' }}>
+                    <div style={{ fontWeight: 'bold' }}>Alamat</div>
+                    <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressProvince}</div>
+                    <div style={{ fontSize: '14px'}}>{transaction.user.user_addresses[0].addressCity}</div>
+                    <div style={{
+                        fontSize: '14px',
+                        display: '-webkit-box',
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        WebkitLineClamp: 5,
+                        textOverflow: 'ellipsis',
+                      }}>{transaction.user.user_addresses[0].addressDetail} sadadjasldjasjdlsads adadjasldjasjdlsadsad adjasldjasjdlsadsadadjasldjasj dlsadsadadjasldjasjdlsadsadadjasldjasjdlsadsadadjasldjasjdlsadsadadj asldjasjdlsadsada djasldjas jdlsad</div>
+                  </div>
+      
+                  <div style={{ marginRight: '150px'}}>
+                    <div style={{ fontWeight: 'bold' }}>Kurir</div>
+                    <div style={{ fontSize: '14px'}}>{transaction.expedition} - {transaction.shippingType}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold'}}>Delivery fee: Rp {transaction.deliveryFee}</div>
+                  </div>
                 </div>
-    
-                <div style={{ marginRight: '150px'}}>
-                  <div style={{ fontWeight: 'bold' }}>Kurir</div>
-                  <div style={{ fontSize: '14px'}}>{transaction.expedition} - {transaction.shippingType}</div>
-                  <div style={{ fontSize: '14px', fontWeight: 'bold'}}>Delivery fee: Rp {transaction.deliveryFee}</div>
+      
+                <div style={{ display:'flex', justifyContent: 'space-between', marginTop: '20px'}}>
+                  <div style={{ fontWeight: 'bold' }}>Total Price:</div>
+                  <div style={{ fontWeight: 'bold', fontSize: '18px' }}>Rp {transaction.totalPrice}</div>
+                </div>
+      
+                <div style={{ display:'flex', justifyContent: 'flex-end', marginTop: '20px'}}>
+                  {
+                    transaction.status === "Waiting for shipping" ?                  
+                    <Button variant='contained' onClick={() => handleRequestPickUp(transaction.transactionId)}>Request Pickup</Button>
+                    :
+                    transaction.status === "Shipping" ?
+                    <Button variant='contained' onClick={() => handlePrintLabel(transaction.transactionId)}>Print Label</Button>
+                    :
+                    ""
+                  }
                 </div>
               </div>
-    
-              <div style={{ display:'flex', justifyContent: 'space-between', marginTop: '20px'}}>
-                <div style={{ fontWeight: 'bold' }}>Total Price:</div>
-                <div style={{ fontWeight: 'bold', fontSize: '18px' }}>Rp {transaction.totalPrice}</div>
-              </div>
-    
-              <div style={{ display:'flex', justifyContent: 'flex-end', marginTop: '20px'}}>
-                {
-                  transaction.status === "Waiting for shipping" ?                  
-                  <Button variant='contained' onClick={() => handleRequestPickUp(transaction.transactionId)}>Request Pickup</Button>
-                  :
-                  transaction.status === "Waiting for shipping" ?
-                  <Button variant='contained' onClick={() => handlePrintLabel(transaction.transactionId)}>Print Label</Button>
-                  :
-                  ""
-                }
-              </div>
+
             </Box>
           })
         }

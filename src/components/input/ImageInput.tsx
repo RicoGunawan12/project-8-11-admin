@@ -8,9 +8,11 @@ export interface InputFileProps {
   ) => void;
   initialFile?: File | null;
   imageString?: string | null;
+  width: string;
+  height: string;
 }
 
-function ImageInput({ onChange, name, initialFile, imageString }: InputFileProps) {
+function ImageInput({ onChange, name, initialFile, imageString, width, height }: InputFileProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -41,17 +43,39 @@ function ImageInput({ onChange, name, initialFile, imageString }: InputFileProps
   }, [initialFile]);
 
   return (
-    <div style={{ display:'flex', alignItems:'center'}}>
+    <div >
         <style>
-            {`
+          {`
             .hover-pointer {
-                cursor: pointer;
+              cursor: pointer;
+              position: relative; /* Needed for positioning child elements */
             }
-            .hover-pointer:hover {
-                cursor: pointer;
+
+         
+            .hover-pointer::after {
+              content: 'Change Picture';
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(0, 0, 0, 0.5); 
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center; 
+              font-size: 1.2rem;
+              font-weight: bold;
+              opacity: 0;
+              transition: opacity 0.3s ease;
             }
-            `}
+
+            .hover-pointer:hover::after {
+              opacity: 1; 
+            }
+          `}
         </style>
+
       <div>
         <input
           name={name}
@@ -66,11 +90,11 @@ function ImageInput({ onChange, name, initialFile, imageString }: InputFileProps
             <img
               src={previewUrl}
             //   className="flex h-[140px] w-[100px] rounded-md border-[1px] border-[gray] object-cover object-center"
-              style={{ display:'flex', width:'20vw', height:'15vw', borderRadius:'4px #DBDCDC', objectPosition: 'center', objectFit: 'cover' }}
+              style={{ display:'flex', width:width, height:height, borderRadius:'4px #DBDCDC', objectPosition: 'center', objectFit: 'cover' }}
             />
           ) : (
             <div 
-                style={{ display:'flex', width:'15vw', height:'15vw', alignItems: 'center', border: 'solid 3px #DBDCDC', justifyContent: 'center', borderRadius:'4px', fontSize: '1vw', color: 'gray' }}
+                style={{ display:'flex', width:width, height:height, alignItems: 'center', border: 'solid 3px #DBDCDC', justifyContent: 'center', borderRadius:'4px', fontSize: '16px', color: 'gray' }}
                 className="flex h-[140px] w-[100px] items-center justify-center rounded-md border-2 border-[gray] text-[5px] text-[gray]">
               <div>+</div>
               <div

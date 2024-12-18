@@ -203,9 +203,9 @@ function UpdateProductView() {
                 Basic Information
             </Typography>
 
-            <div style={{ display: 'flex', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                 <div>
-                    <ImageInput onChange={handleFileChange} name="Default Image" initialFile={defaultImage}/>
+                    <ImageInput onChange={handleFileChange} name="Default Image" initialFile={defaultImage} width="250px" height="250px"/>
                 </div>
 
 
@@ -259,7 +259,7 @@ function UpdateProductView() {
                         Variant {index + 1}
                     </Typography>
 
-                    <div style={{ display: 'flex', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                         <div>
                             <ImageInput 
                                 onChange={(e) => {
@@ -267,6 +267,7 @@ function UpdateProductView() {
                                     const file = target.files?.[0] || null;
                                     handleInputChange(index, "productImage", file);
                                 }}
+                                width="250px" height="250px"
                                 name="Variant Image" 
                                 initialFile={variant.productImage}
                                 // imageString={variant.productImage}

@@ -31,7 +31,7 @@ export type UserProps = {
 };
 
 type UserTableRowProps = {
-  row: {contactId: string, contact: string, contactAccount: string};
+  row: {contactId: string, contact: string, contactAccount: string, contactImage: string};
   selected: boolean;
   onSelectRow: () => void;
   handleUpdateContact: (id: string, contact: string, contactAccount: string) => void;
@@ -67,7 +67,7 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdateContact, 
       <TableRow className='hover-pointer' hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
-            <Avatar src={`/assets/contact/${row.contact}.png`} alt={row.contact} />
+            <Avatar src={`${import.meta.env.VITE_BACKEND_API}${row.contactImage}`} alt={row.contact} />
             {row.contact}
           </Box>
         </TableCell>

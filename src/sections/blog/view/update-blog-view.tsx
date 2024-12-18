@@ -156,6 +156,8 @@ function UpdateBlogView() {
             setImageFile(file);
           }}
           name="Blog Thumbnail"
+          width="250px" 
+          height="250px"
         />
       </div>
 

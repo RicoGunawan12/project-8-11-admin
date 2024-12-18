@@ -28,6 +28,8 @@ export const UpdateVoucherView = lazy(() => import('src/pages/voucher'));
 export const PagePage = lazy(() => import('src/pages/page'));
 export const SocialPage = lazy(() => import('src/pages/social'));
 export const AboutPage = lazy(() => import('src/pages/about'));
+export const BannerPage = lazy(() => import('src/pages/banner'));
+export const FAQPage = lazy(() => import('src/pages/faq'));
 
 // ----------------------------------------------------------------------
 
@@ -65,11 +67,13 @@ export function Router() {
         { path: 'promos', element: <PromoPage /> },
         { path: 'pages', element: <PagePage /> },
         { path: 'about', element: <AboutPage /> },
+        { path: 'banner', element: <BannerPage /> },
         { path: 'social', element: <SocialPage /> },
         { path: 'blog/:id', element: <UpdateBlogView /> },
         { path: 'delivery', element: <DeliveryView /> },
         { path: 'voucher', element: <VoucherPage /> },
         { path: 'voucher/:id', element: <UpdateVoucherView /> },
+        { path: 'faq', element: <FAQPage /> },
         
       ],
     },

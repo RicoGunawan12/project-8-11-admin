@@ -49,7 +49,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products`);
                 setProducts(response.data);
             } catch (error) {
-                showErrorToast(error.message);
+                showErrorToast(error.response.data.message);
             }
         }
         getProducts();
@@ -93,7 +93,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
             if (error.status === 401) {
                 nav('/')
             }
-            showErrorToast(error.message);
+            showErrorToast(error.response.data.message);
         }
     } 
 

@@ -26,11 +26,11 @@ export type UserProps = {
 };
 
 type UserTableRowProps = {
-  row: { productCategoryId: string, productCategoryName: string};
+  row: { faqId: string, faqQuestion: string, faqAnswer: string };
   selected: boolean;
   onSelectRow: () => void;
   handleDelete: (id: string) => void;
-  handleUpdate: (id: string, name: string) => void;
+  handleUpdate: (id: string, faqQuestion: string, faqAnswer: string) => void;
 };
 
 export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: UserTableRowProps) {
@@ -44,16 +44,17 @@ export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleU
         </TableCell>
 
         {/* <TableCell>{row.productCategoryId}</TableCell> */}
-        <TableCell>{row.productCategoryName}</TableCell>
+        <TableCell>{row.faqQuestion}</TableCell>
+        <TableCell>{row.faqAnswer}</TableCell>
 
 
         <TableCell>
-          <MenuItem onClick={() => handleUpdate(row.productCategoryId, row.productCategoryName)}>
+          <MenuItem onClick={() => handleUpdate(row.faqId, row.faqQuestion, row.faqAnswer)}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
 
-          <MenuItem onClick={() => handleDelete(row.productCategoryId)} sx={{ color: 'error.main' }}>
+          <MenuItem onClick={() => handleDelete(row.faqId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>

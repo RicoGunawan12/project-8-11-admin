@@ -79,11 +79,12 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 }
 
 export type VoucherProps = {
-  voucherId : string,
+  voucherId: string,
   voucherType: string,
-  voucherCode : string,
-  voucherStartDate : string
-  voucherEndDate : string,
-  maxDiscount : number,
-  discount : number
+  voucherCode: string,
+  voucherStartDate: string
+  voucherEndDate: string,
+  maxDiscount: number,
+  discount: number
+  quota: number
 }

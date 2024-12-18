@@ -1,6 +1,7 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -22,6 +23,8 @@ import { HeaderSection } from '../core/header-section';
 import { AccountPopover } from '../components/account-popover';
 import { LanguagePopover } from '../components/language-popover';
 import { NotificationsPopover } from '../components/notifications-popover';
+import { Button } from '@mui/material';
+import Cookies from 'js-cookie';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +38,13 @@ export type DashboardLayoutProps = {
 
 export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) {
   const theme = useTheme();
+  const nav = useNavigate();
+
+  const handleLogout = async () => {
+
+    Cookies.remove('token');
+    nav('/')
+  }
 
   const [navOpen, setNavOpen] = useState(false);
 
@@ -78,32 +88,37 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                 />
               </>
             ),
-            // rightArea: (
-            //   <Box gap={1} display="flex" alignItems="center">
-            //     <Searchbar />
-            //     <LanguagePopover data={_langs} />
-            //     <NotificationsPopover data={_notifications} />
-            //     <AccountPopover
-            //       data={[
-            //         {
-            //           label: 'Home',
-            //           href: '/',
-            //           icon: <Iconify width={22} icon="solar:home-angle-bold-duotone" />,
-            //         },
-            //         {
-            //           label: 'Profile',
-            //           href: '#',
-            //           icon: <Iconify width={22} icon="solar:shield-keyhole-bold-duotone" />,
-            //         },
-            //         {
-            //           label: 'Settings',
-            //           href: '#',
-            //           icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
-            //         },
-            //       ]}
-            //     />
-            //   </Box>
-            // ),
+            rightArea: (
+              // <Box gap={1} display="flex" alignItems="center">
+              //   <Searchbar />
+              //   <LanguagePopover data={_langs} />
+              //   <NotificationsPopover data={_notifications} />
+              //   <AccountPopover
+              //     data={[
+              //       {
+              //         label: 'Home',
+              //         href: '/',
+              //         icon: <Iconify width={22} icon="solar:home-angle-bold-duotone" />,
+              //       },
+              //       {
+              //         label: 'Profile',
+              //         href: '#',
+              //         icon: <Iconify width={22} icon="solar:shield-keyhole-bold-duotone" />,
+              //       },
+              //       {
+              //         label: 'Settings',
+              //         href: '#',
+              //         icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
+              //       },
+              //     ]}
+              //   />
+              // </Box>
+              <div>
+                <Button onClick={handleLogout} fullWidth color="error" size="medium" variant="text">
+                  Logout
+                </Button>
+              </div>
+            ),
           }}
         />
       }
