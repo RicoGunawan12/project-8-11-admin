@@ -58,26 +58,31 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
         />
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <Typography variant="h4" style={{ textAlign: 'left', flexGrow: 1 }}>
-          Blog Thumbnail
-        </Typography>
-        <ImageInput
-          onChange={(e) => {
-            const target = e.target as HTMLInputElement;
-            const file = target.files?.[0] || null;
-            setSelectedImage(file);
-          }}
-          name="Blog Thumbnail"
-          width="250px" 
-          height="250px"
-        />
-        {selectedImage && (
-          <Typography variant="body2" color="textSecondary">
-            Selected File: {selectedImage.name}
-          </Typography>
-        )}
-      </div>
+      <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+  <Typography variant="h4" style={{ textAlign: 'left', marginBottom: '10px' }}>
+    Blog Thumbnail
+  </Typography>
+
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <ImageInput
+      onChange={(e) => {
+        const target = e.target as HTMLInputElement;
+        const file = target.files?.[0] || null;
+        setSelectedImage(file);
+      }}
+      name="Blog Thumbnail"
+      width="250px" 
+      height="250px"
+    />
+
+    {selectedImage && (
+      <Typography variant="body2" color="textSecondary" style={{ marginLeft: '20px' }}>
+        Selected File: {selectedImage.name}
+      </Typography>
+    )}
+  </div>
+</div>
+
 
       <div
         style={{

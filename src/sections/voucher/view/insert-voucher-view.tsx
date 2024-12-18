@@ -186,88 +186,98 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
       </div>
 
       <div style={{ marginBottom: '20px' }}>
-        <TextField
-          label="Max Discount"
-          variant="outlined"
-          fullWidth
-          type="number"
-          value={maxDiscount}
-          onChange={(e) => setMaxDiscount(Number(e.target.value))}
-          sx={{
-            '& .MuiInputBase-root': {
-              backgroundColor: '#fff',
-              borderRadius: '8px',
-            },
-            '& .MuiInputLabel-root': {
-              color: '#333',
-            },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#ddd',
-              },
-              '&:hover fieldset': {
-                borderColor: '#007BFF',
-              },
-            },
-          }}
-        />
-      </div>
+  <TextField
+    label="Max Discount"
+    variant="outlined"
+    fullWidth
+    type="number"
+    value={maxDiscount || ''} // Prevents leading zeros by not showing "0"
+    onChange={(e) => {
+      const value = e.target.value;
+      setMaxDiscount(value === '' ? 0 : parseInt(value, 10)); // Sets value to 0 if input is empty
+    }}
+    sx={{
+      '& .MuiInputBase-root': {
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+      },
+      '& .MuiInputLabel-root': {
+        color: '#333',
+      },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: '#ddd',
+        },
+        '&:hover fieldset': {
+          borderColor: '#007BFF',
+        },
+      },
+    }}
+  />
+</div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <TextField
-          label="Discount"
-          variant="outlined"
-          fullWidth
-          type="number"
-          value={discount}
-          onChange={(e) => setDiscount(Number(e.target.value))}
-          sx={{
-            '& .MuiInputBase-root': {
-              backgroundColor: '#fff',
-              borderRadius: '8px',
-            },
-            '& .MuiInputLabel-root': {
-              color: '#333',
-            },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#ddd',
-              },
-              '&:hover fieldset': {
-                borderColor: '#007BFF',
-              },
-            },
-          }}
-        />
-      </div>
+<div style={{ marginBottom: '20px' }}>
+  <TextField
+    label="Discount"
+    variant="outlined"
+    fullWidth
+    type="number"
+    value={discount || ''} // Prevents leading zeros by not showing "0"
+    onChange={(e) => {
+      const value = e.target.value;
+      setDiscount(value === '' ? 0 : parseInt(value, 10)); // Sets value to 0 if input is empty
+    }}
+    sx={{
+      '& .MuiInputBase-root': {
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+      },
+      '& .MuiInputLabel-root': {
+        color: '#333',
+      },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: '#ddd',
+        },
+        '&:hover fieldset': {
+          borderColor: '#007BFF',
+        },
+      },
+    }}
+  />
+</div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <TextField
-          label="Quota"
-          variant="outlined"
-          fullWidth
-          type="number"
-          value={quota}
-          onChange={(e) => setQuota(Number(e.target.value))}
-          sx={{
-            '& .MuiInputBase-root': {
-              backgroundColor: '#fff',
-              borderRadius: '8px',
-            },
-            '& .MuiInputLabel-root': {
-              color: '#333',
-            },
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: '#ddd',
-              },
-              '&:hover fieldset': {
-                borderColor: '#007BFF',
-              },
-            },
-          }}
-        />
-      </div>
+<div style={{ marginBottom: '20px' }}>
+  <TextField
+    label="Quota"
+    variant="outlined"
+    fullWidth
+    type="number"
+    value={quota || ''} // Prevents leading zeros by not showing "0"
+    onChange={(e) => {
+      const value = e.target.value;
+      setQuota(value === '' ? 0 : parseInt(value, 10)); // Sets value to 0 if input is empty
+    }}
+    sx={{
+      '& .MuiInputBase-root': {
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+      },
+      '& .MuiInputLabel-root': {
+        color: '#333',
+      },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: '#ddd',
+        },
+        '&:hover fieldset': {
+          borderColor: '#007BFF',
+        },
+      },
+    }}
+  />
+</div>
+
 
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <Button
