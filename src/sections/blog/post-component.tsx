@@ -1,4 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+// Helper function to format the date into a readable format
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
 
 interface Props {
   postImage: string;
@@ -7,6 +18,12 @@ interface Props {
 }
 
 function PostComponent({ postImage, postTitle, postContent }: Props) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleReadMoreClick = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
   return (
     <div
       style={{
@@ -30,7 +47,7 @@ function PostComponent({ postImage, postTitle, postContent }: Props) {
           borderRadius: '50%',
           overflow: 'hidden',
           border: '2px solid #ddd',
-          flexShrink: 0, // Prevent the image from shrinking
+          flexShrink: 0,
         }}
       >
         <img
@@ -61,17 +78,26 @@ function PostComponent({ postImage, postTitle, postContent }: Props) {
             lineHeight: '1.5',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
+            WebkitLineClamp: isExpanded ? 'none' : 2,
             WebkitBoxOrient: 'vertical',
+            justifyContent: 'space-between',
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
-          {postContent}
+          <span>{formatDate(postContent)}</span>
+          {!isExpanded && (
+            <span
+              onClick={handleReadMoreClick}
+              style={{ color: '#007bff', cursor: 'pointer' }}
+            >
+              Read more &gt;&gt;
+            </span>
+          )}
         </div>
       </div>
     </div>
   );
 }
-
 
 export default PostComponent;
