@@ -107,6 +107,10 @@ export function UserTableRow({ row, selected, onSelectRow, handlePromoDetail, ha
         <TableCell onClick={() => handlePromoDetail(row)}>{new Date(row.startDate).toDateString()}</TableCell>
         <TableCell onClick={() => handlePromoDetail(row)}>{new Date(row.endDate).toDateString()}</TableCell>
         <TableCell>
+          <MenuItem onClick={() => nav("/promos/" + row.promoId)}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
           <MenuItem onClick={() => handleDeletePromo(row.promoId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete

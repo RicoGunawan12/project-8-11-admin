@@ -30,7 +30,7 @@ export function SignInView() {
   const handleSignIn = async () => {
     try {
       const response: { message: string, token: string } = await loginUser(email, password);
-      Cookies.set('token', response.token, { expires: 1 / 24 });
+      Cookies.set('token', response.token, { expires: 6 / 24 });
       showSuccessToast(response.message);
       router.push('/dashboard');
     } catch (error) {
