@@ -16,14 +16,9 @@ type InsertProductProps = {
 type VariantProps = {
     id: number;
     variantImage: File | null;
-    productSize: string;
     productColor: string;
     productPrice: number;
     productStock: number;
-    productWeight: number;
-    productLength: number;
-    productWidth: number;
-    productHeight: number;
     sku: string;
 }
 
@@ -31,6 +26,11 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
     const nav = useNavigate();
     const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string}[]>([]);
     const [curr, setCurr] = useState(0);
+    const [productSize, setProductSize] = useState("");
+    const [productWeight, setProductWeight] = useState(0);
+    const [productLength, setProductLength] = useState(0);
+    const [productWidth, setProductWidth] = useState(0);
+    const [productHeight, setProductHeight] = useState(0);
 
     const [defaultImage, setDefaultImage] = useState<File | null>(null);
     const handleFileChange = async (e: any) => {
@@ -44,7 +44,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         setCategory(event.target.value as string);
     };
     const [variants, setVariants] = useState<VariantProps[]>([
-        { id: 0, sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 },
+        { id: 0, sku: "test", variantImage: null, productColor: "", productPrice: 0, productStock: 0 },
     ]);
 
     const handleAddVariant = () => {
@@ -54,14 +54,9 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                 id: variants.length > 0 ? variants[variants.length - 1].id + 1 : 0, // Increment `id`
                 sku: "test",
                 variantImage: null,
-                productSize: "",
                 productColor: "",
                 productPrice: 0,
                 productStock: 0,
-                productWeight: 0,
-                productLength: 0,
-                productWidth: 0,
-                productHeight: 0,
             },
         ]);
     };
@@ -105,6 +100,11 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         formData.append("productName", productName);
         formData.append("productCategoryName", category);
         formData.append("productDescription", description);
+        formData.append("productSize", productSize);
+        formData.append("productWeight", productWeight.toString());
+        formData.append("productLength", productLength.toString());
+        formData.append("productWidth", productWidth.toString());
+        formData.append("productHeight", productHeight.toString());
         if (defaultImage) {
             formData.append("defaultImage", defaultImage);
         }
@@ -112,7 +112,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         variants.forEach((variant, index) => {
             if (variant.variantImage) {
                 const fileExtension = variant.variantImage.name.split(".").pop(); // Get file extension
-                const newFileName = `${productName} - ${variant.productSize} - ${variant.productColor}.${fileExtension}`;
+                const newFileName = `${productName} - ${variant.productColor}.${fileExtension}`;
         
                 const renamedFile = new File([variant.variantImage], newFileName, {
                     type: variant.variantImage.type,
@@ -140,7 +140,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
               showSuccessToast(response.data.message);
               setVariants(
-                [{ id: 0, sku: "test", variantImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
+                [{ id: 0, sku: "test", variantImage: null, productColor: "", productPrice: 0, productStock: 0 }]
               )
               changePage(1);
               handleUpdate();
@@ -187,6 +187,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
             }
             `}
         </style>
+        
         <Typography variant="h4" style={{ textAlign: 'center', marginBottom: '20px' }} flexGrow={1}>
             Insert Product
         </Typography>
@@ -225,6 +226,15 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                         }
                     </Select>
 
+                    <TextField
+                        fullWidth
+                        name="size"
+                        label="Size"
+                        InputLabelProps={{ shrink: true }}
+                        onChange={(e) => setProductSize(e.target.value)}
+                        style={{ marginTop: '25px' }}
+                    />
+
                     <TextareaAutosize 
                         style={{ borderRadius: '10px', border: isFocused ? 'blue solid 1px' : '#E7E7E7 solid 1px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
                         aria-label="minimum height"  
@@ -235,6 +245,67 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                         onChange={(e) => setDescription(e.target.value)}
                     />
 
+                    <div style={{ marginTop: '30px'}}>
+                        <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
+                            Delivery Information
+                        </Typography>
+                        
+                        <div style={{ display:'flex', gap: '10px'}}>
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Weight</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">gram</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Weight"
+                                    inputProps={{
+                                        'aria-label': 'weight',
+                                    }}
+                                    aria-describedby="outlined-weight-helper-text"
+                                    type="number"
+                                    onChange={(e) => setProductWeight(parseInt(e.target.value))}
+                                />
+                            </FormControl>
+
+                            
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Length</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Length"
+                                    type="number"
+                                    onChange={(e) => setProductLength(parseInt(e.target.value))}
+                                />
+                            </FormControl>
+
+
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Width</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Width"
+                                    type="number"
+                                    onChange={(e) => setProductWidth(parseInt(e.target.value))}
+                                    />
+                            </FormControl>
+
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Height</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Height"
+                                    type="number"
+                                    onChange={(e) => setProductHeight(parseInt(e.target.value))}
+                                    />
+                            </FormControl>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -274,14 +345,6 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                         </div>
 
                         <div style={{ width: '100%'}}>
-                            <TextField
-                                fullWidth
-                                name="size"
-                                label="Size"
-                                InputLabelProps={{ shrink: true }}
-                                onChange={(e) => handleInputChange(index, "productSize", e.target.value)}
-                                sx={{ mb: 3 }}
-                            />
 
                             <TextField
                                 fullWidth
@@ -312,68 +375,6 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                     onChange={(e) => handleInputChange(index, "productStock", parseInt(e.target.value))}
                                 />
                             </div>
-                        </div>
-                    </div>
-
-                    <div style={{ marginTop: '30px'}}>
-                        <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
-                            Delivery Information
-                        </Typography>
-                        
-                        <div style={{ display:'flex', gap: '10px'}}>
-                            <FormControl sx={{ width: '100ch' }} variant="outlined">
-                                <FormHelperText id="outlined-weight-helper-text">Weight</FormHelperText>
-                                <OutlinedInput
-                                    fullWidth
-                                    endAdornment={<InputAdornment position="end">gram</InputAdornment>}
-                                    style={{ height: '55px'}}
-                                    placeholder="Weight"
-                                    inputProps={{
-                                        'aria-label': 'weight',
-                                    }}
-                                    aria-describedby="outlined-weight-helper-text"
-                                    type="number"
-                                    onChange={(e) => handleInputChange(index, "productWeight", parseInt(e.target.value))}
-                                />
-                            </FormControl>
-
-                            
-                            <FormControl sx={{ width: '100ch' }} variant="outlined">
-                                <FormHelperText id="outlined-weight-helper-text">Length</FormHelperText>
-                                <OutlinedInput
-                                    fullWidth
-                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
-                                    style={{ height: '55px'}}
-                                    placeholder="Length"
-                                    type="number"
-                                    onChange={(e) => handleInputChange(index, "productLength", parseInt(e.target.value))}
-                                />
-                            </FormControl>
-
-
-                            <FormControl sx={{ width: '100ch' }} variant="outlined">
-                                <FormHelperText id="outlined-weight-helper-text">Width</FormHelperText>
-                                <OutlinedInput
-                                    fullWidth
-                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
-                                    style={{ height: '55px'}}
-                                    placeholder="Width"
-                                    type="number"
-                                    onChange={(e) => handleInputChange(index, "productWidth", parseInt(e.target.value))}
-                                    />
-                            </FormControl>
-
-                            <FormControl sx={{ width: '100ch' }} variant="outlined">
-                                <FormHelperText id="outlined-weight-helper-text">Height</FormHelperText>
-                                <OutlinedInput
-                                    fullWidth
-                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
-                                    style={{ height: '55px'}}
-                                    placeholder="Height"
-                                    type="number"
-                                    onChange={(e) => handleInputChange(index, "productHeight", parseInt(e.target.value))}
-                                    />
-                            </FormControl>
                         </div>
                     </div>
                 </div>
