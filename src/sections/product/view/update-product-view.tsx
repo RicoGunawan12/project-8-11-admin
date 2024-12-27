@@ -1,4 +1,4 @@
-import { Button, MenuItem, Select, SelectChangeEvent, TextareaAutosize, TextField, Typography, FormControl, InputLabel, OutlinedInput, InputAdornment } from "@mui/material";
+import { Button, MenuItem, Select, SelectChangeEvent, TextareaAutosize, TextField, Typography, FormControl, InputLabel, OutlinedInput, InputAdornment, FormHelperText } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
@@ -326,42 +326,57 @@ function UpdateProductView() {
                         </Typography>
                         
                         <div style={{ display:'flex', gap: '10px'}}>
-                            <OutlinedInput
-                                fullWidth
-                                endAdornment={<InputAdornment position="end">kg</InputAdornment>}
-                                style={{ height: '55px'}}
-                                placeholder="Weight"
-                                type="number"
-                                value={variant.productWeight}
-                                onChange={(e) => handleInputChange(index, "productWeight", parseInt(e.target.value))}
-                            />
-                            <OutlinedInput
-                                fullWidth
-                                endAdornment={<InputAdornment position="end">meter</InputAdornment>}
-                                style={{ height: '55px'}}
-                                placeholder="Length"
-                                type="number"
-                                value={variant.productLength}
-                                onChange={(e) => handleInputChange(index, "productLength", parseInt(e.target.value))}
-                            />
-                            <OutlinedInput
-                                fullWidth
-                                endAdornment={<InputAdornment position="end">meter</InputAdornment>}
-                                style={{ height: '55px'}}
-                                placeholder="Width"
-                                type="number"
-                                value={variant.productWidth}
-                                onChange={(e) => handleInputChange(index, "productWidth", parseInt(e.target.value))}
-                            />
-                            <OutlinedInput
-                                fullWidth
-                                endAdornment={<InputAdornment position="end">meter</InputAdornment>}
-                                style={{ height: '55px'}}
-                                placeholder="Height"
-                                type="number"
-                                value={variant.productHeight}
-                                onChange={(e) => handleInputChange(index, "productHeight", parseInt(e.target.value))}
-                            />
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Weight</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">gram</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Weight"
+                                    type="number"
+                                    value={variant.productWeight}
+                                    onChange={(e) => handleInputChange(index, "productWeight", parseInt(e.target.value))}
+                                    />
+                            </FormControl>
+
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Length</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Length"
+                                    type="number"
+                                    value={variant.productLength}
+                                    onChange={(e) => handleInputChange(index, "productLength", parseInt(e.target.value))}
+                                    />
+                            </FormControl>
+
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Width</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Width"
+                                    type="number"
+                                    value={variant.productWidth}
+                                    onChange={(e) => handleInputChange(index, "productWidth", parseInt(e.target.value))}
+                                    />
+                            </FormControl>
+                            
+                            <FormControl sx={{ width: '100ch' }} variant="outlined">
+                                <FormHelperText id="outlined-weight-helper-text">Height</FormHelperText>
+                                <OutlinedInput
+                                    fullWidth
+                                    endAdornment={<InputAdornment position="end">centimeter</InputAdornment>}
+                                    style={{ height: '55px'}}
+                                    placeholder="Height"
+                                    type="number"
+                                    value={variant.productHeight}
+                                    onChange={(e) => handleInputChange(index, "productHeight", parseInt(e.target.value))}
+                                    />
+                            </FormControl>
                         </div>
                     </div>
                 </div>

@@ -54,6 +54,8 @@ export function DeliveryView() {
             Authorization: `Bearer ${Cookies.get('token')}`,
           },
         });
+        console.log(response.data);
+        
         if (response.data.response[0]) {
           setSenderName(response.data.response[0].senderName);
           setPhoneNumber(response.data.response[0].senderPhoneNumber);
@@ -167,7 +169,7 @@ export function DeliveryView() {
           This delivery data will be the pick up point for expedition
         </Typography>
       </Box>
-      <div style={{ display:'flex', gap: '10px'}}>
+      <div style={{ display:'flex', flexWrap: 'wrap', gap: '10px'}}>
         <div>
           <Typography variant="subtitle2" flexGrow={1} style={{ marginBottom: '10px', fontSize: '12px' }}>
             Current pick up province <span style={{ color: 'red' }}>{currProvince?.toUpperCase()}</span>
@@ -216,7 +218,7 @@ export function DeliveryView() {
       
 
       <div style={{ marginTop: '20px'}}>
-        <div style={{ display:'flex', gap: '20px'}}>
+        <div style={{ display:'flex', flexWrap: 'wrap', gap: '20px'}}>
           <TextField label="Sender Name" variant="outlined" value={senderName} onChange={(e) => setSenderName(e.target.value)} />
           <TextField label="Phone Number" variant="outlined" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
         </div>
