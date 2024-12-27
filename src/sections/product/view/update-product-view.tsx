@@ -7,6 +7,7 @@ import ImageInput from "src/components/input/ImageInput";
 import { useToaster } from "src/components/toast/Toast";
 import { DashboardContent } from "src/layouts/dashboard";
 import { ProductProps } from "../utils";
+import { Iconify } from "src/components/iconify";
 
 type InsertProductProps = {
     changePage: (curr: number) => void
@@ -14,6 +15,7 @@ type InsertProductProps = {
 };
 
 type VariantProps = {
+    id: number
     productVariantId: string
     productImage: File | null;
     productColor: string;
@@ -46,11 +48,11 @@ function UpdateProductView() {
         setCategory(event.target.value as string);
     };
     const [variants, setVariants] = useState<VariantProps[]>([
-        { productVariantId: "", sku: "test", productImage: null, productColor: "", productPrice: 0, productStock: 0 },
+        { id: 0, productVariantId: "", sku: "test", productImage: null, productColor: "", productPrice: 0, productStock: 0 },
     ]);
 
     const handleAddVariant = () => {
-        setVariants([...variants, { productVariantId: "", sku: "test", productImage: null, productColor: "", productPrice: 0, productStock: 0 }]);
+        setVariants([...variants, { id: variants.length > 0 ? variants[variants.length - 1].id + 1 : 0, productVariantId: "", sku: "test", productImage: null, productColor: "", productPrice: 0, productStock: 0 }]);
     };
 
     const handleInputChange = <T extends keyof VariantProps>(index: number, field: T, value: VariantProps[T]) => {
@@ -98,7 +100,8 @@ function UpdateProductView() {
               setProductLength(response.data.productLength)
               setProductHeight(response.data.productHeight)
              const updatedVariants = await Promise.all(
-                response.data.product_variants.map(async (variant: any) => {
+                response.data.product_variants.map(async (variant: any, index: number) => {
+                    variant.id = index;
                     variant.productImage = await convertToFile(`${import.meta.env.VITE_BACKEND_API}${variant.productImage}`);
                     return variant;
                 })
@@ -133,22 +136,24 @@ function UpdateProductView() {
 
         variants.forEach((variant, index) => {
             if (variant.productImage) {
+                console.log(variant.productImage);
+                
                 const fileExtension = variant.productImage.name.split(".").pop(); // Get file extension
-                const newFileName = `${productName} - ${variant.productColor}.${fileExtension}`;
+                const newFileName = `${productName} - ${variant.productColor}`;
         
                 const renamedFile = new File([variant.productImage], newFileName, {
                     type: variant.productImage.type,
                 });
-        
+                console.log(renamedFile);
+                
                 formData.append("productImage", renamedFile);
-            }
-            
+            } 
         });
         formData.append(`productVariants`, JSON.stringify(variants));
 
-        // formData.forEach((value, key) => {
-        //     console.log(key, value);
-        //   });
+        formData.forEach((value, key) => {
+            console.log(key, value);
+          });
           
         try {
               
@@ -191,6 +196,10 @@ function UpdateProductView() {
         const file = new File([blob], "test", { type: blob.type });
       
         return file;
+      }
+
+      const handleDeleteVariant = (idx: number) => {
+        setVariants(prevVariants => prevVariants.filter(variant => variant.id !== idx));
       }
 
   return (
@@ -334,9 +343,20 @@ function UpdateProductView() {
                 console.log(variant);
                 
                 return <div key={variant.productVariantId} style={{ padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px', marginTop: '50px'}}>
-                    <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
-                        Variant {index + 1}
-                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'space-between'}}>
+                        <Typography style={{ marginBottom: '20px', fontWeight: 'bold' }}>
+                            Variant {index + 1}
+                        </Typography>
+                        {
+                            variants.length > 1 ?
+                            <MenuItem  onClick={() => handleDeleteVariant(variant.id)} sx={{ color: 'error.main' }}>
+                                <Iconify icon="solar:trash-bin-trash-bold" />
+                                Delete
+                            </MenuItem>
+                            :
+                            ""
+                        }
+                    </div>
 
                     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                         <div>
@@ -395,7 +415,7 @@ function UpdateProductView() {
         }
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '20px', marginBottom: '20px'}}>
-            {/* <Button variant="contained" onClick={handleAddVariant}>+ New Variant</Button> */}
+            <Button variant="contained" onClick={handleAddVariant}>+ New Variant</Button>
         </div>
 
         <div style={{ position: 'fixed', bottom: '0', backgroundColor: 'white', zIndex: '1', width:'77.5%', boxShadow: '0px -2px 6px rgba(0, 0, 0, 0.2)' }}>

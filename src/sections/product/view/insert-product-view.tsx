@@ -319,7 +319,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                             Variant {index + 1}
                         </Typography>
                         {
-                            index > 0 ?
+                            variants.length > 1 ?
                             <MenuItem  onClick={() => handleDeleteVariant(variant.id)} sx={{ color: 'error.main' }}>
                                 <Iconify icon="solar:trash-bin-trash-bold" />
                                 Delete

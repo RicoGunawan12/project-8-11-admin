@@ -89,6 +89,10 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton> */}
           
+          <MenuItem onClick={handleProductDetail}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
           <MenuItem onClick={() => handleDeleteProduct(row.productId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
@@ -119,10 +123,6 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
-          </MenuItem>
 
           <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
