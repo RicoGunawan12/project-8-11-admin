@@ -268,7 +268,7 @@ export function FAQView() {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Insert New Category
+            Insert New FAQ
           </Typography>
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>

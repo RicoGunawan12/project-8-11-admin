@@ -218,7 +218,7 @@ export function DeliveryView() {
       <div style={{ marginTop: '20px'}}>
         <div style={{ display:'flex', gap: '20px'}}>
           <TextField label="Sender Name" variant="outlined" value={senderName} onChange={(e) => setSenderName(e.target.value)} />
-          <TextField label="Phone Number" variant="outlined" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
+          <TextField label="Phone Number" type='number' variant="outlined" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
         </div>
 
         <TextareaAutosize

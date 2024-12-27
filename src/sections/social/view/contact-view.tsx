@@ -64,6 +64,7 @@ export function SocialView() {
   const [currPage, setCurrPage] = useState(1);
   const [products, setProducts] = useState([]);
   const [contacts, setContacts] = useState<{contactId: string, contact: string, contactAccount: string, contactImage: string}[]>([]);
+  const [contactToSend, setContactToSend] = useState<{contactId: string, email: string, phone: string}>();
 
   const [contact, setContact] = useState("");
   const [contactAccount, setContactAccount] = useState("");
@@ -85,6 +86,21 @@ export function SocialView() {
       }
     }
     getContacts();
+
+    async function getContactToSend() {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/contacts/admin`, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`,
+          },
+        });
+        setContactToSend(response.data.contact);
+        console.log(response.data.contact)
+      } catch (error) {
+        showErrorToast(error.message);
+      }
+    }
+    getContactToSend();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [update]);
 
@@ -186,6 +202,27 @@ export function SocialView() {
     }
   }
 
+  const handleUpdateContactToSend = async () => {
+    try {
+      const body = {
+        email: contactToSend?.email,
+        phone: contactToSend?.phone
+      }
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/admin/${contactToSend?.contactId}`, body, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      });
+      
+      showSuccessToast("Contact to send updated!");
+    } catch (error) {
+      if (error.status === 401) {
+        nav('/')
+      }
+      showErrorToast(error.response.data.message);
+    }
+  }
+
   return (
     <DashboardContent>
       {
@@ -196,7 +233,6 @@ export function SocialView() {
               Social Media
             </Typography>
 
-            <Button color='inherit' variant='contained' onClick={handleOpen}>+ New Contact</Button>
           </Box>
 
 
@@ -212,9 +248,12 @@ export function SocialView() {
                   name="contactAccount"
                   label="Email"
                   InputLabelProps={{ shrink: true }}
-                  onChange={(e) => setContactAccount(e.target.value)}
+                  onChange={(e) => setContactToSend((prev: any) => ({
+                      ...prev,
+                      email: e.target.value,
+                  }))}
                   placeholder='tyeso@gmail.com'
-                  value={contactAccount}
+                  value={contactToSend?.email}
                 />
                 <Typography variant="caption">
                   This email is used to receive message from customer through gmail
@@ -227,21 +266,28 @@ export function SocialView() {
                   name="contactAccount"
                   label="Phone"
                   InputLabelProps={{ shrink: true }}
-                  onChange={(e) => setContactAccount(e.target.value)}
+                  onChange={(e) => setContactToSend((prev: any) => ({
+                      ...prev,
+                      phone: e.target.value,
+                  }))}
                   placeholder='+628132456789'
-                  value={contactAccount}
+                  value={contactToSend?.phone}
                 />
                 <Typography variant="caption">
                   This phone is used to redirect customer to Whatsapp
                 </Typography>
               </Box>
             </Box>
-            <Button color='inherit' variant='contained' onClick={handleOpen}>Update Contact</Button>
+            <Button color='inherit' variant='contained' onClick={handleUpdateContactToSend}>Update Contact</Button>
           </Box>
 
           
 
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'end', padding: '10px'}}>
+            <Button color='inherit' variant='contained' onClick={handleOpen}>+ New Social Media</Button>
+          </div>
           <Card>
+            
             <UserTableToolbar
               numSelected={table.selected.length}
               filterName={filterName}

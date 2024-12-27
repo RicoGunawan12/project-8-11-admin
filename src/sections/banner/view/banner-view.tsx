@@ -31,6 +31,9 @@ export function BannerView() {
   const [productPage, setProductPage] = useState<File | null>(null);
   const [aboutPage, setAboutPage] = useState<File | null>(null);
   const [contactPage, setContactPage] = useState<File | null>(null);
+  const [faqPage, setFAQPage] = useState<File | null>(null);
+  const [profilePage, setProfilePage] = useState<File | null>(null);
+  const [blogPage, setBlogPage] = useState<File | null>(null);
   const [update, setUpdate] = useState(false);
   const { showSuccessToast, showErrorToast } = useToaster();
 
@@ -47,6 +50,15 @@ export function BannerView() {
                 }
                 else if (banner.page === "Contact Page") {
                   setContactPage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "Blog Page") {
+                  setBlogPage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "FAQ Page") {
+                  setFAQPage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "Profile Page") {
+                  setProfilePage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
                 }
               })
             } catch (error) {
@@ -92,6 +104,21 @@ export function BannerView() {
             formData.append("image", contactPage)
           }
         }
+        else if (page === "Profile Page") {
+          if (profilePage) {
+            formData.append("image", profilePage)
+          }
+        }
+        else if (page === "FAQ Page") {
+          if (faqPage) {
+            formData.append("image", faqPage)
+          }
+        }
+        else if (page === "Blog Page") {
+          if (blogPage) {
+            formData.append("image", blogPage)
+          }
+        }
         const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/banners`, formData, {
           headers: { 
               "Content-Type": "multipart/form-data",
@@ -120,6 +147,31 @@ export function BannerView() {
         This banner will be showed on top of page
       </Typography>
 
+
+      <div style={{ margin: '20px 0'}}>
+        <Typography variant="h6" style={{ margin: '20px 0'}} flexGrow={1}>
+          Product Page
+        </Typography>
+
+        <div style={{ width: '100%' }}>        
+          <div>
+            <ImageInput 
+              width="100%" 
+              height="200px" 
+              onChange={(e) => {
+                const target = e.target as HTMLInputElement;
+                const file = target.files?.[0] || null;
+                setProductPage(file)
+              }}
+              initialFile={productPage}
+              name="Product Banner"
+            />
+          </div>
+          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Product Page")}>
+              Update Page
+          </Button>
+        </div>
+      </div>
 
       <div style={{ margin: '20px 0'}}>
         <Typography variant="h6" style={{ margin: '20px 0'}} flexGrow={1}>
@@ -172,10 +224,9 @@ export function BannerView() {
         </div>
       </div>
 
-
       <div style={{ margin: '20px 0'}}>
         <Typography variant="h6" style={{ margin: '20px 0'}} flexGrow={1}>
-          Product Page
+          FAQ Page
         </Typography>
 
         <div style={{ width: '100%' }}>        
@@ -186,17 +237,70 @@ export function BannerView() {
               onChange={(e) => {
                 const target = e.target as HTMLInputElement;
                 const file = target.files?.[0] || null;
-                setProductPage(file)
+                setFAQPage(file)
               }}
-              initialFile={productPage}
-              name="Product Banner"
+              initialFile={faqPage}
+              name="FAQ Banner"
             />
           </div>
-          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Product Page")}>
+          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("FAQ Page")}>
               Update Page
           </Button>
         </div>
       </div>
+
+      <div style={{ margin: '20px 0'}}>
+        <Typography variant="h6" style={{ margin: '20px 0'}} flexGrow={1}>
+          Profile Page
+        </Typography>
+
+        <div style={{ width: '100%' }}>        
+          <div>
+            <ImageInput 
+              width="100%" 
+              height="200px" 
+              onChange={(e) => {
+                const target = e.target as HTMLInputElement;
+                const file = target.files?.[0] || null;
+                setProfilePage(file)
+              }}
+              initialFile={profilePage}
+              name="Profile Banner"
+            />
+          </div>
+          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Profile Page")}>
+              Update Page
+          </Button>
+        </div>
+      </div>
+
+      <div style={{ margin: '20px 0'}}>
+        <Typography variant="h6" style={{ margin: '20px 0'}} flexGrow={1}>
+          Blog Page
+        </Typography>
+
+        <div style={{ width: '100%' }}>        
+          <div>
+            <ImageInput 
+              width="100%" 
+              height="200px" 
+              onChange={(e) => {
+                const target = e.target as HTMLInputElement;
+                const file = target.files?.[0] || null;
+                setBlogPage(file)
+              }}
+              initialFile={blogPage}
+              name="Profile Banner"
+            />
+          </div>
+          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Blog Page")}>
+              Update Page
+          </Button>
+        </div>
+      </div>
+
+
+      
       
     </DashboardContent>
   );

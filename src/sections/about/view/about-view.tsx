@@ -32,6 +32,7 @@ export function AboutView() {
   const [content, setContent] = useState("");
   const [id, setId] = useState("");
   const [title, setTitle] = useState("");
+  const [why, setWhy] = useState("");
   const [update, setUpdate] = useState(false);
   const { showSuccessToast, showErrorToast } = useToaster();
 
@@ -43,10 +44,12 @@ export function AboutView() {
         if (value === 0) {
           setContent(response.data.response[0].contentEng);
           setTitle(response.data.response[0].titleEng);
+          setWhy(response.data.response[0].whyEng)
         }
         else {
           setContent(response.data.response[0].contentIndo);
           setTitle(response.data.response[0].titleIndo);
+          setWhy(response.data.response[0].whyIndo)
         }
         setResponse(response.data.response[0])
         setId(response.data.response[0].pageId);
@@ -62,7 +65,8 @@ export function AboutView() {
     try {
       const body = {
         contentEng: content,
-        titleEng: title
+        titleEng: title,
+        whyEng: why
       }
       console.log(body);
       
@@ -90,7 +94,8 @@ export function AboutView() {
     try {
       const body = {
         contentIndo: content,
-        titleIndo: title
+        titleIndo: title,
+        whyIndo: why
       }
       console.log(body);
       
@@ -160,6 +165,7 @@ export function AboutView() {
           onChange={(event, newValue) => {
             setContent(newValue === 0 ? response.contentEng : response.contentIndo)
             setTitle(newValue === 0 ? response.titleEng : response.titleIndo)
+            setWhy(newValue === 0 ? response.whyEng : response.whyIndo)
             setValue(newValue);
           }}
           sx={{
@@ -193,6 +199,17 @@ export function AboutView() {
                   }}
                   onEditorChange={(content) => setContent(content)}
                   value={content}
+                />
+              </div>
+
+              <div>
+                <TextareaAutosize 
+                    style={{ borderRadius: '10px', border: '#E7E7E7 solid 1px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
+                    aria-label="minimum height"  
+                    minRows={3}  
+                    placeholder="Why Tyeso?"
+                    value={why}
+                    onChange={(e) => setWhy(e.target.value)}
                 />
               </div>
 
