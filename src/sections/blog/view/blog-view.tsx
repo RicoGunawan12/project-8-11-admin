@@ -23,6 +23,7 @@ type BlogPost = {
   postTitle: string;
   postContent: string;
   postImage : string
+  createdAt: string
 };
 
 export function BlogView() {
@@ -80,7 +81,7 @@ export function BlogView() {
                       },
                     }}
                   >
-                    <PostComponent postContent={post.postContent} postImage={post.postImage} postTitle={post.postTitle}/>
+                    <PostComponent postContent={post.createdAt} postImage={post.postImage} postTitle={post.postTitle}/>
                   </Box>
                 </Link>
                     
