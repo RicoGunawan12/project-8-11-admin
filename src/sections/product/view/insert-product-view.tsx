@@ -362,6 +362,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                                         id="outlined-adornment-amount"
                                         startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
                                         label="Amount"
+                                        type="number"
                                         onChange={(e) => handleInputChange(index, "productPrice", parseInt(e.target.value))}
                                     />
                                 </FormControl>

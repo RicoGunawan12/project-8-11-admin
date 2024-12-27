@@ -373,6 +373,7 @@ function UpdateProductView() {
                                         startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
                                         label="Amount"
                                         value={variant.productPrice}
+                                        type="number"
                                         onChange={(e) => handleInputChange(index, "productPrice", parseInt(e.target.value))}
                                     />
                                 </FormControl>
