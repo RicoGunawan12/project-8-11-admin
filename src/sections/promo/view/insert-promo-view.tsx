@@ -81,7 +81,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
             
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/promos`, body, {
                 headers: {
-                    Authorization: `Bearer ${Cookies.get('token')}`,
+                    Authorization: `Bearer ${Cookies.get('tys-token')}`,
                 },
             });
             showSuccessToast("New promo added!");

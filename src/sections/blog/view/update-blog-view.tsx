@@ -31,7 +31,7 @@ function UpdateBlogView() {
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );
@@ -50,7 +50,7 @@ function UpdateBlogView() {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/posts/${id}`, {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       showSuccessToast(response.data.message);

@@ -97,7 +97,7 @@ export function FAQView() {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/faqs`, body,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );
@@ -127,7 +127,7 @@ export function FAQView() {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${currUpdateId}`, body,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );
@@ -150,7 +150,7 @@ export function FAQView() {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );

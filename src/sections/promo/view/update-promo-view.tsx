@@ -61,7 +61,7 @@ function UpdatePromoView() {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/promos/${id}` , {
                     headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${Cookies.get('token')}`,
+                    Authorization: `Bearer ${Cookies.get('tys-token')}`,
                     },
                 });
                 setPromoName(response.data.promo.promoName)
@@ -114,7 +114,7 @@ function UpdatePromoView() {
             
             const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/promos/${promoId}`, body, {
                 headers: {
-                    Authorization: `Bearer ${Cookies.get('token')}`,
+                    Authorization: `Bearer ${Cookies.get('tys-token')}`,
                 },
             });
             showSuccessToast("Promo updated!");

@@ -146,7 +146,7 @@ export function TransactionView() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/transactions?status=${statusMap[value]}`, {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         });
         setTransactions(response.data.transactions);
@@ -168,7 +168,7 @@ export function TransactionView() {
         transactionId
       }, {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       showSuccessToast("Pick up requested!");
@@ -198,7 +198,7 @@ export function TransactionView() {
         transactionId
       }, {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       // showSuccessToast("Pick up requested!");

@@ -39,7 +39,7 @@ export function OverviewAnalyticsView() {
           month
         }, {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         });
         setAnalytic(response.data.response);
@@ -57,7 +57,7 @@ export function OverviewAnalyticsView() {
           year
         }, {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         });
         setAllMonthAnalytic(response.data.response);
@@ -77,7 +77,7 @@ export function OverviewAnalyticsView() {
           year, month
         }, {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         });
         setCategoryAnalytic(response.data.response);

@@ -42,7 +42,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
 
   const handleLogout = async () => {
 
-    Cookies.remove('token');
+    Cookies.remove('tys-token');
     nav('/')
   }
 

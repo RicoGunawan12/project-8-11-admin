@@ -105,7 +105,7 @@ export function ProductsView() {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/update/variant`, product?.product_variants, {
           headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
+              Authorization: `Bearer ${Cookies.get("tys-token")}`,
           },
       });
       // setProduct(response.data);
@@ -145,7 +145,7 @@ export function ProductsView() {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`, {
           headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
+              Authorization: `Bearer ${Cookies.get("tys-token")}`,
           },
       });
       showSuccessToast("Product Deleted!");
@@ -166,7 +166,7 @@ export function ProductsView() {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/update/bestseller/${id}`, body, {
           headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
+              Authorization: `Bearer ${Cookies.get("tys-token")}`,
           },
       });
       // setUpdate(!update);

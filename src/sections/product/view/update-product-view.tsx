@@ -146,7 +146,7 @@ function UpdateProductView() {
               const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/${product?.productId}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${Cookies.get('token')}`
+                    Authorization: `Bearer ${Cookies.get('tys-token')}`
                  },
               });
 

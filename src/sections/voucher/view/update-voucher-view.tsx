@@ -90,7 +90,7 @@ function UpdateVoucherView() {
         updatedVoucherData,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );

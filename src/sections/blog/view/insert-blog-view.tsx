@@ -31,7 +31,7 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/posts`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       showSuccessToast(response.data.message);

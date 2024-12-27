@@ -51,7 +51,7 @@ export function DeliveryView() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/addresses/admin`, {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         });
         console.log(response.data);
@@ -139,7 +139,7 @@ export function DeliveryView() {
 
       await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/addresses/admin`, body, {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       })
       showSuccessToast("Pick up point updated!");

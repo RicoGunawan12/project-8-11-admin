@@ -92,7 +92,7 @@ export function CategoriesView() {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/categories`, body,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );
@@ -121,7 +121,7 @@ export function CategoriesView() {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/categories/${currUpdateId}`, body,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );
@@ -146,7 +146,7 @@ export function CategoriesView() {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/categories/${id}`,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );

@@ -41,7 +41,7 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
         voucherData,
         {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );

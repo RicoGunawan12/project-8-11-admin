@@ -127,7 +127,7 @@ export function PromoView() {
       // const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/promo/${id}`, body, {
       //     headers: {
       //         "Content-Type": "application/json",
-      //         Authorization: `Bearer ${Cookies.get("token")}`,
+      //         Authorization: `Bearer ${Cookies.get("tys-token")}`,
       //     },
       // });
       showSuccessToast("Promo applied!");
@@ -145,7 +145,7 @@ export function PromoView() {
     try {
         const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/promos/${promoId}`, {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         });
         setUpdate(!update);

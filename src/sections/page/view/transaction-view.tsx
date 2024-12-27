@@ -75,7 +75,7 @@ export function PageView() {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/eng/${id}`, body, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       
@@ -102,7 +102,7 @@ export function PageView() {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/indo/${id}`, body, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       

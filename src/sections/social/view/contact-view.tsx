@@ -91,7 +91,7 @@ export function SocialView() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/contacts/admin`, {
           headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`,
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         });
         setContactToSend(response.data.contact);
@@ -126,7 +126,7 @@ export function SocialView() {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/contacts`, body, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       showSuccessToast("New contact added!");
@@ -163,7 +163,7 @@ export function SocialView() {
       }
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${contactId}`, body, {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       console.log(response);
@@ -188,7 +188,7 @@ export function SocialView() {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${id}`, {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       
@@ -210,7 +210,7 @@ export function SocialView() {
       }
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/admin/${contactToSend?.contactId}`, body, {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
       
