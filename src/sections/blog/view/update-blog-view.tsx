@@ -12,6 +12,7 @@ function UpdateBlogView() {
   const [editorContent, setEditorContent] = useState<string>('');
   const [blogTitle, setBlogTitle] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const nav = useNavigate();
   const { showErrorToast, showSuccessToast } = useToaster();
@@ -23,6 +24,9 @@ function UpdateBlogView() {
       formData.append('postContent', editorContent);
       if (imageFile) {
         formData.append('postImage', imageFile); // Append the new image file
+      }
+      if (bannerImage) {
+        formData.append('postBanner', bannerImage); // Append the new image file
       }
 
       const response = await axios.put(
@@ -91,6 +95,9 @@ function UpdateBlogView() {
         setImageFile(
           await convertToFile(`${import.meta.env.VITE_BACKEND_API}${response.data.post.postImage}`)
         );
+        setBannerImage(
+          await convertToFile(`${import.meta.env.VITE_BACKEND_API}${response.data.post.postBanner}`)
+        )
       } catch (error) {
         showErrorToast(error.message);
       } finally {
@@ -148,17 +155,39 @@ function UpdateBlogView() {
             Current Image
           </Typography>
         </div>
-        <ImageInput
-          initialFile={imageFile}
-          onChange={(e) => {
-            const target = e.target as HTMLInputElement;
-            const file = target.files?.[0] || null;
-            setImageFile(file);
-          }}
-          name="Blog Thumbnail"
-          width="250px" 
-          height="250px"
-        />
+        <div style={{ display: 'flex', alignItems: 'center'}}>
+          <ImageInput
+            initialFile={imageFile}
+            onChange={(e) => {
+              const target = e.target as HTMLInputElement;
+              const file = target.files?.[0] || null;
+              setImageFile(file);
+            }}
+            name="Blog Thumbnail"
+            width="250px" 
+            height="250px"
+          />
+        </div>
+      </div>
+
+      <div style={{ width: '100%', marginTop: '40px' }}>
+        <Typography variant="h4" style={{ textAlign: 'left', marginBottom: '10px' }}>
+          Blog Banner
+        </Typography>
+
+        <div style={{ width: '100%' }}>
+          <ImageInput 
+            width="100%" 
+            height="200px" 
+            onChange={(e) => {
+              const target = e.target as HTMLInputElement;
+              const file = target.files?.[0] || null;
+              setBannerImage(file)
+            }}
+            initialFile={bannerImage}
+            name="About Banner"
+          />
+        </div>
       </div>
 
       <div

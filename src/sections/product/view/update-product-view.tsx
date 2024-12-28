@@ -31,6 +31,7 @@ function UpdateProductView() {
     const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string}[]>([]);
     
     const [productSize, setProductSize] = useState("");
+    const [productCode, setProductCode] = useState("");
     const [productWeight, setProductWeight] = useState(0);
     const [productLength, setProductLength] = useState(0);
     const [productWidth, setProductWidth] = useState(0);
@@ -95,6 +96,7 @@ function UpdateProductView() {
               setCategory(response.data.product_category.productCategoryName)
               setDescription(response.data.productDescription)
               setProductSize(response.data.productSize)
+              setProductCode(response.data.productCode)
               setProductWeight(response.data.productWeight)
               setProductWidth(response.data.productWidth)
               setProductLength(response.data.productLength)
@@ -126,6 +128,7 @@ function UpdateProductView() {
         formData.append("productCategoryName", category);
         formData.append("productDescription", description);
         formData.append("productSize", productSize);
+        formData.append("productCode", productCode);
         formData.append("productWeight", productWeight.toString());
         formData.append("productLength", productLength.toString());
         formData.append("productWidth", productWidth.toString());
@@ -261,6 +264,16 @@ function UpdateProductView() {
                         onChange={(e) => setProductSize(e.target.value)}
                         style={{ marginTop: '25px' }}
                         value={productSize}
+                    />
+
+                    <TextField
+                        fullWidth
+                        name="code"
+                        label="Product code"
+                        InputLabelProps={{ shrink: true }}
+                        onChange={(e) => setProductCode(e.target.value)}
+                        style={{ marginTop: '25px' }}
+                        value={productCode}
                     />
 
                     <TextareaAutosize 

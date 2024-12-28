@@ -16,6 +16,7 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
   const [editorContent, setEditorContent] = useState<string>('');
   const [blogTitle, setBlogTitle] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [bannerImage, setBannerImage] = useState<File | null>(null);
   const nav = useNavigate();
   const { showErrorToast, showSuccessToast } = useToaster();
 
@@ -26,6 +27,9 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
       formData.append('postContent', editorContent);
       if (selectedImage) {
         formData.append('postImage', selectedImage);
+      }
+      if (bannerImage) {
+        formData.append('postBanner', bannerImage);
       }
 
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/posts`, formData, {
@@ -80,6 +84,28 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
         Selected File: {selectedImage.name}
       </Typography>
     )}
+
+    
+  </div>
+
+  <div style={{ width: '100%', marginTop: '40px' }}>
+    <Typography variant="h4" style={{ textAlign: 'left', marginBottom: '10px' }}>
+      Blog Banner
+    </Typography>
+
+    <div style={{ width: '100%' }}>
+      <ImageInput 
+        width="100%" 
+        height="200px" 
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement;
+          const file = target.files?.[0] || null;
+          setBannerImage(file)
+        }}
+        initialFile={bannerImage}
+        name="About Banner"
+      />
+    </div>
   </div>
 </div>
 

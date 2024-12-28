@@ -27,6 +27,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
     const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string}[]>([]);
     const [curr, setCurr] = useState(0);
     const [productSize, setProductSize] = useState("");
+    const [productCode, setProductCode] = useState("");
     const [productWeight, setProductWeight] = useState(0);
     const [productLength, setProductLength] = useState(0);
     const [productWidth, setProductWidth] = useState(0);
@@ -101,6 +102,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         formData.append("productCategoryName", category);
         formData.append("productDescription", description);
         formData.append("productSize", productSize);
+        formData.append("productCode", productCode);
         formData.append("productWeight", productWeight.toString());
         formData.append("productLength", productLength.toString());
         formData.append("productWidth", productWidth.toString());
@@ -232,6 +234,15 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
                         label="Size"
                         InputLabelProps={{ shrink: true }}
                         onChange={(e) => setProductSize(e.target.value)}
+                        style={{ marginTop: '25px' }}
+                    />
+
+                    <TextField
+                        fullWidth
+                        name="code"
+                        label="Product Code"
+                        InputLabelProps={{ shrink: true }}
+                        onChange={(e) => setProductCode(e.target.value)}
                         style={{ marginTop: '25px' }}
                     />
 
