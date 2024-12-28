@@ -80,7 +80,7 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
           </Box>
         </TableCell>
 
-        <TableCell onClick={handleProductDetail}>{row.product_category.productCategoryName}</TableCell>
+        <TableCell onClick={handleProductDetail}>{row.product_category?.productCategoryName ? row.product_category.productCategoryName : 'Uncategorized'}</TableCell>
 
         <TableCell><Button onClick={() => handleEditVariant(row.productId)}>Edit Variant</Button></TableCell>
 

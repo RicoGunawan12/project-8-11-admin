@@ -61,7 +61,7 @@ export function CategoriesView() {
   const handleOpenUpdate = async (id: string, name: string, photo: string) => {
     setCurrUpdateId(id);
     setCurrUpdateName(name);
-    setCurrPhoto(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${photo}`))
+    setCurrPhoto(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${photo}`) ?? null)
     setOpenUpdate(true);
   }
   const handleCloseUpdate = () => setOpenUpdate(false);
@@ -104,7 +104,7 @@ export function CategoriesView() {
           },
         }
       );
-      
+      setPhoto(null);
       showSuccessToast(response.data.message);
       setOpen(false);
       setUpdate(!update);
@@ -186,19 +186,23 @@ export function CategoriesView() {
 
   async function convertToFile(url: string) {
     // Fetch the image as a Blob
-    const response = await fetch(url);
+    try {
+      const response = await fetch(url);
     
-    if (!response.ok) {
-      throw new Error('Failed to fetch image');
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+    
+      // Convert the response to a Blob
+      const blob = await response.blob();
+    
+      // Create a new File object from the Blob
+      const file = new File([blob], "test", { type: blob.type });
+    
+      return file;
+    } catch (error) {
+      return null;
     }
-  
-    // Convert the response to a Blob
-    const blob = await response.blob();
-  
-    // Create a new File object from the Blob
-    const file = new File([blob], "test", { type: blob.type });
-  
-    return file;
   }
 
   return (
