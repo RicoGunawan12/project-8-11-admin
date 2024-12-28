@@ -110,8 +110,10 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
         if (defaultImage) {
             formData.append("defaultImage", defaultImage);
         }
-
+        
         variants.forEach((variant, index) => {
+            console.log(variant);
+            
             if (variant.variantImage) {
                 const fileExtension = variant.variantImage.name.split(".").pop(); // Get file extension
                 const newFileName = `${productName} - ${variant.productColor}.${fileExtension}`;

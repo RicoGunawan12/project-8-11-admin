@@ -153,7 +153,8 @@ function UpdateProductView() {
             } 
         });
         formData.append(`productVariants`, JSON.stringify(variants));
-
+        console.log(variants);
+        
         formData.forEach((value, key) => {
             console.log(key, value);
           });
