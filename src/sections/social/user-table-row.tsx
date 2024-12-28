@@ -34,7 +34,7 @@ type UserTableRowProps = {
   row: {contactId: string, contact: string, contactAccount: string, contactImage: string};
   selected: boolean;
   onSelectRow: () => void;
-  handleUpdateContact: (id: string, contact: string, contactAccount: string) => void;
+  handleUpdateContact: (id: string, contact: string, contactAccount: string, contactImage: string) => void;
   handleDeleteContact: (id: string) => void;
 };
 
@@ -73,7 +73,7 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdateContact, 
         </TableCell>
 
         <TableCell><a href={row.contactAccount} target="_blank">{row.contactAccount}</a></TableCell>
-        <TableCell><Button onClick={() => handleUpdateContact(row.contactId, row.contact, row.contactAccount)}>Update</Button></TableCell>
+        <TableCell><Button onClick={() => handleUpdateContact(row.contactId, row.contact, row.contactAccount, row.contactImage)}>Update</Button></TableCell>
         <TableCell>
           <MenuItem onClick={() => handleDeleteContact(row.contactId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />

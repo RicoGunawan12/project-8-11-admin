@@ -53,7 +53,7 @@ export function getComparator<Key extends keyof any>(
 // ----------------------------------------------------------------------
 
 type ApplyFilterProps = {
-  inputData: { productCategoryId: string, productCategoryName: string}[];
+  inputData: { productCategoryId: string, productCategoryName: string, productCategoryPhoto: string}[];
   filterName: string;
   comparator: (a: any, b: any) => number;
 };

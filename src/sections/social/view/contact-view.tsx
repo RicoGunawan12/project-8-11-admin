@@ -148,11 +148,12 @@ export function SocialView() {
     setContactImage(file);
   }
 
-  const handleUpdate = async (id: string, contact: string, contactAccount: string) => {
+  const handleUpdate = async (id: string, contact: string, contactAccount: string, contactImage: string) => {
     handleOpenUpdate();
     setContact(contact);
     setContactAccount(contactAccount);
     setContactId(id);
+    setContactImage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${contactImage}`))
   }
 
   const handleUpdateContact = async () => {
@@ -222,6 +223,24 @@ export function SocialView() {
       showErrorToast(error.response.data.message);
     }
   }
+
+  async function convertToFile(url: string) {
+    // Fetch the image as a Blob
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch image');
+    }
+  
+    // Convert the response to a Blob
+    const blob = await response.blob();
+  
+    // Create a new File object from the Blob
+    const file = new File([blob], "test", { type: blob.type });
+  
+    return file;
+  }
+
 
   return (
     <DashboardContent>
@@ -431,6 +450,9 @@ export function SocialView() {
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
             <div style={{ marginTop: '35px', gap: '20px'}}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px'}}>
+                <ImageInput onChange={handleChangeImage} initialFile={contactImage} name="Contact image" width="250px" height="250px"/>
+              </div>
               <TextField
                 fullWidth
                 name="contact"

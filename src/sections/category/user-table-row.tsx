@@ -26,16 +26,16 @@ export type UserProps = {
 };
 
 type UserTableRowProps = {
-  row: { productCategoryId: string, productCategoryName: string};
+  row: { productCategoryId: string, productCategoryName: string, productCategoryPhoto: string};
   selected: boolean;
   onSelectRow: () => void;
   handleDelete: (id: string) => void;
-  handleUpdate: (id: string, name: string) => void;
+  handleUpdate: (id: string, name: string, photo: string) => void;
 };
 
 export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-
+  
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -43,12 +43,17 @@ export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleU
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        {/* <TableCell>{row.productCategoryId}</TableCell> */}
-        <TableCell>{row.productCategoryName}</TableCell>
+
+        <TableCell>
+          <Box gap={2} display="flex" alignItems="center">
+            <Avatar src={`${import.meta.env.VITE_BACKEND_API}${row.productCategoryPhoto}`}/> 
+            {row.productCategoryName}
+          </Box>
+        </TableCell>
 
 
         <TableCell>
-          <MenuItem onClick={() => handleUpdate(row.productCategoryId, row.productCategoryName)}>
+          <MenuItem onClick={() => handleUpdate(row.productCategoryId, row.productCategoryName, row.productCategoryPhoto)}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>

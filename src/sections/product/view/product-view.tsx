@@ -169,7 +169,7 @@ export function ProductsView() {
               Authorization: `Bearer ${Cookies.get("tys-token")}`,
           },
       });
-      // setUpdate(!update);
+      setUpdate(!update);
     } catch (error) {
       if (error.status === 401) {
         nav('/')

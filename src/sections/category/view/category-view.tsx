@@ -29,6 +29,7 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
+import ImageInput from 'src/components/input/ImageInput';
 
 // ----------------------------------------------------------------------
 
@@ -38,12 +39,12 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
-  height: 250,
+  minHeight: 250,
   bgcolor: 'background.paper',
   // border: '2px solid #000',
   borderRadius: 2,
   boxShadow: 24,
-  pt: 4,
+  py: 4,
   px: 4
 };
 
@@ -55,10 +56,12 @@ export function CategoriesView() {
 
   const [currUpdateId, setCurrUpdateId] = useState('');
   const [currUpdateName, setCurrUpdateName] = useState('');
+  const [currPhoto, setCurrPhoto] = useState<File | null>(null);
   const [openUpdate, setOpenUpdate] = useState(false);
-  const handleOpenUpdate = (id: string, name: string) => {
+  const handleOpenUpdate = async (id: string, name: string, photo: string) => {
     setCurrUpdateId(id);
     setCurrUpdateName(name);
+    setCurrPhoto(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${photo}`))
     setOpenUpdate(true);
   }
   const handleCloseUpdate = () => setOpenUpdate(false);
@@ -67,14 +70,16 @@ export function CategoriesView() {
   const { showErrorToast, showSuccessToast } = useToaster();
   const [update, setUpdate] = useState(false);
   const [filterName, setFilterName] = useState('');
-  const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string}[]>([]);
+  const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string, productCategoryPhoto: string}[]>([]);
   const [category, setCategory] = useState('');
+  const [photo, setPhoto] = useState<File | null>(null);
   
   useEffect(() => {
     async function getCategories() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/categories`);
         setCategories(response.data);
+        
         console.log(response.data);
       } catch (error) {
         showErrorToast(error.message);
@@ -86,12 +91,15 @@ export function CategoriesView() {
 
   const handleInsertCategory = async () => {
     try {
-      const body = {
-        productCategoryName: category
+      const body = new FormData();
+      body.append('productCategoryName', category);
+      if (photo) {
+        body.append('productCategoryPhoto', photo);
       }
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}/api/categories`, body,
         {
           headers: {
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
@@ -115,12 +123,15 @@ export function CategoriesView() {
 
   const handleUpdateCategory = async () => {
     try {
-      const body = {
-        productCategoryName: currUpdateName
+      const body = new FormData();
+      body.append('productCategoryName', currUpdateName);
+      if (currPhoto) {
+        body.append('productCategoryPhoto', currPhoto);
       }
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/categories/${currUpdateId}`, body,
         {
           headers: {
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
@@ -131,6 +142,8 @@ export function CategoriesView() {
       setOpenUpdate(false);
       setUpdate(!update);
     } catch (error) {
+      console.log(error);
+      
       if (error.status === 401) {
         nav('/');
       }
@@ -161,13 +174,31 @@ export function CategoriesView() {
     }
   }
 
-  const dataFiltered: { productCategoryId: string, productCategoryName: string}[] = applyFilter({
+  const dataFiltered: { productCategoryId: string, productCategoryName: string, productCategoryPhoto: string}[] = applyFilter({
     inputData: categories,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
   const notFound = !dataFiltered.length && !!filterName;
+
+
+  async function convertToFile(url: string) {
+    // Fetch the image as a Blob
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch image');
+    }
+  
+    // Convert the response to a Blob
+    const blob = await response.blob();
+  
+    // Create a new File object from the Blob
+    const file = new File([blob], "test", { type: blob.type });
+  
+    return file;
+  }
 
   return (
     <DashboardContent>
@@ -266,21 +297,26 @@ export function CategoriesView() {
             Insert New Category
           </Typography>
 
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
-            <div style={{ display: 'flex', marginTop: '35px', gap: '20px'}}>
+          <div style={{ display: 'flex', marginTop: '35px', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
+            
+            <div>
+              <ImageInput name='Category Photo' width='100%' height='200px' initialFile={photo} onChange={(e: any) => setPhoto(e.target.files[0])}/>
+            </div>
+            <div style={{ gap: '20px', marginTop: '20px'}}>
               <TextField
                 fullWidth
                 name="category"
                 label="Category"
+                
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => setCategory(e.target.value)}
               />
 
-              <Button variant="contained" onClick={handleInsertCategory}>Insert</Button>
             </div>
 
-            <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
+            <div style={{ display: 'flex', width: '100%', marginTop: '20px', gap: '10px', justifyContent: 'end' }}>
               <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
+              <Button variant="contained" onClick={handleInsertCategory}>Insert</Button>
             </div>
           </div>
 
@@ -299,22 +335,27 @@ export function CategoriesView() {
             Update Category
           </Typography>
 
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
-            <div style={{ display: 'flex', marginTop: '20px', gap: '20px'}}>
-              <TextField
-                fullWidth
-                name="category"
-                label="Category"
-                InputLabelProps={{ shrink: true }}
-                value={currUpdateName}
-                onChange={(e) => setCurrUpdateName(e.target.value)}
-              />
+          <div style={{ display: 'flex', marginTop: '35px', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
+              <div>
+                <ImageInput name='Category Photo' width='100%' height='200px' initialFile={currPhoto} onChange={(e: any) => setCurrPhoto(e.target.files[0])}/>
+              </div>
 
-              <Button variant="contained" onClick={handleUpdateCategory}>Update</Button>
-            </div>
+              <div style={{ marginTop: '20px' }}>
+                <TextField
+                  fullWidth
+                  name="category"
+                  label="Category"
+                  InputLabelProps={{ shrink: true }}
+                  value={currUpdateName}
+                  onChange={(e) => setCurrUpdateName(e.target.value)}
+                />
+              </div>
 
-            <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
+              
+
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'end', marginTop: '20px', gap: '10px' }}>
               <Button color="error" variant="contained" onClick={handleCloseUpdate}>Close</Button>
+              <Button variant="contained" onClick={handleUpdateCategory}>Update</Button>
             </div>
           </div>
 
