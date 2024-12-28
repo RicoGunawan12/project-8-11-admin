@@ -52,6 +52,8 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
   const handleProductDetail = () => {
     nav('/products/' + row.productId);
   }
+  console.log(row);
+  
 
   return (
     <>
@@ -82,7 +84,7 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
 
         <TableCell><Button onClick={() => handleEditVariant(row.productId)}>Edit Variant</Button></TableCell>
 
-        <TableCell><Switch onChange={(e) =>  handleUpdateBestSeller(row.productId, e.target.checked)} /></TableCell>
+        <TableCell><Switch checked={row.isBestSeller} onChange={(e) =>  handleUpdateBestSeller(row.productId, e.target.checked)} /></TableCell>
 
         <TableCell align="right">
           {/* <IconButton onClick={handleOpenPopover}>

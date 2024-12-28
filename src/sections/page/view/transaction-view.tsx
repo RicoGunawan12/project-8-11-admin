@@ -21,6 +21,7 @@ import { useToaster } from 'src/components/toast/Toast';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { SvgColor } from 'src/components/svg-color';
+import ImageInput from 'src/components/input/ImageInput';
 
 // ----------------------------------------------------------------------
 
@@ -39,12 +40,13 @@ export function PageView() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/pages`);
         setResponse(response.data.pages[0]);
+        console.log(response.data);
+        
         if (value === 0) {
           setContent(response.data.pages[0].contentJSONEng);
         }
         else {
           setContent(response.data.pages[0].contentJSONIndo);
-
         }
         setId(response.data.pages[0].pageId);
       } catch (error) {
@@ -119,6 +121,41 @@ export function PageView() {
     }
   }
 
+  const handleBackgroundChange = async (index: number) => {
+    try {
+      const body = new FormData();
+      console.log(content);
+      
+      body.append("index", index.toString());
+      if (content[index].background) {
+        body.append("background", content[index].background);
+      }
+      if (content[index].photo) {
+        body.append("photo", content[index].photo);
+      }
+      console.log(content[index].photo);
+      
+      
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/background/${id}`, body, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      console.log(response);
+      
+      showSuccessToast("Background updated!");
+    } catch (error) {
+      console.log(error);
+      
+      if (error.status === 401) {
+        nav('/');        
+      }
+      showErrorToast(error.message);
+    }
+  }
+  
+
   return (
     <DashboardContent>
       <style>
@@ -184,31 +221,83 @@ export function PageView() {
         <div>
           {
             content.map((con, index) => {
-              console.log(con.page);
-              
-              if (con.page === "About Us Page") return ""
               return <div key={index}>
                 <div style={{ margin: '10px 0', fontWeight: 'bold'}}>Section {index + 1}</div>
                 
-                <div style={{ marginBottom: '50px', display: 'flex', gap:'20px', alignItems: 'center'}}>
-                  <div style={{ width: '50%' }}>
+                {
+                  con.background && con.photo ?
+                  <div style={{ marginBottom: '50px', gap:'20px', alignItems: 'center'}}>
                     <div>
-                      <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "title", e.target.value)} value={content[index].title} label={"Title"} variant="outlined" />
-                    </div>
-                    <TextareaAutosize
-                        style={{ borderRadius: '10px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
-                        aria-label="minimum height"  
-                        minRows={3}  
-                        value={content[index].content}
-                        placeholder="Description"
-                        onChange={(e) => handleContentChange(index, "content", e.target.value)}
-                    />
-                  </div>
+                      <div style={{ width: '100%', justifyContent: 'center', display:'flex' }}>
+                        <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
+                      </div>
+                      <div style={{ margin: '20px 0 30px 0'}}>
+                        
+                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', gap: '40px', flexWrap: 'wrap'}}>
+                          <div style={{ width: '40%'}}>
+                            <Typography variant='h5' mb={'10px'}>Background</Typography>
+                            <ImageInput onChange={(e: any) => handleContentChange(index, "background", e.target.files[0])} imageString={con.background} name='Background' width='100%' height='250px' />
+                          </div>
+                          <div style={{ width: '40%'}}>
+                            <Typography variant='h5' mb={'10px'}>Right image</Typography>
+                            <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={con.photo} name='Right Photo' width='100%' height='250px' />
+                          </div>
+                        </div>
 
-                  <div style={{ width: '50%' }}>
-                    <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                          <Button variant="contained" style={{ marginTop: '20px'}} onClick={() => handleBackgroundChange(index)}>
+                              Update Section { index + 1} Background & Image 
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "title", e.target.value)} value={content[index].title} label={"Title"} variant="outlined" />
+                      </div>
+                      <TextareaAutosize
+                          style={{ borderRadius: '10px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
+                          aria-label="minimum height"  
+                          minRows={3}  
+                          value={content[index].content}
+                          placeholder="Description"
+                          onChange={(e) => handleContentChange(index, "content", e.target.value)}
+                      />
+                    </div> 
                   </div>
-                </div>
+                  :
+                  <div style={{ marginBottom: '50px', display: 'flex', gap:'20px', alignItems: 'center'}}>
+                    <div style={{ width: '50%' }}>
+                      {
+                        con.background ?
+                        <div style={{ margin: '20px 0 30px 0'}}>
+                          <ImageInput onChange={(e: any) => handleContentChange(index, "background", e.target.files[0])} imageString={con.background} name='Background' width='100%' height='250px' />
+                          
+                          <Button variant="contained" style={{ marginTop: '20px'}} onClick={() => handleBackgroundChange(index)}>
+                              Update Background 
+                          </Button>
+                        </div>
+                        :
+                        ""
+                      }
+
+                      <div>
+                        <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "title", e.target.value)} value={content[index].title} label={"Title"} variant="outlined" />
+                      </div>
+                      <TextareaAutosize
+                          style={{ borderRadius: '10px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
+                          aria-label="minimum height"  
+                          minRows={3}  
+                          value={content[index].content}
+                          placeholder="Description"
+                          onChange={(e) => handleContentChange(index, "content", e.target.value)}
+                      />
+                    </div>
+
+                    <div style={{ width: '50%' }}>
+                      <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
+                    </div>
+                  </div>
+                }
               </div>
             })
           }
