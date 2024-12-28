@@ -158,9 +158,11 @@ export function SocialView() {
 
   const handleUpdateContact = async () => {
     try {
-      const body = {
-        contact,
-        contactAccount
+      const body = new FormData();
+      body.append("contact", contact)
+      body.append("contactAccount", contactAccount)
+      if (contactImage) {
+        body.append("contactImage", contactImage)
       }
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${contactId}`, body, {
         headers: {
@@ -170,6 +172,7 @@ export function SocialView() {
       console.log(response);
       
       showSuccessToast("Contact updated!");
+      window.location = window.location
       setContact("");
       setContactAccount("");
       setContactId("");

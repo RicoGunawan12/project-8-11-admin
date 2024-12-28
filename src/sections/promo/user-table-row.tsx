@@ -43,9 +43,9 @@ type PromoProps = {
     product: {
       productName: string
       defaultImage: string
+      productSize: string
       product_variants: {
         productImage: string
-        productSize: string
         productColor: string
         productPrice: number
       }[]

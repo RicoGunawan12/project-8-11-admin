@@ -63,9 +63,9 @@ export type PromoProps = {
     product: {
       productName: string
       defaultImage: string
+      productSize: string
       product_variants: {
         productImage: string
-        productSize: string
         productColor: string
         productPrice: number
       }[]
@@ -284,7 +284,7 @@ export function PromoView() {
                             return <div style={{ display:'flex', alignItems: 'center', width: '100%', marginTop: '10px', justifyContent: 'space-between', padding: '10px 40px'}}>
                               <div style={{ display:'flex', alignItems: 'center', gap: '10px' }}>
                                 <Avatar style={{ width: '70px', height: '70px' }} src={import.meta.env.VITE_BACKEND_API + v.productImage} alt={det.product.productName} />
-                                <div>{v.productSize} - {v.productColor}</div>
+                                <div>{v.productColor}</div>
                               </div>
 
                               <div style={{ display:'flex', gap: '10px'}}>
