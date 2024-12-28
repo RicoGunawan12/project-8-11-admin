@@ -141,6 +141,7 @@ export function CategoriesView() {
       showSuccessToast(response.data.message);
       setOpenUpdate(false);
       setUpdate(!update);
+      window.location = window.location
     } catch (error) {
       console.log(error);
       

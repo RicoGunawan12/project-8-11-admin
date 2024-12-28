@@ -265,6 +265,56 @@ export function PageView() {
                     </div> 
                   </div>
                   :
+                  con.bestNumber1 ?
+                  <div style={{ marginBottom: '50px', gap:'20px', alignItems: 'center'}}>
+                    <div style={{ width: '100%', justifyContent: 'center', display:'flex' }}>
+                      <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
+                    </div>
+                    <div>
+                      {
+                        con.background ?
+                        <div style={{ margin: '20px 0 30px 0'}}>
+                          <ImageInput onChange={(e: any) => handleContentChange(index, "background", e.target.files[0])} imageString={con.background} name='Background' width='100%' height='250px' />
+                          
+                          <Button variant="contained" style={{ marginTop: '20px'}} onClick={() => handleBackgroundChange(index)}>
+                              Update Background 
+                          </Button>
+                        </div>
+                        :
+                        ""
+                      }
+
+                      <div style={{ display: 'flex', gap: '20px', marginBottom: '20px'}}>
+                        <div>
+                          <TextField style={{ marginBottom: '20px'}} fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "bestNumber1", e.target.value)} value={content[index].bestNumber1} label={"First Data"} variant="outlined" />
+                          <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "bestTitle1", e.target.value)} value={content[index].bestTitle1} label={"First Title"} variant="outlined" />
+                        </div>
+                        <div>
+                          <TextField style={{ marginBottom: '20px'}} fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "bestNumber2", e.target.value)} value={content[index].bestNumber2} label={"First Data"} variant="outlined" />
+                          <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "bestTitle2", e.target.value)} value={content[index].bestTitle2} label={"First Title"} variant="outlined" />
+                        </div>
+                        <div>
+                          <TextField style={{ marginBottom: '20px'}} fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "bestNumber3", e.target.value)} value={content[index].bestNumber3} label={"First Data"} variant="outlined" />
+                          <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "bestTitle3", e.target.value)} value={content[index].bestTitle3} label={"First Title"} variant="outlined" />
+                        </div>
+                      </div>
+
+                      <div>
+                        <TextField fullWidth id="outlined-basic" onChange={(e) => handleContentChange(index, "title", e.target.value)} value={content[index].title} label={"Title"} variant="outlined" />
+                      </div>
+                      <TextareaAutosize
+                          style={{ borderRadius: '10px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
+                          aria-label="minimum height"  
+                          minRows={3}  
+                          value={content[index].content}
+                          placeholder="Description"
+                          onChange={(e) => handleContentChange(index, "content", e.target.value)}
+                      />
+                    </div>
+
+                    
+                  </div>
+                  :
                   <div style={{ marginBottom: '50px', display: 'flex', gap:'20px', alignItems: 'center'}}>
                     <div style={{ width: '50%' }}>
                       {
