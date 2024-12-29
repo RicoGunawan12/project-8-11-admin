@@ -93,7 +93,7 @@ function UpdateProductView() {
               console.log(response.data);
               
               setProductName(response.data.productName)
-              setCategory(response.data.product_category.productCategoryName)
+              setCategory(response.data.product_category?.productCategoryName ?? "")
               setDescription(response.data.productDescription)
               setProductSize(response.data.productSize)
               setProductCode(response.data.productCode)

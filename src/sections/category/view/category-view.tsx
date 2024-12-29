@@ -116,7 +116,7 @@ export function CategoriesView() {
         showErrorToast("Unauthorized");
       }
       else {
-        showErrorToast(error.response.data.errors[0].msg);
+        showErrorToast(error.response.data.message);
       }
     }
   }
