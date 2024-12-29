@@ -63,6 +63,14 @@ export function InsertUserView({ currPage, changePage, updateSignal, handleUpdat
 
   return (
     <div>
+        <Button
+            variant="contained"
+            color="inherit"
+            onClick={() => changePage(UserPageNumbers.SHOW_PAGE_VIEW)}
+        >
+            Back
+        </Button>
+
       <Typography variant="h4" style={{ textAlign: 'center', marginBottom: '20px' }} flexGrow={1}>
         Insert User
       </Typography>
@@ -79,7 +87,7 @@ export function InsertUserView({ currPage, changePage, updateSignal, handleUpdat
                 }
             </Select>
         </div>
-        
+
         <div style={{ marginBottom: '30px' }}>
           <TextField
             id="outlined-basic"
