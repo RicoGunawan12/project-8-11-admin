@@ -63,29 +63,30 @@ export function InsertUserView({ currPage, changePage, updateSignal, handleUpdat
 
   return (
     <div>
-        <Button
-            variant="contained"
-            color="inherit"
-            onClick={() => changePage(UserPageNumbers.SHOW_PAGE_VIEW)}
-        >
-            Back
-        </Button>
+      <Button
+        variant="contained"
+        color="inherit"
+        onClick={() => changePage(UserPageNumbers.SHOW_PAGE_VIEW)}
+      >
+        Back
+      </Button>
 
       <Typography variant="h4" style={{ textAlign: 'center', marginBottom: '20px' }} flexGrow={1}>
         Insert User
       </Typography>
 
       <div style={{ padding: '10px 10%' }}>
-
         <div style={{ marginBottom: '30px' }}>
-            <Select onChange={handleRoleChange} defaultValue=" " fullWidth>
-                <MenuItem value=" " selected={true}>-- Choose Role --</MenuItem>
-                {
-                    roles.map((item: { value: string, label: string}) => 
-                        <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>
-                    )
-                }
-            </Select>
+          <Select onChange={handleRoleChange} defaultValue=" " fullWidth>
+            <MenuItem value=" " selected={true}>
+              -- Choose Role --
+            </MenuItem>
+            {roles.map((item: { value: string; label: string }) => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
         </div>
 
         <div style={{ marginBottom: '30px' }}>
