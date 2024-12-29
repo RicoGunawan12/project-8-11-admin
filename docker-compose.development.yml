@@ -11,6 +11,8 @@ services:
       dockerfile: Dockerfile.development
       context: .
     restart: always #change if you don't want your container restarting
+    env_file:
+      - .env.development
     ports:
       - 3002:3039
     # volumes:
