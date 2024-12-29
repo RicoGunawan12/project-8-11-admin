@@ -104,6 +104,7 @@ export function ShowUserView({ currPage, changePage, updateSignal, handleUpdate 
                   { id: 'email', label: 'E-mail' },
                   { id: 'phone', label: 'Phone Number' },
                   { id: 'role', label: 'Role' },
+                  { id: 'status', label: 'Status', align: 'center' },
                   { id: 'action', label: 'Action', align: 'left' },
                 ]}
               />
@@ -119,6 +120,7 @@ export function ShowUserView({ currPage, changePage, updateSignal, handleUpdate 
                       row={row}
                       selected={table.selected.includes(row.userId)}
                       onSelectRow={() => table.onSelectRow(row.userId)}
+                      onUpdate={() => handleUpdate()}
                     />
                   ))}
 
