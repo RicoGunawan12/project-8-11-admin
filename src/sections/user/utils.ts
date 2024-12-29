@@ -1,6 +1,24 @@
-import type { UserProps } from './user-table-row';
-
 // ----------------------------------------------------------------------
+
+export enum UserPageNumbers {
+  INSERT_PAGE_VIEW = 0,
+  SHOW_PAGE_VIEW = 1
+};
+
+export type UserProps = {
+  userId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  role: string;
+};
+
+export type UserPageProps = {
+  currPage: number;
+  changePage: (curr: number) => void
+  updateSignal: boolean;
+  handleUpdate: () => void
+};
 
 export const visuallyHidden = {
   border: 0,
@@ -54,11 +72,11 @@ export function getComparator<Key extends keyof any>(
 
 type ApplyFilterProps = {
   inputData: UserProps[];
-  filterName: string;
+  filterInput: string;
   comparator: (a: any, b: any) => number;
 };
 
-export function applyFilter({ inputData, comparator, filterName }: ApplyFilterProps) {
+export function applyFilter({ inputData, comparator, filterInput }: ApplyFilterProps) {
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
 
   stabilizedThis.sort((a, b) => {
@@ -69,9 +87,9 @@ export function applyFilter({ inputData, comparator, filterName }: ApplyFilterPr
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (filterName) {
+  if (filterInput) {
     inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (user) => user.fullName.toLowerCase().indexOf(filterInput.toLowerCase()) !== -1 || user.email.toLowerCase().indexOf(filterInput.toLowerCase()) !== -1 || user.phone.indexOf(filterInput) !== -1
     );
   }
 
