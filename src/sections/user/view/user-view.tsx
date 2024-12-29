@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -23,19 +23,39 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
+import axios from 'axios';
+import { useToaster } from 'src/components/toast/Toast';
 
 // ----------------------------------------------------------------------
 
 export function UserView() {
   const table = useTable();
+  const { showErrorToast, showSuccessToast } = useToaster();
 
-  const [filterName, setFilterName] = useState('');
+  const [updateSignal, setUpdateSignal] = useState<boolean>(false);
+
+  const [users, setUsers] = useState<UserProps[]>([]);
+  const [filterName, setFilterName] = useState<string>('');
 
   const dataFiltered: UserProps[] = applyFilter({
-    inputData: _users,
+    inputData: users,
     comparator: getComparator(table.order, table.orderBy),
-    filterName,
+    filterInput: filterName,
   });
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_USER}`);
+        setUsers(response.data);
+        console.log(response.data);
+      } catch (error) {
+        showErrorToast(error.message);
+      }
+    };
+
+    getUsers();
+  }, [updateSignal]);
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -81,11 +101,10 @@ export function UserView() {
                 }
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
+                  { id: 'email', label: 'E-mail' },
+                  { id: 'phone', label: 'Phone Number' },
                   { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'action', label: 'Action', align: 'left'},
                 ]}
               />
               <TableBody>
@@ -96,10 +115,10 @@ export function UserView() {
                   )
                   .map((row) => (
                     <UserTableRow
-                      key={row.id}
+                      key={row.userId}
                       row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
+                      selected={table.selected.includes(row.userId)}
+                      onSelectRow={() => table.onSelectRow(row.userId)}
                     />
                   ))}
 
