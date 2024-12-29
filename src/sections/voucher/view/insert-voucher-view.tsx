@@ -4,6 +4,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { useToaster } from 'src/components/toast/Toast';
+import { CircularProgress } from '@mui/material';
 
 type InsertVoucherProps = {
   changePage: (curr: number) => void;
@@ -18,11 +19,13 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
   const [maxDiscount, setMaxDiscount] = useState<number>(0);
   const [discount, setDiscount] = useState<number>(0);
   const [quota, setQuota] = useState<number>(0);
+  const [loading, setLoading] = useState(false);
 
   const nav = useNavigate();
   const { showErrorToast, showSuccessToast } = useToaster();
 
   const handleInsertVoucher = async () => {
+    setLoading(true);
     try {
       const voucherData = {
         vouchers: [{
@@ -56,6 +59,7 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
       }
       showErrorToast(error.response?.data?.message || 'Something went wrong.');
     }
+    setLoading(false);
   };
 
   return (
@@ -285,7 +289,7 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
           color="primary"
           onClick={handleInsertVoucher}
           disabled={
-            !voucherCode || !voucherStartDate || !voucherEndDate || !maxDiscount || !discount
+            !voucherCode || !voucherStartDate || !voucherEndDate || !maxDiscount || !discount || loading
           }
           sx={{
             backgroundColor: '#007BFF',
@@ -293,8 +297,9 @@ function InsertVoucherView({ changePage, handleUpdate }: InsertVoucherProps) {
               backgroundColor: '#0056b3',
             },
           }}
+          style={{ width: '150px'}}
         >
-          Submit Voucher
+          {loading ? <CircularProgress size={24} /> : "Submit Voucher"}
         </Button>
       </div>
     </div>

@@ -31,6 +31,7 @@ import { maxHeaderSize } from 'node:http';
 import Cookies from 'js-cookie';
 import { Dayjs } from 'dayjs';
 import ImageInput from 'src/components/input/ImageInput';
+import { CircularProgress } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -71,8 +72,11 @@ export function SocialView() {
   const [contactImage, setContactImage] = useState<File | null>(null);
   const [contactId, setContactId] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [loadingContactToSend, setLoadingContactToSend] = useState(false);
+
   const [update, setUpdate] = useState(false);
-  const { showErrorToast, showSuccessToast } = useToaster();
+  const { showErrorToast, showSuccessToast, showLoadingToast } = useToaster();
   const table = useTable();
 
   useEffect(() => {
@@ -115,6 +119,7 @@ export function SocialView() {
   const notFound = !dataFiltered.length && !!filterName;
 
   const handleInsertContact = async () => {
+    setLoading(true);
     try {
       const body = new FormData();
       body.append('contact', contact);
@@ -140,6 +145,7 @@ export function SocialView() {
       }
       showErrorToast(error.message);
     }
+    setLoading(false);
   }
 
   const handleChangeImage = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -157,6 +163,7 @@ export function SocialView() {
   }
 
   const handleUpdateContact = async () => {
+    setLoading(true);
     try {
       const body = new FormData();
       body.append("contact", contact)
@@ -186,17 +193,24 @@ export function SocialView() {
       }
       showErrorToast(error.response.data.message);
     }
+    setLoading(false);
   }
 
   const handleDeleteContact = async (id: string) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${id}`, {
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${id}`, {
         headers: {
           Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
+
+      await showLoadingToast(response, {
+        pending: "Deleting social media...",
+        success: "Social media deleted successfully!",
+        error: "Error deleting social media!",
+      });
       
-      showSuccessToast("Contact deleted!");
+      // showSuccessToast("Contact deleted!");
       setUpdate(!update)
     } catch (error) {
       if (error.status === 401) {
@@ -207,6 +221,7 @@ export function SocialView() {
   }
 
   const handleUpdateContactToSend = async () => {
+    setLoadingContactToSend(true);
     try {
       const body = {
         email: contactToSend?.email,
@@ -225,6 +240,7 @@ export function SocialView() {
       }
       showErrorToast(error.response.data.message);
     }
+    setLoadingContactToSend(false);
   }
 
   async function convertToFile(url: string) {
@@ -300,7 +316,9 @@ export function SocialView() {
                 </Typography>
               </Box>
             </Box>
-            <Button color='inherit' variant='contained' onClick={handleUpdateContactToSend}>Update Contact</Button>
+            <Button color='inherit' variant='contained' style={{ width: '150px' }} onClick={handleUpdateContactToSend} disabled={loadingContactToSend}>
+            {loadingContactToSend ? <CircularProgress size={24} /> : "Update Contact"}
+            </Button>
           </Box>
 
           
@@ -433,7 +451,9 @@ export function SocialView() {
 
             <div style={{ display: 'flex', gap:'20px', width: '100%', justifyContent: 'end' }}>
               <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
-              <Button variant="contained" onClick={handleInsertContact}>Insert</Button>
+              <Button variant="contained" onClick={handleInsertContact} style={{ width: '80px' }} disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : "Insert"}
+              </Button>
             </div>
           </div>
 
@@ -481,7 +501,9 @@ export function SocialView() {
 
             <div style={{ display: 'flex', gap:'20px', width: '100%', justifyContent: 'end' }}>
               <Button color="error" variant="contained" onClick={handleCloseUpdate}>Close</Button>
-              <Button variant="contained" onClick={handleUpdateContact}>Update</Button>
+              <Button variant="contained" onClick={handleUpdateContact} style={{ width: '80px' }} disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : "Update"}
+              </Button>
             </div>
           </div>
 

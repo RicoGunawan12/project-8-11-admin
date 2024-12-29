@@ -15,7 +15,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { BottomNavigation, BottomNavigationAction, Chip, TextareaAutosize, TextField } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Chip, CircularProgress, TextareaAutosize, TextField } from '@mui/material';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +35,7 @@ export function BannerView() {
   const [profilePage, setProfilePage] = useState<File | null>(null);
   const [blogPage, setBlogPage] = useState<File | null>(null);
   const [update, setUpdate] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { showSuccessToast, showErrorToast } = useToaster();
 
   useEffect(() => {
@@ -86,6 +87,7 @@ export function BannerView() {
     }
 
     async function handleUpdate(page: string) {
+      setLoading(true);
       try {
         const formData = new FormData();
         formData.append("page", page);
@@ -133,6 +135,7 @@ export function BannerView() {
         }
         showErrorToast(error.response.data.message);
       }
+      setLoading(false);
     }
 
   return (
@@ -167,8 +170,8 @@ export function BannerView() {
               name="Product Banner"
             />
           </div>
-          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Product Page")}>
-              Update Page
+          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Product Page")}>
+              {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
         </div>
       </div>
@@ -193,8 +196,8 @@ export function BannerView() {
             />
 
           </div>
-          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("About Page")}>
-              Update Page
+          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("About Page")}>
+              {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
         </div>
       </div>
@@ -218,8 +221,8 @@ export function BannerView() {
               name="Contact Banner"
             />
           </div>
-          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Contact Page")}>
-              Update Page
+          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Contact Page")}>
+              {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
         </div>
       </div>
@@ -243,8 +246,8 @@ export function BannerView() {
               name="FAQ Banner"
             />
           </div>
-          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("FAQ Page")}>
-              Update Page
+          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("FAQ Page")}>
+              {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
         </div>
       </div>
@@ -268,8 +271,8 @@ export function BannerView() {
               name="Profile Banner"
             />
           </div>
-          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Profile Page")}>
-              Update Page
+          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Profile Page")}>
+              {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
         </div>
       </div>
@@ -293,8 +296,8 @@ export function BannerView() {
               name="Profile Banner"
             />
           </div>
-          <Button variant="contained" style={{ margin: '20px 0'}} onClick={() => handleUpdate("Blog Page")}>
-              Update Page
+          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Blog Page")}>
+              {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
         </div>
       </div>

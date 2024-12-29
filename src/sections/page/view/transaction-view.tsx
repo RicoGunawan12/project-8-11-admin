@@ -15,7 +15,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { BottomNavigation, BottomNavigationAction, Chip, TextareaAutosize, TextField } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Chip, CircularProgress, TextareaAutosize, TextField } from '@mui/material';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +33,7 @@ export function PageView() {
   const [id, setId] = useState("");
   const [response, setResponse] = useState<any>();
   const [update, setUpdate] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { showSuccessToast, showErrorToast } = useToaster();
 
   useEffect(() => {
@@ -68,6 +69,8 @@ export function PageView() {
   };
   
   const handleUpdateEngPage = async () => {
+    setLoading(true);
+
     try {
       const body = {
         contentJSONEng: content
@@ -90,11 +93,14 @@ export function PageView() {
       if (error.status === 401) {
         nav('/');        
       }
-      showErrorToast(error.message);
+      showErrorToast(error.response.data.message);
     }
+    setLoading(false);
+
   }
 
   const handleUpdateIndoPage = async () => {
+    setLoading(true);
     try {
       const body = {
         contentJSONIndo: content
@@ -117,11 +123,14 @@ export function PageView() {
       if (error.status === 401) {
         nav('/');        
       }
-      showErrorToast(error.message);
+      showErrorToast(error.response.data.message);
     }
+    setLoading(false);
+
   }
 
   const handleBackgroundChange = async (index: number) => {
+    setLoading(true);
     try {
       const body = new FormData();
       console.log(content);
@@ -151,8 +160,10 @@ export function PageView() {
       if (error.status === 401) {
         nav('/');        
       }
-      showErrorToast(error.message);
+      showErrorToast(error.response.data.message);
     }
+    setLoading(false);
+
   }
   
 
@@ -245,8 +256,8 @@ export function PageView() {
                         </div>
 
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
-                          <Button variant="contained" style={{ marginTop: '20px'}} onClick={() => handleBackgroundChange(index)}>
-                              Update Section { index + 1} Background & Image 
+                          <Button variant="contained" disabled={loading} style={{ marginTop: '20px', width: '300px'}} onClick={() => handleBackgroundChange(index)}>
+                            {loading ? <CircularProgress size={24} /> : `Update Section ${ index + 1} Background & Image `}
                           </Button>
                         </div>
                       </div>
@@ -357,8 +368,8 @@ export function PageView() {
       
       <div className="responsive-container">
           <div className="button-container">
-          <Button variant="contained" onClick={value === 1 ? handleUpdateIndoPage : handleUpdateEngPage}>
-              Update Page 
+          <Button variant="contained" style={{ width: '140px'}} disabled={loading} onClick={value === 1 ? handleUpdateIndoPage : handleUpdateEngPage}>
+            {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
           </div>
       </div>

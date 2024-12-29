@@ -1,4 +1,4 @@
-import { FormHelperText } from "@mui/material";
+import { CircularProgress, FormHelperText } from "@mui/material";
 import { Button, MenuItem, Select, SelectChangeEvent, TextareaAutosize, TextField, Typography, FormControl, InputLabel, OutlinedInput, InputAdornment } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -32,6 +32,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
     const [productLength, setProductLength] = useState(0);
     const [productWidth, setProductWidth] = useState(0);
     const [productHeight, setProductHeight] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const [defaultImage, setDefaultImage] = useState<File | null>(null);
     const handleFileChange = async (e: any) => {
@@ -97,6 +98,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
 
       const handleInsertProduct = async () => {
+        setLoading(true);
         const formData = new FormData();
         formData.append("productName", productName);
         formData.append("productCategoryName", category);
@@ -156,6 +158,7 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
             }
             showErrorToast(error.response.data.message);
         }
+        setLoading(false);
       }
 
       const handleDeleteVariant = (idx: number) => {
@@ -401,8 +404,8 @@ function InsertProductView({ changePage, handleUpdate }: InsertProductProps) {
 
         <div className="responsive-container">
             <div className="button-container">
-            <Button variant="contained" onClick={handleInsertProduct}>
-                Insert Product
+            <Button variant="contained" onClick={handleInsertProduct} disabled={loading} style={{ width: '140px'}}>
+                {loading ? <CircularProgress size={24} /> : "Insert Product"}
             </Button>
             </div>
         </div>

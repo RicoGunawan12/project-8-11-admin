@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import Modal from '@mui/material/Modal';
 import TablePagination from '@mui/material/TablePagination';
-import { TextField } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,6 +53,7 @@ export function CategoriesView() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [loading, setLoading] = useState(false);
 
   const [currUpdateId, setCurrUpdateId] = useState('');
   const [currUpdateName, setCurrUpdateName] = useState('');
@@ -67,7 +68,7 @@ export function CategoriesView() {
   const handleCloseUpdate = () => setOpenUpdate(false);
 
   const table = useTable();
-  const { showErrorToast, showSuccessToast } = useToaster();
+  const { showErrorToast, showSuccessToast, showLoadingToast } = useToaster();
   const [update, setUpdate] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [categories, setCategories] = useState<{ productCategoryId: string, productCategoryName: string, productCategoryPhoto: string}[]>([]);
@@ -90,6 +91,7 @@ export function CategoriesView() {
   }, [update]);
 
   const handleInsertCategory = async () => {
+    setLoading(true);
     try {
       const body = new FormData();
       body.append('productCategoryName', category);
@@ -119,9 +121,11 @@ export function CategoriesView() {
         showErrorToast(error.response.data.message);
       }
     }
+    setLoading(false);
   }
 
   const handleUpdateCategory = async () => {
+    setLoading(true);
     try {
       const body = new FormData();
       body.append('productCategoryName', currUpdateName);
@@ -150,22 +154,29 @@ export function CategoriesView() {
       }
       showErrorToast(error.message);
     }
+    setLoading(false);
   }
 
   const handleDeleteCategory = async (id: string) => {
+    
     try {
       const body = {
         category
       }
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/categories/${id}`,
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/categories/${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );
+      await showLoadingToast(response, {
+        pending: "Deleting category...",
+        success: "Category deleted successfully!",
+        error: "Error deleting category!",
+      });
 
-      showSuccessToast(response.data.message);
+      // showSuccessToast(response.data.message);
       setUpdate(!update);
     } catch (error) {
       if (error.status === 401) {
@@ -321,7 +332,7 @@ export function CategoriesView() {
 
             <div style={{ display: 'flex', width: '100%', marginTop: '20px', gap: '10px', justifyContent: 'end' }}>
               <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
-              <Button variant="contained" onClick={handleInsertCategory}>Insert</Button>
+              <Button variant="contained" onClick={handleInsertCategory} disabled={loading} style={{ width: '75px'}}>{loading ? <CircularProgress size={24} /> : "Insert"}</Button>
             </div>
           </div>
 
@@ -360,7 +371,7 @@ export function CategoriesView() {
 
             <div style={{ display: 'flex', width: '100%', justifyContent: 'end', marginTop: '20px', gap: '10px' }}>
               <Button color="error" variant="contained" onClick={handleCloseUpdate}>Close</Button>
-              <Button variant="contained" onClick={handleUpdateCategory}>Update</Button>
+              <Button variant="contained" onClick={handleUpdateCategory} disabled={loading} style={{ width: '75px'}}>{loading ? <CircularProgress size={24} /> : "Update"}</Button>
             </div>
           </div>
 

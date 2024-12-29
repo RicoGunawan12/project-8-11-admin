@@ -41,7 +41,7 @@ export function VoucherView() {
   const [vouchers, setVouchers] = useState<VoucherProps[]>([]);
   const [voucher, setVoucher] = useState<VoucherProps>();
   const [update, setUpdate] = useState(false);
-  const { showErrorToast, showSuccessToast } = useToaster();
+  const { showErrorToast, showSuccessToast, showLoadingToast } = useToaster();
   const table = useTable();
 
   useEffect(() => {
@@ -78,12 +78,17 @@ export function VoucherView() {
 
   const handleDeleteVoucher = async (id: string) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/vouchers`, {
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/vouchers`, {
         data: {
           code: id
         }
       });
-      showSuccessToast('Voucher deleted successfully');
+      await showLoadingToast(response, {
+        pending: "Deleting voucher...",
+        success: "Voucher deleted successfully!",
+        error: "Error deleting voucher!",
+      });
+      // showSuccessToast('Voucher deleted successfully');
       setUpdate(!update); // Trigger data refresh
     } catch (error) {
       showErrorToast(error.message);

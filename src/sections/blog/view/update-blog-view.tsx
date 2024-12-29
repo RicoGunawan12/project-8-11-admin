@@ -222,7 +222,7 @@ function UpdateBlogView() {
       >
         <Button
           variant="contained"
-          color="primary"
+          color="error"
           onClick={handleDeleteBlog}
           disabled={!blogTitle || !editorContent}
         >

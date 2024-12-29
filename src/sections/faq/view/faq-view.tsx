@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import Modal from '@mui/material/Modal';
 import TablePagination from '@mui/material/TablePagination';
-import { TextField } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -67,8 +67,9 @@ export function FAQView() {
   const handleCloseUpdate = () => setOpenUpdate(false);
 
   const table = useTable();
-  const { showErrorToast, showSuccessToast } = useToaster();
+  const { showErrorToast, showSuccessToast, showLoadingToast } = useToaster();
   const [update, setUpdate] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [filterName, setFilterName] = useState('');
   const [faqs, setFAQs] = useState<{ faqId: string, faqQuestion: string, faqAnswer: string }[]>([]);
   const [faqQuestion, setFaqQuestion] = useState('');
@@ -89,6 +90,7 @@ export function FAQView() {
   }, [update]);
 
   const handleInsertFAQ = async () => {
+    setLoading(true);
     try {
       const body = {
         faqQuestion,
@@ -116,9 +118,11 @@ export function FAQView() {
         showErrorToast(error.response.data.errors[0].msg);
       }
     }
+    setLoading(false);
   }
 
   const handleUpdateFAQ = async () => {
+    setLoading(true);
     try {
       const body = {
         faqQuestion: currUpdateFaqQuestion,
@@ -143,19 +147,24 @@ export function FAQView() {
       }
       showErrorToast(error.message);
     }
+    setLoading(false);
   }
 
   const handleDeleteFAQ = async (id: string) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${id}`,
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${id}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
         }
       );
-
-      showSuccessToast(response.data.message);
+      await showLoadingToast(response, {
+        pending: "Deleting FAQ...",
+        success: "FAQ deleted successfully!",
+        error: "Error deleting FAQ!",
+      });
+      // showSuccessToast(response.data.message);
       setUpdate(!update);
     } catch (error) {
       if (error.status === 401) {
@@ -298,7 +307,7 @@ export function FAQView() {
 
             <div style={{ display: 'flex', width: '100%', justifyContent: 'end', gap: '10px', marginTop: '20px' }}>
               <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
-              <Button variant="contained" onClick={handleInsertFAQ}>Insert</Button>
+              <Button variant="contained" style={{ width: '80px'}} disabled={loading} onClick={handleInsertFAQ}>{loading ? <CircularProgress size={24} /> : "Insert"}</Button>
             </div>
           </div>
 
@@ -345,7 +354,7 @@ export function FAQView() {
 
             <div style={{ display: 'flex', width: '100%', justifyContent: 'end', gap: '10px', marginTop: '20px' }}>
               <Button color="error" variant="contained" onClick={handleCloseUpdate}>Close</Button>
-              <Button variant="contained" onClick={handleUpdateFAQ}>Update</Button>
+              <Button variant="contained" style={{ width: '80px'}} onClick={handleUpdateFAQ} disabled={loading}>{loading ? <CircularProgress size={24} /> : "Update"}</Button>
             </div>
           </div>
 

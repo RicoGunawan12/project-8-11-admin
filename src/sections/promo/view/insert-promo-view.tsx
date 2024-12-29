@@ -1,4 +1,4 @@
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, CircularProgress } from "@mui/material";
 import { Button, MenuItem, Select, TextareaAutosize, TextField, Typography, FormControl, InputLabel, OutlinedInput, InputAdornment } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
@@ -40,6 +40,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
     const [promoAmount, setPromoAmount] = useState(0);
     const [startDate, setStartDate] = useState<Dayjs>();
     const [endDate, setEndDate] = useState<Dayjs>();
+    const [loading, setLoading] = useState(false);
     const [selectedProducts, setSelectedProducts] = useState<ProductProps[]>([]);
   const [products, setProducts] = useState<ProductProps[]>([]);
     
@@ -66,6 +67,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
     }
 
     const handleInsertPromo = async () => {
+        setLoading(true);
         try {
             const products = selectedProducts.map((p) => ({
                 productId: p.productId,
@@ -95,6 +97,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
             }
             showErrorToast(error.response.data.message);
         }
+        setLoading(false);
     } 
 
   return (
@@ -155,7 +158,7 @@ function InsertPromoView({ changePage, handleUpdate }: InsertPromoProps) {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button onClick={handleInsertPromo} variant='contained'>Insert Promo</Button>
+                <Button onClick={handleInsertPromo} variant='contained' disabled={loading} style={{ width: '130px' }}>{loading ? <CircularProgress size={24} /> : "Insert Promo"}</Button>
             </div>
         </div>
     </div>

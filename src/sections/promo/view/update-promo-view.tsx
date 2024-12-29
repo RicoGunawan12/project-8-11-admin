@@ -1,4 +1,4 @@
-import { Autocomplete } from "@mui/material";
+import { Autocomplete, CircularProgress } from "@mui/material";
 import { Button, MenuItem, Select, TextareaAutosize, TextField, Typography, FormControl, InputLabel, OutlinedInput, InputAdornment } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import axios from "axios";
@@ -42,6 +42,7 @@ function UpdatePromoView() {
     const [startDate, setStartDate] = useState<Dayjs>();
     const [endDate, setEndDate] = useState<Dayjs>();
     const [promoId, setPromoId] = useState("");
+    const [loading, setLoading] = useState(false);
     const [selectedProducts, setSelectedProducts] = useState<ProductProps[]>([]);
   const [products, setProducts] = useState<ProductProps[]>([]);
     
@@ -99,6 +100,7 @@ function UpdatePromoView() {
     }
 
     const handleUpdatePromo = async () => {
+        setLoading(true);
         try {
             const products = selectedProducts.map((p) => ({
                 productId: p.productId,
@@ -129,6 +131,7 @@ function UpdatePromoView() {
             }
             showErrorToast(error.response.data.message);
         }
+        setLoading(false);
     } 
 
   return (
@@ -194,7 +197,7 @@ function UpdatePromoView() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button onClick={handleUpdatePromo} variant='contained'>Update Promo</Button>
+                <Button onClick={handleUpdatePromo} variant='contained' style={{ width: '140px'}} disabled={loading}>{loading ? <CircularProgress size={24} /> : "Update Promo"}</Button>
             </div>
         </div>
     </div>

@@ -14,16 +14,13 @@ import { DashboardContent } from 'src/layouts/dashboard'
 
 export function DeliveryView() {
   const nav = useNavigate();
-  const [provinces, setProvinces] = useState<{province_id: string, label: string}[]>([]);
-  const [cities, setCities] = useState<{city_id: string, province_id: string, province: string, type: string, label: string, postal_code: string}[]>([]);
-  const [subdistricts, setSubdistricts] = useState<{subdistrict_id: string, label: string, city_id: string, province_id: string, province: string, type: string, city: string, postal_code: string}[]>([]);
-  const [province, setProvince] = useState<string | undefined>("");
-  const [city, setCity] = useState<string | undefined>("");
-  const [subdistrict, setSubdistrict] = useState<string | undefined>("");
-  const [currProvince, setCurrProvince] = useState<string | undefined>("");
-  const [currCity, setCurrCity] = useState<string | undefined>("");
-  const [currSubdistrict, setCurrSubdistrict] = useState<string | undefined>("");
+  const [destinations, setDestinations] = useState<{city_name: string, district_name: string, id: number, label: string, subdistrict_name: string, zip_code: string}[]>([]);
+  
+  const [destination, setDestination] = useState<string | undefined>("");
+  
+  const [selectedDestination, setSelectedDestination] = useState<{city_name: string, district_name: string, id: number, label: string, subdistrict_name: string, zip_code: string}>();
   const [postalCode, setPostalCode] = useState<string | undefined>("");
+  const [label, setLabel] = useState<string | undefined>("");
   const [detail, setDetail] = useState("");
   const [senderName, setSenderName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -33,20 +30,6 @@ export function DeliveryView() {
   const [provinceId, setProvinceId] = useState("");
 
   useEffect(() => {
-    async function getProvinces() {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/addresses/province`);
-        console.log(response.data.provinces);
-        const transformedProvinces = response.data.provinces.map(({ province_id, province }: { province_id: string, province: string}) => ({
-          province_id,
-          label: province
-      }));
-        setProvinces(transformedProvinces);
-      } catch (error) {
-        showErrorToast(error.message);
-      }
-    }
-
     async function currentPickupPoint() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/addresses/admin`, {
@@ -60,15 +43,7 @@ export function DeliveryView() {
           setSenderName(response.data.response[0].senderName);
           setPhoneNumber(response.data.response[0].senderPhoneNumber);
           setDetail(response.data.response[0].addressDetail);
-          
-          setProvince(response.data.response[0].addressProvince);
-          setCity(response.data.response[0].addressCity);
-          setSubdistrict(response.data.response[0].addressSubdistrict);
-
-          setCurrProvince(response.data.response[0].addressProvince);
-          setCurrCity(response.data.response[0].addressCity);
-          setCurrSubdistrict(response.data.response[0].addressSubdistrict);
-
+          setLabel(response.data.response[0].komshipLabel);
         }
       } catch (error) {
         if (error.status === 401) {
@@ -77,50 +52,27 @@ export function DeliveryView() {
       }
     }
 
+    
     currentPickupPoint();
-    getProvinces();
-  }, [loading])
+  }, [loading]);
 
-  async function getCities(id: string | undefined) {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/addresses/city?province=${id}`);
-      
-      const transformedCities = response.data.cities.map(({ city_id, province_id, province, type, city_name, postal_code }: {city_id: string, province_id: string, province: string, type: string, city_name: string, postal_code: string}) => ({
-        city_id,
-        label: `${type} ${city_name}`
-      }));
-      setCities(transformedCities);
-    } catch (error) {
-      showErrorToast(error.message);
+  useEffect(() => {
+    async function getAllDestination() {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/addresses/destination?keyword=${destination}`);
+        setDestinations(response.data.searchResult.data);
+        console.log(response.data.searchResult.data);
+        
+      } catch (error) {
+        console.log(error);
+        
+        showErrorToast(error.message);
+      }
     }
-  }
-
-  async function handleChangeProvince(id: string | undefined, province: string | undefined) {
-    setProvince(province);
-    await getCities(id);
-  }
-
-  async function handleChangeCity(id: string | undefined, cityName: string | undefined) {
-    setCity(cityName);
-    await getSubdistricts(id);
-  }
-
-  async function getSubdistricts(id: string | undefined) {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/addresses/subdistrict?city=${id}`);
-      const transformedSubdistrict = response.data.subdistrict.rajaongkir.results.map(({ subdistrict_id, subdistrict_name, city_id, province_id, province, type, city, postal_code }: {subdistrict_id: string, subdistrict_name: string, city_id: string, province_id: string, province: string, type: string, city: string, postal_code: string}) => ({
-        city_id,
-        province_id,
-        province,
-        type,
-        label: subdistrict_name,
-        postal_code
-      }));
-      setSubdistricts(transformedSubdistrict);
-    } catch (error) {
-      showErrorToast(error.message);
+    if (destination && destination?.length > 0) {
+      getAllDestination();
     }
-  }
+  }, [destination]);
 
   async function handleUpdatePickUpPoint() {
     setLoading(true);
@@ -128,11 +80,13 @@ export function DeliveryView() {
       const body = {
         senderName: senderName,
         senderPhoneNumber: phoneNumber,
-        province: province, 
-        city: city, 
-        subdistrict: subdistrict, 
-        postalCode: postalCode, 
-        addressDetail: detail
+        city: selectedDestination?.city_name, 
+        subdistrict: selectedDestination?.subdistrict_name, 
+        district: selectedDestination?.district_name, 
+        postalCode: selectedDestination?.zip_code, 
+        addressDetail: detail,
+        komshipAddressId: selectedDestination?.id,
+        label: selectedDestination?.label
       }
 
       console.log(body);
@@ -170,20 +124,28 @@ export function DeliveryView() {
         </Typography>
       </Box>
       <div style={{ display:'flex', flexWrap: 'wrap', gap: '10px'}}>
-        <div>
+        <div style={{ width: '100%' }}>
           <Typography variant="subtitle2" flexGrow={1} style={{ marginBottom: '10px', fontSize: '12px' }}>
-            Current pick up province <span style={{ color: 'red' }}>{currProvince?.toUpperCase()}</span>
+            Current pick up province <span style={{ color: 'red' }}>{label?.toUpperCase()}</span>
           </Typography>
+
           <Autocomplete
+            fullWidth
             disablePortal
-            options={provinces}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Province" />}
-            onChange={(e, province) => handleChangeProvince(province?.province_id, province?.label) }
+            options={destinations}
+            // sx={{ width:  }}
+            renderInput={(params) => <TextField {...params} label="Type city / district / subdistrict / postal code" />}
+            onInputChange={(event, newInputValue) => {
+              setDestination(newInputValue);
+            }}
+            onChange={(event: any, newValue: any) => {
+              setSelectedDestination(newValue);
+            }}
           />
+
         </div>
 
-        <div>
+        {/* <div>
           <Typography variant="subtitle2" flexGrow={1} style={{ marginBottom: '10px', fontSize: '12px' }}>
             Current pick up city <span style={{ color: 'red' }}>{currCity?.toUpperCase()}</span>
           </Typography>
@@ -212,15 +174,15 @@ export function DeliveryView() {
               setPostalCode(subdistrict?.postal_code)
             }}
           />
-        </div>
+        </div> */}
       </div>
 
       
 
       <div style={{ marginTop: '20px'}}>
-        <div style={{ display:'flex', flexWrap: 'wrap', gap: '20px'}}>
-          <TextField label="Sender Name" variant="outlined" value={senderName} onChange={(e) => setSenderName(e.target.value)} />
-          <TextField label="Phone Number" type='number' variant="outlined" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
+        <div style={{ display:'flex', flexWrap: 'wrap', justifyContent: 'space-between'}}>
+          <TextField style={{ width: '45%' }} label="Sender Name" variant="outlined" value={senderName} onChange={(e) => setSenderName(e.target.value)} />
+          <TextField style={{ width: '45%' }} label="Phone Number" type='number' variant="outlined" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
         </div>
 
         <TextareaAutosize

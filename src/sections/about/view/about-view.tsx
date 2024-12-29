@@ -15,7 +15,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
-import { BottomNavigation, BottomNavigationAction, Chip, TextareaAutosize, TextField } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Chip, CircularProgress, TextareaAutosize, TextField } from '@mui/material';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +34,7 @@ export function AboutView() {
   const [title, setTitle] = useState("");
   const [why, setWhy] = useState("");
   const [update, setUpdate] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { showSuccessToast, showErrorToast } = useToaster();
 
   useEffect(() => {
@@ -62,6 +63,7 @@ export function AboutView() {
   
   
   const handleUpdateEngPage = async () => {
+    setLoading(true);
     try {
       const body = {
         contentEng: content,
@@ -88,9 +90,11 @@ export function AboutView() {
       }
       showErrorToast(error.message);
     }
+    setLoading(false);
   }
 
   const handleUpdateIndoPage = async () => {
+    setLoading(true);
     try {
       const body = {
         contentIndo: content,
@@ -116,6 +120,7 @@ export function AboutView() {
       }
       showErrorToast(error.message);
     }
+    setLoading(false);
   }
 
   return (
@@ -227,8 +232,8 @@ export function AboutView() {
 
       <div className="responsive-container">
           <div className="button-container">
-          <Button variant="contained" onClick={value === 0 ? handleUpdateEngPage : handleUpdateIndoPage}>
-              Update Page
+          <Button variant="contained" disabled={loading} style={{ width: '140px' }} onClick={value === 0 ? handleUpdateEngPage : handleUpdateIndoPage}>
+          {loading ? <CircularProgress size={24} /> : "Update Page"}
           </Button>
           </div>
       </div>

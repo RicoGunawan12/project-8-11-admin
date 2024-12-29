@@ -27,7 +27,7 @@ import type { UserProps } from '../user-table-row';
 import InsertProductView from './insert-product-view';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
-import { FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextField } from '@mui/material';
+import { CircularProgress, FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextField } from '@mui/material';
 import { maxHeaderSize } from 'node:http';
 import Cookies from 'js-cookie';
 
@@ -60,7 +60,8 @@ export function ProductsView() {
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState<ProductProps>();
   const [update, setUpdate] = useState(false);
-  const { showErrorToast, showSuccessToast } = useToaster();
+  const [loading, setLoading] = useState(false);
+  const { showErrorToast, showSuccessToast, showLoadingToast } = useToaster();
   const table = useTable();
 
   useEffect(() => {
@@ -98,16 +99,19 @@ export function ProductsView() {
   } 
 
   const handleUpdateVariant = async () => {
+    setLoading(true);
     if (!product) {
       return;
     }
-     try {
+    try {
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/update/variant`, product?.product_variants, {
-          headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("tys-token")}`,
-          },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("tys-token")}`,
+        },
       });
+      
+      
       // setProduct(response.data);
       showSuccessToast("Variant updated!");
       setProduct(undefined);
@@ -120,8 +124,9 @@ export function ProductsView() {
       
       showErrorToast(error.message);
     }
+    setLoading(false);
   }
-
+  
   const handleInputChange = (
     index: number,
     field: keyof ProductProps['product_variants'][0], // Type fixed for better readability
@@ -142,13 +147,18 @@ export function ProductsView() {
 
   const handleDeleteProduct = async (id: string) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`, {
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/products/${id}`, {
           headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${Cookies.get("tys-token")}`,
           },
       });
-      showSuccessToast("Product Deleted!");
+      await showLoadingToast(response, {
+        pending: "Deleting product...",
+        success: "Product deleted successfully!",
+        error: "Error deleting product!",
+      });
+      // showSuccessToast("Product Deleted!");
       setUpdate(!update);
     } catch (error) {
       if (error.status === 401) {
@@ -302,8 +312,8 @@ export function ProductsView() {
               {
                 product?.product_variants.map((variant, index) => {
                   return <tr key={variant.productVariantId}>
-                        <td>{`${variant.productSize} - ${variant.productColor}`}</td>
-                        <td style={{ padding: '10px', width: '250px'}}>
+                        <td>{`${variant.productColor}`}</td>
+                        <td style={{ padding: '10px', width: '350px'}}>
                           <div style={{ display: 'flex', gap: '5px' }}>
                             <Button style={{ fontSize: '16px'}} onClick={(e) => handleInputChange(index, "productStock", variant.productStock - 1)}>-</Button>
                             <OutlinedInput
@@ -333,8 +343,8 @@ export function ProductsView() {
                 })
               }
             </table> 
-            <Button variant="contained" style={{ margin: '20px 0'}} onClick={handleUpdateVariant}>Update</Button>
 
+            <Button variant="contained" style={{ margin: '20px 0'}} disabled={loading} onClick={handleUpdateVariant}>{loading ? <CircularProgress size={24} /> : "Update"}</Button>
             <div style={{ display: 'flex', width: '100%', justifyContent: 'end' }}>
               <Button color="error" variant="contained" onClick={handleClose}>Close</Button>
             </div>

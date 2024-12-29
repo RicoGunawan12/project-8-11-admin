@@ -35,5 +35,26 @@ export function useToaster() {
         });
         return showSuccessToast;
     };
-    return { showErrorToast, showSuccessToast };
+
+    const showLoadingToast = (promise: Promise<any>, messages: { pending: string; success: string; error: string }) => {
+        return toast.promise(
+          promise,
+          {
+            pending: messages.pending,
+            success: messages.success,
+            error: messages.error,
+          },
+          {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            theme: "light",
+            transition: Bounce,
+          }
+        );
+      };
+    
+    return { showErrorToast, showSuccessToast, showLoadingToast };
 }

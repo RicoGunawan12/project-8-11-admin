@@ -1,4 +1,4 @@
-import { Button, MenuItem, Select, SelectChangeEvent, TextareaAutosize, TextField, Typography, FormControl, InputLabel, OutlinedInput, InputAdornment, FormHelperText } from "@mui/material";
+import { Button, MenuItem, Select, SelectChangeEvent, TextareaAutosize, TextField, Typography, FormControl, InputLabel, OutlinedInput, InputAdornment, FormHelperText, CircularProgress } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
@@ -36,6 +36,7 @@ function UpdateProductView() {
     const [productLength, setProductLength] = useState(0);
     const [productWidth, setProductWidth] = useState(0);
     const [productHeight, setProductHeight] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const [defaultImage, setDefaultImage] = useState<File | null>(null);
     const handleFileChange = async (e: any) => {
@@ -123,6 +124,7 @@ function UpdateProductView() {
 
 
       const handleUpdateProduct = async () => {
+        setLoading(true);
         const formData = new FormData();
         formData.append("productName", productName);
         formData.append("productCategoryName", category);
@@ -136,14 +138,14 @@ function UpdateProductView() {
         if (defaultImage) {
             formData.append("defaultImage", defaultImage);
         }
-
+        
         variants.forEach((variant, index) => {
             if (variant.productImage) {
                 console.log(variant.productImage);
                 
                 const fileExtension = variant.productImage.name.split(".").pop(); // Get file extension
                 const newFileName = `${productName} - ${variant.productColor}`;
-        
+                
                 const renamedFile = new File([variant.productImage], newFileName, {
                     type: variant.productImage.type,
                 });
@@ -157,37 +159,38 @@ function UpdateProductView() {
         
         formData.forEach((value, key) => {
             console.log(key, value);
-          });
-          
+        });
+        
         try {
-              
-
-              const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/${product?.productId}`, formData, {
+            
+            
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/products/${product?.productId}`, formData, {
                 headers: { 
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${Cookies.get('tys-token')}`
-                 },
-              });
-
-              showSuccessToast(response.data.message);
-            //   setVariants(
-            //     [{ sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
-            //   )
-            nav('/products');
-        } catch (error) {
-            console.log(error);
+                },
+            });
             
-            if (error.status === 401) {
-                nav('/');
+            showSuccessToast(response.data.message);
+            //   setVariants(
+                //     [{ sku: "test", productImage: null, productSize: "", productColor: "", productPrice: 0, productStock: 0, productWeight: 0, productLength: 0, productWidth: 0, productHeight: 0 }]
+                //   )
+                nav('/products');
+            } catch (error) {
+                console.log(error);
+                
+                if (error.status === 401) {
+                    nav('/');
+                }
+                showErrorToast(error.response.data.message);
             }
-            showErrorToast(error.response.data.message);
+            setLoading(false);
         }
-      }
-
-
-      async function convertToFile(url: string) {
-        // Fetch the image as a Blob
-        const response = await fetch(url);
+        
+        
+        async function convertToFile(url: string) {
+            // Fetch the image as a Blob
+            const response = await fetch(url);
         
         if (!response.ok) {
           throw new Error('Failed to fetch image');
@@ -434,7 +437,7 @@ function UpdateProductView() {
 
         <div style={{ position: 'fixed', bottom: '0', backgroundColor: 'white', zIndex: '1', width:'77.5%', boxShadow: '0px -2px 6px rgba(0, 0, 0, 0.2)' }}>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'end', marginTop: '20px', marginBottom: '20px', paddingRight: '40px'}}>
-                <Button variant="contained" onClick={handleUpdateProduct}>Update Product</Button>
+                <Button disabled={loading} variant="contained" style={{ width: '150px' }} onClick={handleUpdateProduct}>{loading ? <CircularProgress size={24} /> : "Update Product"}</Button>
             </div>
         </div>
 
