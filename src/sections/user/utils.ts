@@ -1,6 +1,24 @@
-import type { UserProps } from './user-table-row';
-
 // ----------------------------------------------------------------------
+
+export enum UserPageNumbers {
+  INSERT_PAGE_VIEW = 0,
+  SHOW_PAGE_VIEW = 1
+};
+
+export type UserProps = {
+  userId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  role: string;
+};
+
+export type UserPageProps = {
+  currPage: number;
+  changePage: (curr: number) => void
+  updateSignal: boolean;
+  handleUpdate: () => void
+};
 
 export const visuallyHidden = {
   border: 0,

@@ -10,16 +10,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Iconify } from 'src/components/iconify';
+import { UserProps } from './utils';
 
 // ----------------------------------------------------------------------
-
-export type UserProps = {
-  userId: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  role: string;
-};
 
 type UserTableRowProps = {
   row: UserProps;
