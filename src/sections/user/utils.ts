@@ -11,6 +11,7 @@ export type UserProps = {
   email: string;
   phone: string;
   role: string;
+  status: string;
 };
 
 export type UserPageProps = {

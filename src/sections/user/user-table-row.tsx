@@ -11,6 +11,9 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Iconify } from 'src/components/iconify';
 import { UserProps } from './utils';
+import axios from 'axios';
+import { useToaster } from 'src/components/toast/Toast';
+import Cookies from 'js-cookie';
 
 // ----------------------------------------------------------------------
 
@@ -18,9 +21,11 @@ type UserTableRowProps = {
   row: UserProps;
   selected: boolean;
   onSelectRow: () => void;
+  onUpdate: () => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+export function UserTableRow({ row, selected, onSelectRow, onUpdate }: UserTableRowProps) {
+  const { showErrorToast, showSuccessToast } = useToaster();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -30,6 +35,38 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
+
+  const handleActivateUser = async (userId: string) => {
+    try {
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_USER}/activate`, {
+        userId
+      }, {
+        headers: {
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      showSuccessToast("Successfully activate account");
+      onUpdate();
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  }
+
+  const handleDeactivateUser = async (userId: string) => {
+    try {
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_USER}/deactivate`, {
+        userId
+      }, {
+        headers: {
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      showSuccessToast("Successfully deactivate account");
+      onUpdate();
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  }
 
   return (
     <>
@@ -51,9 +88,9 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
         <TableCell>{row.role.toUpperCase()}</TableCell>
 
-        {/* <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
-        </TableCell> */}
+        <TableCell>
+          <div style={{ backgroundColor: (row.status === 'active') ? "#88E788" : "#EF9A9A", textAlign: "center", borderRadius: "8px", color: (row.status === 'active') ? "#008000" : "#D32F2F", fontWeight: "bold" }}>{row.status.toUpperCase()}</div>
+        </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
@@ -85,15 +122,20 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
-          </MenuItem>
+          {row.status === 'inactive' ? (
+            <MenuItem onClick={() => handleActivateUser(row.userId)} sx={{ color: 'success.main' }}>
+              <Iconify icon="solar:check-circle-linear" />
+              Activate
+            </MenuItem>
+          ) : (
+            <MenuItem onClick={() => handleDeactivateUser(row.userId)} sx={{ color: 'error.main' }}>
+              <Iconify icon="solar:close-circle-linear" />
+              Deactivate
+            </MenuItem>
+          ) }
+          
 
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
+          
         </MenuList>
       </Popover>
     </>
