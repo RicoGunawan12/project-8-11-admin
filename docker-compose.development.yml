@@ -1,0 +1,23 @@
+# Author: Christopher Limawan
+# File: Dockerfile.development
+# Purpose: Docker compose configuration for development environment, adjusted for Tyeso web 
+
+version: "3.9"
+
+services: 
+  admin-frontend:
+    container_name: tyeso-admin-web_frontend
+    build: 
+      dockerfile: Dockerfile.development
+      context: .
+    restart: always #change if you don't want your container restarting
+    ports:
+      - 3002:3039
+    # volumes:
+    #   - .:/app
+
+networks:
+  default:
+    name: dev_tyeso-network_default
+    driver: bridge
+    external: true
