@@ -1,6 +1,6 @@
 import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -25,6 +25,8 @@ import { LanguagePopover } from '../components/language-popover';
 import { NotificationsPopover } from '../components/notifications-popover';
 import { Button } from '@mui/material';
 import Cookies from 'js-cookie';
+import axios from 'axios';
+import { useToaster } from 'src/components/toast/Toast';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +41,7 @@ export type DashboardLayoutProps = {
 export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) {
   const theme = useTheme();
   const nav = useNavigate();
+  const { showErrorToast } = useToaster();
 
   const handleLogout = async () => {
 
@@ -49,6 +52,35 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
   const [navOpen, setNavOpen] = useState(false);
 
   const layoutQuery: Breakpoint = 'lg';
+
+  useEffect(() => {
+    const checkCurrentUser = async () => {
+      const bearerToken = Cookies.get('tys-token');
+
+      if (bearerToken === null || bearerToken === undefined) {
+        nav('/');
+      }
+
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_USER}/logged-in`, {
+          headers: {
+            Authorization: `Bearer ${bearerToken}`
+          }
+        });
+
+        if (response.data.user.role !== 'admin') {
+          showErrorToast('Unauthorized, logging out...');
+          handleLogout();
+        }
+
+      } catch (error) {
+        showErrorToast(error);
+        nav('/');
+      } 
+    };
+
+    setTimeout(checkCurrentUser, 1000);
+  }, []);
 
   return (
     <LayoutSection
