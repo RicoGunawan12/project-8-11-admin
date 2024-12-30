@@ -1,21 +1,17 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
+export type CategoryProps = {
   id: string;
   name: string;
   role: string;
@@ -25,7 +21,7 @@ export type UserProps = {
   isVerified: boolean;
 };
 
-type UserTableRowProps = {
+type CategoryTableRowProps = {
   row: { productCategoryId: string, productCategoryName: string, productCategoryPhoto: string};
   selected: boolean;
   onSelectRow: () => void;
@@ -33,7 +29,7 @@ type UserTableRowProps = {
   handleUpdate: (id: string, name: string, photo: string) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: UserTableRowProps) {
+export function CategoryTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: CategoryTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   
   return (
@@ -63,40 +59,7 @@ export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleU
             Delete
           </MenuItem>
         </TableCell>
-
-        {/* <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell> */}
       </TableRow>
-
-      <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        // onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        {/* <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 140,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              px: 1,
-              gap: 2,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
-            },
-          }}
-        >
-          
-        </MenuList> */}
-      </Popover>
     </>
   );
 }
