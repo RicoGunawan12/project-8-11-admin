@@ -18,17 +18,7 @@ import { Button, Switch } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
-  id: string;
-  name: string;
-  role: string;
-  status: string;
-  company: string;
-  avatarUrl: string;
-  isVerified: boolean;
-};
-
-type UserTableRowProps = {
+type ProductTableRowProps = {
   row: ProductProps;
   selected: boolean;
   onSelectRow: () => void;
@@ -37,7 +27,7 @@ type UserTableRowProps = {
   handleUpdateBestSeller: (id: string, isBestSeller: boolean) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, handleDeleteProduct, handleUpdateBestSeller }: UserTableRowProps) {
+export function ProductTableRow({ row, selected, onSelectRow, handleEditVariant, handleDeleteProduct, handleUpdateBestSeller }: ProductTableRowProps) {
   const nav = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
@@ -101,37 +91,6 @@ export function UserTableRow({ row, selected, onSelectRow, handleEditVariant, ha
           </MenuItem>
         </TableCell>
       </TableRow>
-
-      {/* <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 140,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              px: 1,
-              gap: 2,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
-            },
-          }}
-        >
-
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
-        </MenuList>
-      </Popover> */}
     </>
   );
 }
