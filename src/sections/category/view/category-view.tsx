@@ -53,6 +53,13 @@ export function CategoriesView() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const [toDelete, setToDelete] = useState("");
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
+
+
   const [loading, setLoading] = useState(false);
 
   const [currUpdateId, setCurrUpdateId] = useState('');
@@ -157,13 +164,18 @@ export function CategoriesView() {
     setLoading(false);
   }
 
-  const handleDeleteCategory = async (id: string) => {
+  const handleOpenDeleteModal = async (id: string) => {
+    setToDelete(id);
+    handleOpenDelete();
+  }
+
+  const handleDeleteCategory = async () => {
     
     try {
       const body = {
         category
       }
-      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/categories/${id}`,
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/categories/${toDelete}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
@@ -177,6 +189,8 @@ export function CategoriesView() {
       });
 
       // showSuccessToast(response.data.message);
+      setToDelete("");
+      handleCloseDelete();
       setUpdate(!update);
     } catch (error) {
       if (error.status === 401) {
@@ -275,7 +289,7 @@ export function CategoriesView() {
                       row={row}
                       selected={table.selected.includes(row.productCategoryId)}
                       onSelectRow={() => table.onSelectRow(row.productCategoryId)}
-                      handleDelete={handleDeleteCategory}
+                      handleDelete={handleOpenDeleteModal}
                       handleUpdate={handleOpenUpdate}
                     />
                   ))}
@@ -315,9 +329,16 @@ export function CategoriesView() {
 
           <div style={{ display: 'flex', marginTop: '35px', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
             
-            <div>
-              <ImageInput name='Category Photo' width='100%' height='200px' initialFile={photo} onChange={(e: any) => setPhoto(e.target.files[0])}/>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ImageInput name='Category Photo' width='300px' height='400px' initialFile={photo} onChange={(e: any) => setPhoto(e.target.files[0])}/>
             </div>
+
+            <div>
+              <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                300 x 400 (px) resolution
+              </Typography>
+            </div>
+
             <div style={{ gap: '20px', marginTop: '20px'}}>
               <TextField
                 fullWidth
@@ -352,8 +373,14 @@ export function CategoriesView() {
           </Typography>
 
           <div style={{ display: 'flex', marginTop: '35px', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <ImageInput name='Category Photo' width='300px' height='400px' initialFile={currPhoto} onChange={(e: any) => setCurrPhoto(e.target.files[0])}/>
+              </div>
+
               <div>
-                <ImageInput name='Category Photo' width='100%' height='200px' initialFile={currPhoto} onChange={(e: any) => setCurrPhoto(e.target.files[0])}/>
+                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                  300 x 400 (px) resolution
+                </Typography>
               </div>
 
               <div style={{ marginTop: '20px' }}>
@@ -372,6 +399,31 @@ export function CategoriesView() {
             <div style={{ display: 'flex', width: '100%', justifyContent: 'end', marginTop: '20px', gap: '10px' }}>
               <Button color="error" variant="contained" onClick={handleCloseUpdate}>Close</Button>
               <Button variant="contained" onClick={handleUpdateCategory} disabled={loading} style={{ width: '75px'}}>{loading ? <CircularProgress size={24} /> : "Update"}</Button>
+            </div>
+          </div>
+
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Delete Category
+          </Typography>
+
+          <div style={{ marginTop: '30px'}}>
+            Are you sure want to delete this category?
+          </div>
+
+          <div style={{ display: 'flex', marginTop: '35px', flexDirection: 'column', justifyContent:'space-between'}}>
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: '20px', gap: '10px' }}>
+              <Button variant="contained" onClick={handleCloseDelete}>Cancel</Button>
+              <Button color="error" variant="contained" onClick={handleDeleteCategory} disabled={loading} style={{ width: '75px'}}>{loading ? <CircularProgress size={24} /> : "Delete"}</Button>
             </div>
           </div>
 

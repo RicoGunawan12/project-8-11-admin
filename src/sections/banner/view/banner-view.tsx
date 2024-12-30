@@ -158,21 +158,31 @@ export function BannerView() {
 
         <div style={{ width: '100%' }}>        
           <div>
-            <ImageInput 
-              width="100%" 
-              height="200px" 
-              onChange={(e) => {
-                const target = e.target as HTMLInputElement;
-                const file = target.files?.[0] || null;
-                setProductPage(file)
-              }}
-              initialFile={productPage}
-              name="Product Banner"
-            />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ImageInput 
+                width="1000px" 
+                height="500px" 
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  const file = target.files?.[0] || null;
+                  setProductPage(file)
+                }}
+                initialFile={productPage}
+                name="Product Page Banner"
+              />
+            </div>
+
+            <div>
+                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                    2 : 1 resolution
+                </Typography>
+            </div>
           </div>
-          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Product Page")}>
-              {loading ? <CircularProgress size={24} /> : "Update Page"}
-          </Button>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Product Page")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -183,22 +193,32 @@ export function BannerView() {
 
         <div style={{ width: '100%' }}>        
           <div>
-            <ImageInput 
-              width="100%" 
-              height="200px" 
-              onChange={(e) => {
-                const target = e.target as HTMLInputElement;
-                const file = target.files?.[0] || null;
-                setAboutPage(file)
-              }}
-              initialFile={aboutPage}
-              name="About Banner"
-            />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ImageInput 
+                width="1000px" 
+                height="500px" 
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  const file = target.files?.[0] || null;
+                  setAboutPage(file)
+                }}
+                initialFile={aboutPage}
+                name="About Page Banner"
+              />
+            </div>
+
+            <div>
+                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                    2 : 1 resolution
+                </Typography>
+            </div>
 
           </div>
-          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("About Page")}>
-              {loading ? <CircularProgress size={24} /> : "Update Page"}
-          </Button>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("About Page")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -209,21 +229,31 @@ export function BannerView() {
 
         <div style={{ width: '100%' }}>        
           <div>
-            <ImageInput 
-              width="100%" 
-              height="200px" 
-              onChange={(e) => {
-                const target = e.target as HTMLInputElement;
-                const file = target.files?.[0] || null;
-                setContactPage(file)
-              }}
-              initialFile={contactPage}
-              name="Contact Banner"
-            />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ImageInput 
+                width="1000px" 
+                height="500px" 
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  const file = target.files?.[0] || null;
+                  setContactPage(file)
+                }}
+                initialFile={contactPage}
+                name="Contact Page Banner"
+              />
+            </div>
+            <div>
+                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                    2 : 1 resolution
+                </Typography>
+            </div>
           </div>
-          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Contact Page")}>
-              {loading ? <CircularProgress size={24} /> : "Update Page"}
-          </Button>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Contact Page")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -233,22 +263,31 @@ export function BannerView() {
         </Typography>
 
         <div style={{ width: '100%' }}>        
-          <div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ImageInput 
-              width="100%" 
-              height="200px" 
+              width="1000px" 
+              height="500px" 
               onChange={(e) => {
                 const target = e.target as HTMLInputElement;
                 const file = target.files?.[0] || null;
                 setFAQPage(file)
               }}
               initialFile={faqPage}
-              name="FAQ Banner"
+              name="FAQ Page Banner"
             />
           </div>
-          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("FAQ Page")}>
-              {loading ? <CircularProgress size={24} /> : "Update Page"}
-          </Button>
+
+          <div>
+              <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                  2 : 1 resolution
+              </Typography>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("FAQ Page")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -258,22 +297,31 @@ export function BannerView() {
         </Typography>
 
         <div style={{ width: '100%' }}>        
-          <div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ImageInput 
-              width="100%" 
-              height="200px" 
+              width="1000px" 
+              height="500px" 
               onChange={(e) => {
                 const target = e.target as HTMLInputElement;
                 const file = target.files?.[0] || null;
                 setProfilePage(file)
               }}
               initialFile={profilePage}
-              name="Profile Banner"
+              name="Profile Page Banner"
             />
           </div>
-          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Profile Page")}>
-              {loading ? <CircularProgress size={24} /> : "Update Page"}
-          </Button>
+          
+          <div>
+              <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                  2 : 1 resolution
+              </Typography>
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Profile Page")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -283,10 +331,10 @@ export function BannerView() {
         </Typography>
 
         <div style={{ width: '100%' }}>        
-          <div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ImageInput 
-              width="100%" 
-              height="200px" 
+              width="1000px" 
+              height="500px" 
               onChange={(e) => {
                 const target = e.target as HTMLInputElement;
                 const file = target.files?.[0] || null;
@@ -296,9 +344,18 @@ export function BannerView() {
               name="Profile Banner"
             />
           </div>
-          <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Blog Page")}>
-              {loading ? <CircularProgress size={24} /> : "Update Page"}
-          </Button>
+          
+          <div>
+              <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                  2 : 1 resolution
+              </Typography>
+          </div>
+            
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Blog Page")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
         </div>
       </div>
 

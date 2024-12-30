@@ -1,11 +1,28 @@
 import { useEffect, useState } from 'react';
-import { Typography, Button, TextField, CircularProgress } from '@mui/material';
+import { Typography, Button, TextField, CircularProgress, Modal, Box } from '@mui/material';
 import { Editor } from '@tinymce/tinymce-react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useToaster } from 'src/components/toast/Toast';
 import ImageInput from 'src/components/input/ImageInput';
+
+
+const styleDelete = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  minHeight: 250,
+  bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  borderRadius: 2,
+  boxShadow: 24,
+  py: 4,
+  px: 4
+};
+
 
 function UpdateBlogView() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +33,10 @@ function UpdateBlogView() {
   const [loading, setLoading] = useState<boolean>(true);
   const nav = useNavigate();
   const { showErrorToast, showSuccessToast } = useToaster();
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
 
   const handleUpdateBlog = async () => {
     try {
@@ -57,6 +78,7 @@ function UpdateBlogView() {
           Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
+      handleCloseDelete();
       showSuccessToast(response.data.message);
       nav('/blog');
     } catch (error: any) {
@@ -120,7 +142,7 @@ function UpdateBlogView() {
   }
 
   return (
-    <div>
+    <div style={{ paddingBottom: '20px' }}>
       <div
         style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', marginLeft: '20px' }}
       >
@@ -223,7 +245,7 @@ function UpdateBlogView() {
         <Button
           variant="contained"
           color="error"
-          onClick={handleDeleteBlog}
+          onClick={handleOpenDelete}
           disabled={!blogTitle || !editorContent}
         >
           Delete Blog
@@ -237,6 +259,26 @@ function UpdateBlogView() {
           Submit Blog
         </Button>
       </div>
+
+      <Modal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleDelete}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Delete Blog 
+            </Typography>
+
+            <div style={{ marginTop: '40px'}}>Are you sure want to delete this blog?</div>  
+          
+            <div style={{ display: 'flex', gap: '10px', marginTop: '35px',  justifyContent: 'center' }}>
+              <Button variant="contained" style={{ margin: '20px 0'}} onClick={handleCloseDelete}>Cancel</Button>
+              <Button color="error" variant="contained" style={{ margin: '20px 0'}} disabled={loading} onClick={handleDeleteBlog}>{loading ? <CircularProgress size={24} /> : "Delete"}</Button>
+            </div>
+        </Box>
+      </Modal>
     </div>
   );
 }

@@ -65,6 +65,10 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdateContact, 
 
         <TableCell><a href={row.contactAccount} target="_blank">{row.contactAccount}</a></TableCell>
         <TableCell>
+          <MenuItem onClick={() => handleUpdateContact(row.contactId, row.contact, row.contactAccount, row.contactImage)}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
           <MenuItem onClick={() => handleDeleteContact(row.contactId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete

@@ -231,7 +231,15 @@ function UpdateProductView() {
 
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent:'space-evenly', alignItems: 'center', gap: '2vw' }}>
                 <div>
-                    <ImageInput onChange={handleFileChange} name="Default Image" initialFile={defaultImage} width="250px" height="250px"/>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <ImageInput onChange={handleFileChange} name="Default Image" initialFile={defaultImage} width="250px" height="250px"/>
+                    </div>
+
+                    <div>
+                        <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                            1 : 1 resolution
+                        </Typography>
+                    </div>
                 </div>
 
 

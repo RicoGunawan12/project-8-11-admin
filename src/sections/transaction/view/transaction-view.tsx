@@ -24,7 +24,7 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
-import { BottomNavigation, BottomNavigationAction, Chip } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Chip, Pagination } from '@mui/material';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
 import { useNavigate } from 'react-router-dom';
@@ -141,9 +141,11 @@ export function TransactionView() {
   const [value, setValue] = useState(0);
   const [update, setUpdate] = useState(false);
   const [transactions, setTransactions] = useState<TransactionProps[]>([]);
+  const [transactionCount, setTransactionCount] = useState(0);
   const { showSuccessToast, showErrorToast } = useToaster();
   const [startDate, setStartDate] = useState<Dayjs>();
   const [endDate, setEndDate] = useState<Dayjs>();
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     async function getTransactions() {
@@ -153,7 +155,7 @@ export function TransactionView() {
             status: statusMap[value],
             startDate: startDate ? startDate.format('YYYY-MM-DD') : undefined,
             endDate: endDate ? endDate.format('YYYY-MM-DD') : undefined,
-            offset: 0,
+            offset: offset === 0 ? offset : offset - 1,
             limit: 10
           },
           headers: {
@@ -171,8 +173,35 @@ export function TransactionView() {
         showErrorToast(error.message);
       }
     }
+
+    async function getTransactionsCount() {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/transactions/count`, {
+          params: {
+            status: statusMap[value],
+            startDate: startDate ? startDate.format('YYYY-MM-DD') : undefined,
+            endDate: endDate ? endDate.format('YYYY-MM-DD') : undefined
+          },
+          headers: {
+            Authorization: `Bearer ${Cookies.get('tys-token')}`,
+          },
+        });
+        setTransactionCount(response.data.count);
+      } catch (error) {
+        console.log(error);
+        
+        if (error.status === 401) {
+          nav('/');        
+        }
+        showErrorToast(error.message);
+      }
+    }
+
+    getTransactionsCount();
     getTransactions();
-  }, [value, startDate, endDate]);
+    console.log(offset);
+    
+  }, [value, startDate, endDate, offset]);
 
   const handleRequestPickUp = async (transactionId: string) => {
     try {
@@ -296,16 +325,15 @@ export function TransactionView() {
                         
                         return <div key={detail.transactionDetailId}>
                           <ProductComponent 
-                            productImage={detail.product_variant.productImage} 
+                            productImage={detail.product_variant?.productImage} 
                             productName={
                               `
-                              ${detail.product_variant.product.productName} -
-                              ${detail.product_variant.productColor} -
-                              ${detail.product_variant.productSize}
+                              ${detail.product_variant?.product.productName} -
+                              ${detail.product_variant?.productColor} 
                               `
                             }
                             quantity={detail.quantity} 
-                            productPrice={detail.product_variant.productPrice}
+                            productPrice={detail.product_variant?.productPrice}
                           />
                         </div>
                       })
@@ -354,6 +382,9 @@ export function TransactionView() {
             </Box>
           })
         }
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+        <Pagination count={Math.ceil(transactionCount / 10)} onChange={(e, pageNumber) => setOffset((pageNumber - 1) * 10)} color="primary" />
+        </div>
       </div>
       
       
