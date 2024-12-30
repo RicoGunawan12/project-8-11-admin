@@ -51,6 +51,23 @@ const style = {
   px: 4
 };
 
+
+const styleDelete = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  minHeight: 250,
+  bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  borderRadius: 2,
+  boxShadow: 24,
+  py: 4,
+  px: 4
+};
+
+
 export function SocialView() {
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
@@ -58,8 +75,16 @@ export function SocialView() {
   const handleClose = () => setOpen(false);
 
   const [openUpdate, setOpenUpdate] = useState(false);
-  const handleOpenUpdate = () => setOpenUpdate(true);
+  const handleOpenUpdate = () => {
+    setOpenUpdate(true)
+    setContactImage(null);
+  }
   const handleCloseUpdate = () => setOpenUpdate(false);
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
+  const [toDelete, setToDelete] = useState("");
   
   const [currPage, setCurrPage] = useState(1);
   const [products, setProducts] = useState([]);
@@ -100,6 +125,9 @@ export function SocialView() {
         setContactToSend(response.data.contact);
         console.log(response.data.contact)
       } catch (error) {
+        if (error.status === 401) {
+          nav('/')
+        }
         showErrorToast(error.message);
       }
     }
@@ -137,6 +165,7 @@ export function SocialView() {
       handleClose()
       setContact("");
       setContactAccount("");
+      setContactImage(null);
       setUpdate(!update)
     } catch (error) {
       if (error.status === 401) {
@@ -161,43 +190,49 @@ export function SocialView() {
     setContactImage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${contactImage}`))
   }
 
-  // const handleUpdateContact = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const body = new FormData();
-  //     body.append("contact", contact)
-  //     body.append("contactAccount", contactAccount)
-  //     if (contactImage) {
-  //       body.append("contactImage", contactImage)
-  //     }
-  //     const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${contactId}`, body, {
-  //       headers: {
-  //         Authorization: `Bearer ${Cookies.get('tys-token')}`,
-  //       },
-  //     });
-  //     console.log(response);
-      
-  //     showSuccessToast("Contact updated!");
-  //     window.location = window.location
-  //     setContact("");
-  //     setContactAccount("");
-  //     setContactId("");
-  //     setUpdate(!update)
-  //     handleCloseUpdate()
-  //   } catch (error) {
-  //     console.log(error);
-      
-  //     if (error.status === 401) {
-  //       nav('/')
-  //     }
-  //     showErrorToast(error.response.data.message);
-  //   }
-  //   setLoading(false);
-  // }
-
-  const handleDeleteContact = async (id: string) => {
+  const handleUpdateContact = async () => {
+    setLoading(true);
     try {
-      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${id}`, {
+      const body = new FormData();
+      body.append("contact", contact)
+      body.append("contactAccount", contactAccount)
+      if (contactImage) {
+        body.append("contactImage", contactImage)
+      }
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${contactId}`, body, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      console.log(response);
+      
+      showSuccessToast("Contact updated!");
+      window.location = window.location
+      setContact("");
+      setContactAccount("");
+      setContactId("");
+      setContactImage(null);
+      setUpdate(!update)
+      handleCloseUpdate()
+    } catch (error) {
+      console.log(error);
+      
+      if (error.status === 401) {
+        nav('/')
+      }
+      showErrorToast(error.response.data.message);
+    }
+    setLoading(false);
+  }
+
+  const handleOpenDeleteModal = async (id: string) => {
+    setToDelete(id);
+    handleOpenDelete();
+  }
+
+  const handleDeleteContact = async () => {
+    try {
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${toDelete}`, {
         headers: {
           Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
@@ -210,6 +245,8 @@ export function SocialView() {
       });
       
       // showSuccessToast("Contact deleted!");
+      setToDelete("");
+      handleCloseDelete();
       setUpdate(!update)
     } catch (error) {
       if (error.status === 401) {
@@ -374,7 +411,7 @@ export function SocialView() {
                           selected={table.selected.includes(row.contactId)}
                           onSelectRow={() => table.onSelectRow(row.contactId)}
                           handleUpdateContact={handleUpdate}
-                          handleDeleteContact={handleDeleteContact}
+                          handleDeleteContact={handleOpenDeleteModal}
                         />
                       ))}
 
@@ -426,8 +463,13 @@ export function SocialView() {
 
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent:'space-between', height:'80%'}}>
             <div style={{ marginTop: '35px', gap: '20px'}}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px'}}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px'}}>
                 <ImageInput onChange={handleChangeImage} initialFile={contactImage} name="Contact image" width="250px" height="250px"/>
+              </div>
+              <div>
+                <Typography id="modal-modal-title" variant="caption" marginBottom={'20px'} textAlign={'center'} component="h2">
+                    1 : 1 resolution
+                </Typography>
               </div>
 
 
@@ -463,7 +505,27 @@ export function SocialView() {
         </Box>
       </Modal>
 
-      {/* <Modal
+      <Modal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleDelete}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Delete Social Media
+            </Typography>
+
+            <div style={{ marginTop: '40px'}}>Are you sure want to delete this social media?</div>  
+          
+            <div style={{ display: 'flex', gap: '10px', marginTop: '35px',  justifyContent: 'center' }}>
+              <Button variant="contained" style={{ margin: '20px 0'}} onClick={handleCloseDelete}>Cancel</Button>
+              <Button color="error" variant="contained" style={{ margin: '20px 0'}} disabled={loading} onClick={handleDeleteContact}>{loading ? <CircularProgress size={24} /> : "Delete"}</Button>
+            </div>
+        </Box>
+      </Modal>
+
+      <Modal
         open={openUpdate}
         onClose={handleCloseUpdate}
         aria-labelledby="modal-modal-title"
@@ -511,7 +573,7 @@ export function SocialView() {
           </div>
 
         </Box>
-      </Modal> */}
+      </Modal>
 
     </DashboardContent>
   );

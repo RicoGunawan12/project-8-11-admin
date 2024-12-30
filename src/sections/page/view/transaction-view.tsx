@@ -142,7 +142,6 @@ export function PageView() {
       if (content[index].photo) {
         body.append("photo", content[index].photo);
       }
-      console.log(content[index].photo);
       
       
       const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/background/${id}`, body, {
@@ -291,8 +290,8 @@ export function PageView() {
                           <div style={{ width: '250px' }}>
                             <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={con.photo} name='Background' width='100%' height='250px' />
                           </div>
-                          <Button variant="contained" style={{ marginTop: '20px'}} onClick={() => handleBackgroundChange(index)}>
-                              Update Background 
+                          <Button variant="contained" style={{ marginTop: '20px', width: '140px' }} disabled={loading} onClick={() => handleBackgroundChange(index)}>
+                            {loading ? <CircularProgress size={24} /> : "Update Photo"}
                           </Button>
                         </div>
                         :

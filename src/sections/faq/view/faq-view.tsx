@@ -48,11 +48,33 @@ const style = {
   px: 4
 };
 
+
+const styleDelete = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  minHeight: 250,
+  bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  borderRadius: 2,
+  boxShadow: 24,
+  py: 4,
+  px: 4
+};
+
+
 export function FAQView() {
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
+  const [toDelete, setToDelete] = useState("");
 
   const [currUpdateId, setCurrUpdateId] = useState('');
   const [currUpdateFaqQuestion, setCurrUpdateFaqQuestion] = useState('');
@@ -150,9 +172,14 @@ export function FAQView() {
     setLoading(false);
   }
 
-  const handleDeleteFAQ = async (id: string) => {
+  const handleOpenDeleteModal = async (id: string) => {
+    setToDelete(id);
+    handleOpenDelete();
+  }
+
+  const handleDeleteFAQ = async () => {
     try {
-      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${id}`,
+      const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/faqs/${toDelete}`,
         {
           headers: {
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
@@ -165,6 +192,8 @@ export function FAQView() {
         error: "Error deleting FAQ!",
       });
       // showSuccessToast(response.data.message);
+      setToDelete("");
+      handleCloseDelete();
       setUpdate(!update);
     } catch (error) {
       if (error.status === 401) {
@@ -242,7 +271,7 @@ export function FAQView() {
                       row={row}
                       selected={table.selected.includes(row.faqId)}
                       onSelectRow={() => table.onSelectRow(row.faqId)}
-                      handleDelete={handleDeleteFAQ}
+                      handleDelete={handleOpenDeleteModal}
                       handleUpdate={handleOpenUpdate}
                     />
                   ))}
@@ -358,6 +387,26 @@ export function FAQView() {
             </div>
           </div>
 
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleDelete}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Delete FAQ 
+            </Typography>
+
+            <div style={{ marginTop: '40px'}}>Are you sure want to delete this FAQ?</div>  
+          
+            <div style={{ display: 'flex', gap: '10px', marginTop: '35px',  justifyContent: 'center' }}>
+              <Button variant="contained" style={{ margin: '20px 0'}} onClick={handleCloseDelete}>Cancel</Button>
+              <Button color="error" variant="contained" style={{ margin: '20px 0'}} disabled={loading} onClick={handleDeleteFAQ}>{loading ? <CircularProgress size={24} /> : "Delete"}</Button>
+            </div>
         </Box>
       </Modal>
     </DashboardContent>

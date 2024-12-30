@@ -30,12 +30,34 @@ const style = {
   px: 4
 };  
 
+
+const styleDelete = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  minHeight: 250,
+  bgcolor: 'background.paper',
+  // border: '2px solid #000',
+  borderRadius: 2,
+  boxShadow: 24,
+  py: 4,
+  px: 4
+};
+
+
 export function VoucherView() {
 
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => setOpenDelete(false);
+  const [toDelete, setToDelete] = useState("");
 
   const [currPage, setCurrPage] = useState(1);
   const [vouchers, setVouchers] = useState<VoucherProps[]>([]);
@@ -76,11 +98,16 @@ export function VoucherView() {
     }
   };
 
-  const handleDeleteVoucher = async (id: string) => {
+  const handleOpenDeleteModal = async (id: string) => {
+    setToDelete(id);
+    handleOpenDelete();
+  }
+
+  const handleDeleteVoucher = async () => {
     try {
       const response = axios.delete(`${import.meta.env.VITE_BACKEND_API}/api/vouchers`, {
         data: {
-          code: id
+          code: toDelete
         }
       });
       await showLoadingToast(response, {
@@ -88,6 +115,8 @@ export function VoucherView() {
         success: "Voucher deleted successfully!",
         error: "Error deleting voucher!",
       });
+      setToDelete("");
+      handleCloseDelete();
       // showSuccessToast('Voucher deleted successfully');
       setUpdate(!update); // Trigger data refresh
     } catch (error) {
@@ -161,7 +190,7 @@ export function VoucherView() {
                           row={row}
                           selected={table.selected.includes(row.voucherId)}
                           onSelectRow={() => table.onSelectRow(row.voucherId)}
-                          handleDelete={handleDeleteVoucher}
+                          handleDelete={handleOpenDeleteModal}
                           handleUpdate={handleEditVoucher}
                         />
                       ))}
@@ -217,6 +246,26 @@ export function VoucherView() {
           <Button variant="contained" style={{ margin: '20px 0' }} onClick={handleClose}>
             Update
           </Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleDelete}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Delete Voucher 
+            </Typography>
+
+            <div style={{ marginTop: '40px'}}>Are you sure want to delete this voucher?</div>  
+          
+            <div style={{ display: 'flex', gap: '10px', marginTop: '35px',  justifyContent: 'center' }}>
+              <Button variant="contained" style={{ margin: '20px 0'}} onClick={handleCloseDelete}>Cancel</Button>
+              <Button color="error" variant="contained" style={{ margin: '20px 0'}} onClick={handleDeleteVoucher}>Delete</Button>
+            </div>
         </Box>
       </Modal>
     </DashboardContent>
