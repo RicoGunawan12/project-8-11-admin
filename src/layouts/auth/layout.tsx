@@ -12,6 +12,10 @@ import { Logo } from 'src/components/logo';
 import { Main } from './main';
 import { HeaderSection } from '../core/header-section';
 import { LayoutSection } from '../core/layout-section';
+import { useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +29,19 @@ export type AuthLayoutProps = {
 
 export function AuthLayout({ sx, children, header }: AuthLayoutProps) {
   const layoutQuery: Breakpoint = 'md';
+  const nav = useNavigate();
+
+  useEffect(() => {
+    const checkCurrentUser = async () => {
+      const bearerToken = Cookies.get('tys-token');
+        
+      if (bearerToken !== null && bearerToken !== undefined) {
+        nav('/dashboard');
+      }
+    };
+
+    checkCurrentUser();
+  }, []);
 
   return (
     <LayoutSection
