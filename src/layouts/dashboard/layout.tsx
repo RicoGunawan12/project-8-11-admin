@@ -79,7 +79,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
       } 
     };
 
-    setTimeout(checkCurrentUser, 1000);
+    // setTimeout(checkCurrentUser, 1000);
   }, []);
 
   return (
