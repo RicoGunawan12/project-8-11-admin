@@ -26,6 +26,7 @@ import { TableNoData } from '../table-no-data';
 import { useCallback, useEffect, useState } from 'react';
 import { useToaster } from 'src/components/toast/Toast';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export function ShowUserView({ currPage, changePage, updateSignal, handleUpdate }: UserPageProps) {
   const table = useTable();
@@ -44,7 +45,12 @@ export function ShowUserView({ currPage, changePage, updateSignal, handleUpdate 
     const getUsers = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_USER}`
+          `${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_USER}`,
+          {
+            headers: {
+              Authorization: `Bearer ${Cookies.get('tys-token')}`
+            }
+          }
         );
         setUsers(response.data);
         console.log(response.data);
