@@ -13,17 +13,16 @@ import TablePagination from '@mui/material/TablePagination';
 import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { UserTableRow } from '../social-table-row';
+import { UserTableHead } from '../social-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { SocialTableToolbar } from '../social-table-toolbar';
 import { emptyRows, applyFilter, getComparator, ProductProps } from '../utils';
 
-import type { UserProps } from '../user-table-row';
+import type { SocialProps } from '../social-table-row';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
 import { FormControl, InputAdornment, InputLabel, Modal, OutlinedInput, TextField } from '@mui/material';
@@ -162,39 +161,39 @@ export function SocialView() {
     setContactImage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${contactImage}`))
   }
 
-  const handleUpdateContact = async () => {
-    setLoading(true);
-    try {
-      const body = new FormData();
-      body.append("contact", contact)
-      body.append("contactAccount", contactAccount)
-      if (contactImage) {
-        body.append("contactImage", contactImage)
-      }
-      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${contactId}`, body, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('tys-token')}`,
-        },
-      });
-      console.log(response);
+  // const handleUpdateContact = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const body = new FormData();
+  //     body.append("contact", contact)
+  //     body.append("contactAccount", contactAccount)
+  //     if (contactImage) {
+  //       body.append("contactImage", contactImage)
+  //     }
+  //     const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/contacts/${contactId}`, body, {
+  //       headers: {
+  //         Authorization: `Bearer ${Cookies.get('tys-token')}`,
+  //       },
+  //     });
+  //     console.log(response);
       
-      showSuccessToast("Contact updated!");
-      window.location = window.location
-      setContact("");
-      setContactAccount("");
-      setContactId("");
-      setUpdate(!update)
-      handleCloseUpdate()
-    } catch (error) {
-      console.log(error);
+  //     showSuccessToast("Contact updated!");
+  //     window.location = window.location
+  //     setContact("");
+  //     setContactAccount("");
+  //     setContactId("");
+  //     setUpdate(!update)
+  //     handleCloseUpdate()
+  //   } catch (error) {
+  //     console.log(error);
       
-      if (error.status === 401) {
-        nav('/')
-      }
-      showErrorToast(error.response.data.message);
-    }
-    setLoading(false);
-  }
+  //     if (error.status === 401) {
+  //       nav('/')
+  //     }
+  //     showErrorToast(error.response.data.message);
+  //   }
+  //   setLoading(false);
+  // }
 
   const handleDeleteContact = async (id: string) => {
     try {
@@ -276,7 +275,7 @@ export function SocialView() {
 
           <Box>
             <Typography variant="h6" flexGrow={1}>
-              Contact
+              Contact Person
             </Typography>
 
             <Box display="flex" gap={5} mt={3} mb={3}>
@@ -321,14 +320,18 @@ export function SocialView() {
             </Button>
           </Box>
 
-          
+          <hr style={{ marginTop: '30px' }} />
+
+          <Typography variant="h6" flexGrow={1} style={{ marginTop: '10px' }}>
+            Social Media Platforms
+          </Typography>
 
           <div style={{ width: '100%', display: 'flex', justifyContent: 'end', padding: '10px'}}>
             <Button color='inherit' variant='contained' onClick={handleOpen}>+ New Social Media</Button>
           </div>
           <Card>
             
-            <UserTableToolbar
+            <SocialTableToolbar
               numSelected={table.selected.length}
               filterName={filterName}
               onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -353,9 +356,9 @@ export function SocialView() {
                       )
                     }
                     headLabel={[
-                      { id: 'contact', label: 'Contact' },
-                      // { id: 'productCategory', label: 'Product Category' },
-                      { id: 'contactAccount', label: 'Contact Account' },
+                      { id: 'contact', label: 'Social Media' },
+                      { id: 'contactAccount', label: 'Link' },
+                      { id: 'action', label: 'Action', align: 'center' }
                     ]}
                   />
                   <TableBody>
@@ -460,7 +463,7 @@ export function SocialView() {
         </Box>
       </Modal>
 
-      <Modal
+      {/* <Modal
         open={openUpdate}
         onClose={handleCloseUpdate}
         aria-labelledby="modal-modal-title"
@@ -508,7 +511,7 @@ export function SocialView() {
           </div>
 
         </Box>
-      </Modal>
+      </Modal> */}
 
     </DashboardContent>
   );
