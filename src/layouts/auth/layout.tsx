@@ -34,21 +34,10 @@ export function AuthLayout({ sx, children, header }: AuthLayoutProps) {
   useEffect(() => {
     const checkCurrentUser = async () => {
       const bearerToken = Cookies.get('tys-token');
-      let loggedInUser = null;
-
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_USER}/logged-in`, {
-          headers: {
-            Authorization: `Bearer ${bearerToken}`
-          }
-        });
-
-        loggedInUser = response.data.user;
         
-        if (bearerToken !== null && bearerToken !== undefined) {
-          nav('/dashboard');
-        }
-      } catch (error) {  }
+      if (bearerToken !== null && bearerToken !== undefined) {
+        nav('/dashboard');
+      }
     };
 
     checkCurrentUser();
