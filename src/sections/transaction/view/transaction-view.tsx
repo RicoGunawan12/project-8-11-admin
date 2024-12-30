@@ -153,6 +153,8 @@ export function TransactionView() {
             status: statusMap[value],
             startDate: startDate ? startDate.format('YYYY-MM-DD') : undefined,
             endDate: endDate ? endDate.format('YYYY-MM-DD') : undefined,
+            offset: 0,
+            limit: 10
           },
           headers: {
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
@@ -161,6 +163,7 @@ export function TransactionView() {
         setTransactions(response.data.transactions);
         console.log(response.data);
       } catch (error) {
+        console.log(error);
         
         if (error.status === 401) {
           nav('/');        
