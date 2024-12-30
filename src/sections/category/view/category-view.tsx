@@ -15,20 +15,19 @@ import { CircularProgress, TextField } from '@mui/material';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
-import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { CategoryTableRow } from '../category-table-row';
+import { CategoryTableHead } from '../category-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { CategoryTableToolbar } from '../category-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { UserProps } from '../user-table-row';
+import type { CategoryProps } from '../category-table-row';
 import ImageInput from 'src/components/input/ImageInput';
 
 // ----------------------------------------------------------------------
@@ -233,32 +232,33 @@ export function CategoriesView() {
       </Box>
 
       <Card>
-        <UserTableToolbar
+        <CategoryTableToolbar
+          itemsSelected={table.selected}
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
+          onUpdate={() => setUpdate(!update)}
         />
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <CategoryTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={_users.length}
+                rowCount={categories.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    _users.map((user) => user.id)
+                    categories.map((category) => category.productCategoryId)
                   )
                 }
                 headLabel={[
-                  // { id: 'categoryId', label: 'Category ID' },
                   { id: 'category', label: 'Category' },
                   { id: 'action', label: 'Action' }
                 ]}
@@ -270,7 +270,7 @@ export function CategoriesView() {
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <UserTableRow
+                    <CategoryTableRow
                       key={row.productCategoryId}
                       row={row}
                       selected={table.selected.includes(row.productCategoryId)}
@@ -282,7 +282,7 @@ export function CategoriesView() {
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, _users.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, categories.length)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -294,7 +294,7 @@ export function CategoriesView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={_users.length}
+          count={categories.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
