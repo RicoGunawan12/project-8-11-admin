@@ -17,13 +17,12 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { ProductTableRow } from '../product-table-row';
+import { ProductTableHead } from '../product-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { ProductTableToolbar } from '../product-table-toolbar';
 import { emptyRows, applyFilter, getComparator, ProductProps } from '../utils';
 
-import type { UserProps } from '../user-table-row';
 import InsertProductView from './insert-product-view';
 import axios from 'axios';
 import { useToaster } from 'src/components/toast/Toast';
@@ -88,7 +87,7 @@ export function ProductsView() {
   useEffect(() => {
     async function getProducts() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/products`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}`);
         setProducts(response.data);
         console.log(response.data);
       } catch (error) {
@@ -236,19 +235,21 @@ export function ProductsView() {
           </Box>
 
           <Card>
-            <UserTableToolbar
+            <ProductTableToolbar
+              itemsSelected={table.selected}
               numSelected={table.selected.length}
               filterName={filterName}
               onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setFilterName(event.target.value);
                 table.onResetPage();
               }}
+              onUpdate={() => setUpdate(!update)}
             />
 
             <Scrollbar>
               <TableContainer sx={{ overflow: 'unset' }}>
                 <Table sx={{ minWidth: 800 }}>
-                  <UserTableHead
+                  <ProductTableHead
                     order={table.order}
                     orderBy={table.orderBy}
                     rowCount={_users.length}
@@ -277,7 +278,7 @@ export function ProductsView() {
                         table.page * table.rowsPerPage + table.rowsPerPage
                       )
                       .map((row, index) => (
-                        <UserTableRow
+                        <ProductTableRow
                           key={row.productId}
                           row={row}
                           selected={table.selected.includes(row.productId)}
