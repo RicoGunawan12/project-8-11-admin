@@ -2,25 +2,16 @@ import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
-import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import MenuItem from '@mui/material/MenuItem';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { ProductProps } from './utils';
 import { useNavigate } from 'react-router-dom';
-import { Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Switch } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
+export type SocialProps = {
   id: string;
   name: string;
   role: string;
@@ -30,7 +21,7 @@ export type UserProps = {
   isVerified: boolean;
 };
 
-type UserTableRowProps = {
+type SocialTableRowProps = {
   row: {contactId: string, contact: string, contactAccount: string, contactImage: string};
   selected: boolean;
   onSelectRow: () => void;
@@ -38,7 +29,7 @@ type UserTableRowProps = {
   handleDeleteContact: (id: string) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleUpdateContact, handleDeleteContact }: UserTableRowProps) {
+export function UserTableRow({ row, selected, onSelectRow, handleUpdateContact, handleDeleteContact }: SocialTableRowProps) {
   const nav = useNavigate();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   
@@ -73,7 +64,6 @@ export function UserTableRow({ row, selected, onSelectRow, handleUpdateContact, 
         </TableCell>
 
         <TableCell><a href={row.contactAccount} target="_blank">{row.contactAccount}</a></TableCell>
-        <TableCell><Button onClick={() => handleUpdateContact(row.contactId, row.contact, row.contactAccount, row.contactImage)}>Update</Button></TableCell>
         <TableCell>
           <MenuItem onClick={() => handleDeleteContact(row.contactId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
