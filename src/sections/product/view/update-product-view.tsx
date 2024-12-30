@@ -138,10 +138,11 @@ function UpdateProductView() {
         if (defaultImage) {
             formData.append("defaultImage", defaultImage);
         }
+        console.log(category);
+        
         
         variants.forEach((variant, index) => {
             if (variant.productImage) {
-                console.log(variant.productImage);
                 
                 const fileExtension = variant.productImage.name.split(".").pop(); // Get file extension
                 const newFileName = `${productName} - ${variant.productColor}`;
@@ -149,17 +150,16 @@ function UpdateProductView() {
                 const renamedFile = new File([variant.productImage], newFileName, {
                     type: variant.productImage.type,
                 });
-                console.log(renamedFile);
                 
                 formData.append("productImage", renamedFile);
             } 
         });
         formData.append(`productVariants`, JSON.stringify(variants));
-        console.log(variants);
         
-        formData.forEach((value, key) => {
-            console.log(key, value);
-        });
+        
+        // formData.forEach((value, key) => {
+        //     console.log(key, value);
+        // });
         
         try {
             

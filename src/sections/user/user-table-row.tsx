@@ -86,10 +86,10 @@ export function UserTableRow({ row, selected, onSelectRow, onUpdate }: UserTable
 
         <TableCell>{row.phone}</TableCell>
 
-        <TableCell>{row.role.toUpperCase()}</TableCell>
+        <TableCell>{row.role}</TableCell>
 
         <TableCell>
-          <div style={{ backgroundColor: (row.status === 'active') ? "#88E788" : "#EF9A9A", textAlign: "center", borderRadius: "8px", color: (row.status === 'active') ? "#008000" : "#D32F2F", fontWeight: "bold" }}>{row.status.toUpperCase()}</div>
+          <div style={{ backgroundColor: (row.status === 'active') ? "#88E788" : "#EF9A9A", textAlign: "center", borderRadius: "8px", color: (row.status === 'active') ? "#008000" : "#D32F2F", fontWeight: "bold" }}>{row.status}</div>
         </TableCell>
 
         <TableCell align="right">

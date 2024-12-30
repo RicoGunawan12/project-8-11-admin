@@ -8,6 +8,7 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+import { DatePicker } from "@mui/x-date-pickers";
 
 import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -30,6 +31,7 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { SvgColor } from 'src/components/svg-color';
 import ProductComponent from '../product-component';
+import { Dayjs } from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -140,11 +142,18 @@ export function TransactionView() {
   const [update, setUpdate] = useState(false);
   const [transactions, setTransactions] = useState<TransactionProps[]>([]);
   const { showSuccessToast, showErrorToast } = useToaster();
+  const [startDate, setStartDate] = useState<Dayjs>();
+  const [endDate, setEndDate] = useState<Dayjs>();
 
   useEffect(() => {
     async function getTransactions() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/transactions?status=${statusMap[value]}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/transactions`, {
+          params: {
+            status: statusMap[value],
+            startDate: startDate ? startDate.format('YYYY-MM-DD') : undefined,
+            endDate: endDate ? endDate.format('YYYY-MM-DD') : undefined,
+          },
           headers: {
             Authorization: `Bearer ${Cookies.get('tys-token')}`,
           },
@@ -160,7 +169,7 @@ export function TransactionView() {
       }
     }
     getTransactions();
-  }, [value]);
+  }, [value, startDate, endDate]);
 
   const handleRequestPickUp = async (transactionId: string) => {
     try {
@@ -220,6 +229,17 @@ export function TransactionView() {
           Transactions
         </Typography>
       </Box>
+
+      <div style={{ marginBottom: '10px' }}>Get transactions between</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '20px'}}>
+        <div>
+          <DatePicker label='Start date' onChange={(date) => { if (date) setStartDate(date)}} />
+        </div>
+
+        <div>
+          <DatePicker label='End date' onChange={(date) => { if (date) setEndDate(date)}} />
+        </div>
+      </div>
 
       <BottomNavigation
         showLabels

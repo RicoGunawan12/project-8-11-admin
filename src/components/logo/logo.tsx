@@ -8,6 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import { RouterLink } from 'src/routes/components';
 
 import { logoClasses } from './classes';
+import LogoImage from '../../../public/assets/TYESO.png'
 
 // ----------------------------------------------------------------------
 
@@ -19,7 +20,7 @@ export type LogoProps = BoxProps & {
 
 export const Logo = forwardRef<HTMLDivElement, LogoProps>(
   (
-    { width, href = '/', height, isSingle = true, disableLink = false, className, sx, ...other },
+    { width, href = '/dashboard', height, isSingle = true, disableLink = false, className, sx, ...other },
     ref
   ) => {
     const theme = useTheme();
@@ -196,24 +197,28 @@ export const Logo = forwardRef<HTMLDivElement, LogoProps>(
     };
 
     return (
-      <Box
-        ref={ref}
-        component={RouterLink}
-        href={href}
-        className={logoClasses.root.concat(className ? ` ${className}` : '')}
-        aria-label="Logo"
-        sx={{
-          ...baseSize,
-          flexShrink: 0,
-          display: 'inline-flex',
-          verticalAlign: 'middle',
-          ...(disableLink && { pointerEvents: 'none' }),
-          ...sx,
-        }}
-        {...other}
-      >
-        {isSingle ? singleLogo : fullLogo}
-      </Box>
+      <div style={{  }}>
+        <img width={100} src={LogoImage}/>
+      </div>
+      // <Box
+      //   ref={ref}
+      //   component={RouterLink}
+      //   href={href}
+      //   className={logoClasses.root.concat(className ? ` ${className}` : '')}
+      //   aria-label="Logo"
+      //   sx={{
+      //     ...baseSize,
+      //     flexShrink: 0,
+      //     display: 'inline-flex',
+      //     verticalAlign: 'middle',
+      //     ...(disableLink && { pointerEvents: 'none' }),
+      //     ...sx,
+      //   }}
+      //   {...other}
+      // >
+      //   {/* {isSingle ? singleLogo : fullLogo} */}
+        
+      // </Box>
     );
   }
 );

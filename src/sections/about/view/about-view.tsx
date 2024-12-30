@@ -161,7 +161,7 @@ export function AboutView() {
 
       <div>
         <Typography variant="h6" flexGrow={1}>
-          Main Page
+          About Page
         </Typography>
 
         <BottomNavigation

@@ -282,11 +282,15 @@ export function PageView() {
                       <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
                     </div>
                     <div>
+
+                      
+                      <Typography variant='h5' mb={'10px'}>Left Image</Typography>
                       {
-                        con.background ?
+                        con.photo ?
                         <div style={{ margin: '20px 0 30px 0'}}>
-                          <ImageInput onChange={(e: any) => handleContentChange(index, "background", e.target.files[0])} imageString={con.background} name='Background' width='100%' height='250px' />
-                          
+                          <div style={{ width: '250px' }}>
+                            <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={con.photo} name='Background' width='100%' height='250px' />
+                          </div>
                           <Button variant="contained" style={{ marginTop: '20px'}} onClick={() => handleBackgroundChange(index)}>
                               Update Background 
                           </Button>
