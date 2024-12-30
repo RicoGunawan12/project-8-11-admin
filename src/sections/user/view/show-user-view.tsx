@@ -82,12 +82,14 @@ export function ShowUserView({ currPage, changePage, updateSignal, handleUpdate 
 
       <Card>
         <UserTableToolbar
+          itemsSelected={table.selected}
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
+          onUpdate={handleUpdate}
         />
 
         <Scrollbar>
