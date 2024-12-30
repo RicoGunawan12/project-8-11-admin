@@ -240,7 +240,7 @@ export function PageView() {
                   <div style={{ marginBottom: '50px', gap:'20px', alignItems: 'center'}}>
                     <div>
                       <div style={{ width: '100%', justifyContent: 'center', display:'flex' }}>
-                        <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
+                        <img src={`/assets/pages/MainPage${index + 1}.png`}/>
                       </div>
                       <div style={{ margin: '20px 0 30px 0'}}>
                         
@@ -279,7 +279,7 @@ export function PageView() {
                   con.bestNumber1 ?
                   <div style={{ marginBottom: '50px', gap:'20px', alignItems: 'center'}}>
                     <div style={{ width: '100%', justifyContent: 'center', display:'flex' }}>
-                      <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
+                      <img src={`/assets/pages/MainPage${index + 1}.png`}/>
                     </div>
                     <div>
 
@@ -359,7 +359,7 @@ export function PageView() {
                     </div>
 
                     <div style={{ width: '50%' }}>
-                      <img src={`/public/assets/pages/MainPage${index + 1}.png`}/>
+                      <img src={`/assets/pages/MainPage${index + 1}.png`}/>
                     </div>
                   </div>
                 }

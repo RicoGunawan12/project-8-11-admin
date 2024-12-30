@@ -221,7 +221,7 @@ export function AboutView() {
             </div>
 
             <div style={{ width: '50%' }}>
-              <img src={`/public/assets/pages/AboutUs1.png`}/>
+              <img src={`/assets/pages/AboutUs1.png`}/>
             </div>
           </div>
 
