@@ -76,6 +76,10 @@ export function ProductTableRow({ row, selected, onSelectRow, handleEditVariant,
 
         <TableCell><Switch checked={row.isBestSeller} onChange={(e) =>  handleUpdateBestSeller(row.productId, e.target.checked)} /></TableCell>
 
+        <TableCell>
+          <div style={{ backgroundColor: (row.productActivityStatus === 'active') ? "#88E788" : "#EF9A9A", textAlign: "center", borderRadius: "8px", color: (row.productActivityStatus === 'active') ? "#008000" : "#D32F2F", fontWeight: "bold" }}>{row.productActivityStatus}</div>
+        </TableCell>
+
         <TableCell align="right">
           {/* <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />

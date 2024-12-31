@@ -87,7 +87,7 @@ export function ProductsView() {
   useEffect(() => {
     async function getProducts() {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}?status=all`);
         setProducts(response.data);
         console.log(response.data);
       } catch (error) {
@@ -266,6 +266,7 @@ export function ProductsView() {
                       { id: 'productCategory', label: 'Product Category' },
                       { id: 'variant', label: 'Update Variant Price & Stock' },
                       { id: 'bestSeller', label: 'Best Seller' },
+                      { id: 'status', label: 'Status' },
                       // { id: 'promo', label: 'Promo' },
                       // { id: 'promoExpiry', label: 'Promo Expiry' },
                       { id: 'action', label: 'action' },

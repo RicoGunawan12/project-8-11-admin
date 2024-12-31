@@ -74,6 +74,7 @@ export type ProductProps = {
     productWidth: number;
     productHeight: number;
   }[]
+  productActivityStatus: string;
 }
 
 type ApplyFilterProps = {

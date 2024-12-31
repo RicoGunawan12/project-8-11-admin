@@ -26,7 +26,23 @@ export function ProductTableToolbar({ itemsSelected, numSelected, filterName, on
 
   const handleMarkProductsBestSeller = async () => {
     try {
-      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}/active`, {
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}/bestseller/active`, {
+        productId: itemsSelected
+      }, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      showSuccessToast("Successfully mark product(s) as best seller");
+      onUpdate();
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  }
+
+  const handleMarkProductsActive = async () => {
+    try {
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}/activitystatus/active`, {
         productId: itemsSelected
       }, {
         headers: {
@@ -42,7 +58,23 @@ export function ProductTableToolbar({ itemsSelected, numSelected, filterName, on
 
   const handleUnmarkProductsBestSeller = async () => {
     try {
-      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}/inactive`, {
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}/bestseller/inactive`, {
+        productId: itemsSelected
+      }, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      showSuccessToast("Successfully unmark product(s) as best seller");
+      onUpdate();
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  }
+
+  const handleMarkProductsInactive = async () => {
+    try {
+      const response = await axios.patch(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_PRODUCT}/activitystatus/inactive`, {
         productId: itemsSelected
       }, {
         headers: {
@@ -105,23 +137,45 @@ export function ProductTableToolbar({ itemsSelected, numSelected, filterName, on
       )}
 
       {numSelected > 0 ? (
-        <div>
-          <Button
-            onClick={handleMarkProductsBestSeller}
-            variant="contained"
-            color={"success"}
-            style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}
-          >
-            Mark Best Seller
-          </Button>
-          <Button
-            onClick={handleUnmarkProductsBestSeller}
-            variant="contained"
-            color={"error"}
-            style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}
-          >
-            Unmark Best Seller
-          </Button>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <Button
+                onClick={handleMarkProductsBestSeller}
+                variant="contained"
+                color={"success"}
+                style={{ marginLeft: "0.5rem", marginRight: "0.5rem", marginTop: "0.25rem", marginBottom: "0.25rem" }}
+              >
+                Mark Best Seller
+              </Button>
+              <Button
+                onClick={handleMarkProductsActive}
+                variant="contained"
+                color={"success"}
+                style={{ marginLeft: "0.5rem", marginRight: "0.5rem", marginTop: "0.25rem", marginBottom: "0.25rem" }}
+              >
+                Mark as Active
+              </Button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <Button
+                onClick={handleUnmarkProductsBestSeller}
+                variant="contained"
+                color={"error"}
+                style={{ marginLeft: "0.5rem", marginRight: "0.5rem", marginTop: "0.25rem", marginBottom: "0.25rem" }}
+              >
+                Unmark Best Seller
+              </Button>
+              <Button
+                onClick={handleMarkProductsInactive}
+                variant="contained"
+                color={"error"}
+                style={{ marginLeft: "0.5rem", marginRight: "0.5rem", marginTop: "0.25rem", marginBottom: "0.25rem" }}
+              >
+                Mark as Inactive
+              </Button>
+            </div>
+          </div>
           <Button
             onClick={handleDeleteProducts}
             variant="contained"
