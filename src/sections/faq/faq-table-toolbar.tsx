@@ -6,16 +6,40 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
+import { Button } from '@mui/material';
+import { useToaster } from 'src/components/toast/Toast';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // ----------------------------------------------------------------------
 
 type FAQTableToolbarProps = {
+  itemsSelected: string[];
   numSelected: number;
   filterName: string;
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onUpdate: () => void;
 };
 
-export function FAQTableToolbar({ numSelected, filterName, onFilterName }: FAQTableToolbarProps) {
+export function FAQTableToolbar({ itemsSelected, numSelected, filterName, onFilterName, onUpdate }: FAQTableToolbarProps) {
+  const { showErrorToast, showSuccessToast } = useToaster();
+
+  const handleDeleteFAQs = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_FAQ}/delete/multiple`, {
+        faqId: itemsSelected
+      }, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      showSuccessToast("Successfully delete product(s)");
+      onUpdate();
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  }
+
   return (
     <Toolbar
       sx={{
@@ -49,11 +73,14 @@ export function FAQTableToolbar({ numSelected, filterName, onFilterName }: FAQTa
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-          </IconButton>
-        </Tooltip>
+        <Button
+          onClick={handleDeleteFAQs}
+          variant="contained"
+          color={"error"}
+          style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}
+        >
+          Delete FAQ(s)
+        </Button>
       ) : (
         <Tooltip title="Filter list">
           <IconButton>

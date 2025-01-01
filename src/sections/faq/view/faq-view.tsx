@@ -229,12 +229,14 @@ export function FAQView() {
 
       <Card>
         <FAQTableToolbar
+          itemsSelected={table.selected}
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
+          onUpdate={() => setUpdate(!update)}
         />
 
         <Scrollbar>
