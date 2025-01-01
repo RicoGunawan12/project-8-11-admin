@@ -16,17 +16,7 @@ import { VoucherProps } from './utils';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
-  id: string;
-  name: string;
-  role: string;
-  status: string;
-  company: string;
-  avatarUrl: string;
-  isVerified: boolean;
-};
-
-type UserTableRowProps = {
+type VoucherTableRowProps = {
   row: VoucherProps;
   selected: boolean;
   onSelectRow: () => void;
@@ -34,7 +24,7 @@ type UserTableRowProps = {
   handleUpdate: (id: string, name: string) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: UserTableRowProps) {
+export function VoucherTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: VoucherTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   return (
