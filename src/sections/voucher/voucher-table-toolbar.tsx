@@ -6,16 +6,40 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { Iconify } from 'src/components/iconify';
+import { useToaster } from 'src/components/toast/Toast';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-type UserTableToolbarProps = {
+type VoucherTableToolbarProps = {
+  itemsSelected: string[];
   numSelected: number;
   filterName: string;
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onUpdate: () => void;
 };
 
-export function UserTableToolbar({ numSelected, filterName, onFilterName }: UserTableToolbarProps) {
+export function VoucherTableToolbar({ itemsSelected, numSelected, filterName, onFilterName, onUpdate }: VoucherTableToolbarProps) {
+  const { showErrorToast, showSuccessToast } = useToaster();
+
+  const handleDeleteVouchers = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_API}${import.meta.env.VITE_API_ENDPOINT_VOUCHER}/delete/multiple`, {
+        voucherCode: itemsSelected
+      }, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      showSuccessToast("Successfully delete voucher(s)");
+      onUpdate();
+    } catch (error) {
+      showErrorToast(error.message);
+    }
+  }
+
   return (
     <Toolbar
       sx={{
@@ -49,11 +73,14 @@ export function UserTableToolbar({ numSelected, filterName, onFilterName }: User
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-          </IconButton>
-        </Tooltip>
+        <Button
+          onClick={handleDeleteVouchers}
+          variant="contained"
+          color={"error"}
+          style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}
+        >
+          Delete Voucher(s)
+        </Button>
       ) : (
         <Tooltip title="Filter list">
           <IconButton>

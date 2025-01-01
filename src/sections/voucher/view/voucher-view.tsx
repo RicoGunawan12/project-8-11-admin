@@ -5,10 +5,10 @@ import { useToaster } from "src/components/toast/Toast";
 import axios from "axios";
 import { DashboardContent } from "src/layouts/dashboard";
 import { Box, Button, Card, Modal, Table, TableBody, TableContainer, TablePagination, Typography } from "@mui/material";
-import { UserTableToolbar } from "../user-table-toolbar";
+import { VoucherTableToolbar } from "../voucher-table-toolbar";
 import { Scrollbar } from "src/components/scrollbar";
-import { UserTableHead } from "../user-table-head";
-import { UserTableRow } from "../user-table-row";
+import { VoucherTableHead } from "../voucher-table-head";
+import { VoucherTableRow } from "../voucher-table-row";
 import { TableEmptyRows } from "../table-empty-rows";
 import { TableNoData } from "../table-no-data";
 import InsertVoucherView from "./insert-voucher-view";
@@ -143,19 +143,21 @@ export function VoucherView() {
           </Box>
 
           <Card>
-            <UserTableToolbar
+            <VoucherTableToolbar
+              itemsSelected={table.selected}
               numSelected={table.selected.length}
               filterName={filterName}
               onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setFilterName(event.target.value);
                 table.onResetPage();
               }}
+              onUpdate={() => setUpdate(!update)}
             />
 
             <Scrollbar>
               <TableContainer sx={{ overflow: 'unset' }}>
                 <Table sx={{ minWidth: 800 }}>
-                  <UserTableHead
+                  <VoucherTableHead
                     order={table.order}
                     orderBy={table.orderBy}
                     rowCount={vouchers.length}
@@ -185,11 +187,11 @@ export function VoucherView() {
                         table.page * table.rowsPerPage + table.rowsPerPage
                       )
                       .map((row, index) => (
-                        <UserTableRow
-                          key={row.voucherId}
+                        <VoucherTableRow
+                          key={row.voucherCode}
                           row={row}
-                          selected={table.selected.includes(row.voucherId)}
-                          onSelectRow={() => table.onSelectRow(row.voucherId)}
+                          selected={table.selected.includes(row.voucherCode)}
+                          onSelectRow={() => table.onSelectRow(row.voucherCode)}
                           handleDelete={handleOpenDeleteModal}
                           handleUpdate={handleEditVoucher}
                         />
