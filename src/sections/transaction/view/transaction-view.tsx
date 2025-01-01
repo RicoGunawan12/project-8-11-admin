@@ -155,7 +155,7 @@ export function TransactionView() {
             status: statusMap[value],
             startDate: startDate ? startDate.format('YYYY-MM-DD') : undefined,
             endDate: endDate ? endDate.format('YYYY-MM-DD') : undefined,
-            offset: offset === 0 ? offset : offset - 1,
+            offset: offset,
             limit: 10
           },
           headers: {
@@ -265,11 +265,27 @@ export function TransactionView() {
       <div style={{ marginBottom: '10px' }}>Get transactions between</div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '20px'}}>
         <div>
-          <DatePicker label='Start date' onChange={(date) => { if (date) setStartDate(date)}} />
+          <DatePicker 
+            label='Start date' 
+            onChange={(date) => { 
+                if (date) 
+                  setStartDate(date)
+                setOffset(0);
+              }
+            } 
+          />
         </div>
 
         <div>
-          <DatePicker label='End date' onChange={(date) => { if (date) setEndDate(date)}} />
+          <DatePicker 
+            label='End date' 
+            onChange={(date) => { 
+                if (date) 
+                  setEndDate(date)
+                setOffset(0);
+              }
+            } 
+          />
         </div>
       </div>
 
@@ -383,7 +399,7 @@ export function TransactionView() {
           })
         }
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-        <Pagination count={Math.ceil(transactionCount / 10)} onChange={(e, pageNumber) => setOffset((pageNumber - 1) * 10)} color="primary" />
+          <Pagination count={Math.ceil(transactionCount / 10)} onChange={(e, pageNumber) => {setOffset((pageNumber - 1) * 10); window.scrollTo({ top: 0, behavior: 'smooth' });}} color="primary" />
         </div>
       </div>
       

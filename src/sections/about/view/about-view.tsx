@@ -22,6 +22,8 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { SvgColor } from 'src/components/svg-color';
 import { Editor } from '@tinymce/tinymce-react';
+import WhyImage from '../../../../assets/pages/AboutUs2.png'
+import ImageInput from 'src/components/input/ImageInput';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +37,10 @@ export function AboutView() {
   const [why, setWhy] = useState("");
   const [update, setUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [whyResponse, setWhyResponse] = useState<any>();
+  const [whyContent, setWhyContent] = useState<any[]>([]);
+
   const { showSuccessToast, showErrorToast } = useToaster();
 
   useEffect(() => {
@@ -58,7 +64,25 @@ export function AboutView() {
         showErrorToast(error.message);
       }
     }
+
+    async function getWhyContent() {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_API}/api/pages/about/why`);
+        console.log(response.data.response);
+        setWhyResponse(response.data.response)
+        if (value === 0) {
+          setWhyContent(response.data.response[0].whyContentJSONEng);
+        }
+        else {
+          setWhyContent(response.data.response[0].whyContentJSONIndo);
+        }
+        
+      } catch (error) {
+        showErrorToast(error.response.data.message); 
+      }
+    }
     getContent();
+    getWhyContent();
   }, [update]);
   
   
@@ -68,7 +92,9 @@ export function AboutView() {
       const body = {
         contentEng: content,
         titleEng: title,
-        whyEng: why
+        whyEng: why,
+        whyContentJSONEng: whyContent,
+        whyContentId: whyResponse[0].whyId
       }
       console.log(body);
       
@@ -99,7 +125,9 @@ export function AboutView() {
       const body = {
         contentIndo: content,
         titleIndo: title,
-        whyIndo: why
+        whyIndo: why,
+        whyContentJSONIndo: whyContent,
+        whyContentId: whyResponse[0].whyId
       }
       console.log(body);
       
@@ -122,6 +150,50 @@ export function AboutView() {
     }
     setLoading(false);
   }
+
+  const handleUpdatePhoto = async (index: number) => {
+    setLoading(true);
+    try {
+      const body = new FormData();
+      console.log(content);
+      
+      body.append("index", index.toString());
+      if (whyContent[index].photo) {
+        body.append("photo", whyContent[index].photo);
+      }
+      
+      
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/pages/about/why/photo`, body, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${Cookies.get('tys-token')}`,
+        },
+      });
+      console.log(response);
+      
+      showSuccessToast("Photo updated!");
+    } catch (error) {
+      console.log(error);
+      
+      if (error.status === 401) {
+        nav('/');        
+      }
+      showErrorToast(error.response.data.message);
+    }
+    setLoading(false);
+
+  }
+
+  const handleContentChange = (index: number, field: string, value: string) => {
+    setWhyContent((prevContent: any) => {
+      const updatedContent = [...prevContent];
+      updatedContent[index] = {
+        ...updatedContent[index],
+        [field]: value,
+      };
+      return updatedContent;
+    });
+  };
 
   return (
     <DashboardContent>
@@ -171,6 +243,7 @@ export function AboutView() {
             setContent(newValue === 0 ? response.contentEng : response.contentIndo)
             setTitle(newValue === 0 ? response.titleEng : response.titleIndo)
             setWhy(newValue === 0 ? response.whyEng : response.whyIndo)
+            setWhyContent(newValue === 0 ? whyResponse[0].whyContentJSONEng : whyResponse[0].whyContentJSONIndo)
             setValue(newValue);
           }}
           sx={{
@@ -185,8 +258,8 @@ export function AboutView() {
         </BottomNavigation>
 
 
-        <div>
-                
+        <div>      
+          <div style={{ margin: '10px 0 20px', fontWeight: 'bold'}}>Section 1</div>
           <div style={{ marginBottom: '50px', display: 'flex', gap:'20px', alignItems: 'center'}}>
             <div style={{ width: '50%' }}>
               <div>
@@ -229,6 +302,55 @@ export function AboutView() {
           
         </div>
       </div>
+
+      <div style={{ marginBottom: '50px'}}>
+        
+        <div style={{ margin: '10px 0 20px', fontWeight: 'bold'}}>Section 2</div>
+
+        <div>
+          <img src={`/assets/pages/AboutUs2.png`}/>
+        </div>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
+
+          {
+            whyContent.map((why: any, index: number) => {
+              return <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '270px' }}>
+                <div style={{ margin: '10px 0 20px', fontWeight: 'bold'}}>Photo {index + 1}</div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={why.photo} name='Photo' width='150px' height='150px'/>
+                </div>
+                
+                <div>
+                    <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                        1 : 1 resolution
+                    </Typography>
+                </div>
+
+                <div>
+                  <Button variant='contained' style={{ marginTop: '10px', width: '130px'}} disabled={loading} onClick={(e) => handleUpdatePhoto(index)}>
+                  {loading ? <CircularProgress size={24} /> : "Update Photo"}
+                  </Button>
+                </div>
+                
+                <div style={{ width: '100%' }}>
+                  <TextareaAutosize 
+                      style={{ borderRadius: '10px', border: '#E7E7E7 solid 1px', width: '100%', marginTop: '25px', padding: '10px', fontFamily: 'inherit', fontSize: '16px'}} 
+                      aria-label="minimum height"  
+                      minRows={3}  
+                      placeholder={`Why content ${index + 1}`}
+                      value={why.content}
+                      onChange={(e) => handleContentChange(index, 'content', e.target.value)}
+                  />
+                </div>
+    
+              </div>
+            })
+          }
+
+        </div>
+      </div>
+
 
       <div className="responsive-container">
           <div className="button-container">

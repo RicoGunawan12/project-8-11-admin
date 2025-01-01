@@ -252,13 +252,13 @@ export function ProductsView() {
                   <ProductTableHead
                     order={table.order}
                     orderBy={table.orderBy}
-                    rowCount={_users.length}
+                    rowCount={products.length}
                     numSelected={table.selected.length}
                     onSort={table.onSort}
                     onSelectAllRows={(checked) =>
                       table.onSelectAllRows(
                         checked,
-                        _users.map((user) => user.id)
+                        products.map((product: ProductProps) => product.productId)
                       )
                     }
                     headLabel={[

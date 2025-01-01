@@ -68,16 +68,21 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
   </Typography>
 
   <div style={{ display: 'flex', alignItems: 'center' }}>
-    <ImageInput
-      onChange={(e) => {
-        const target = e.target as HTMLInputElement;
-        const file = target.files?.[0] || null;
-        setSelectedImage(file);
-      }}
-      name="Blog Thumbnail"
-      width="250px" 
-      height="250px"
-    />
+    <div>
+      <ImageInput
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement;
+          const file = target.files?.[0] || null;
+          setSelectedImage(file);
+        }}
+        name="Blog Thumbnail"
+        width="250px" 
+        height="250px"
+      />
+      <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+          2 : 1 resolution
+      </Typography>
+    </div>
 
     {selectedImage && (
       <Typography variant="body2" color="textSecondary" style={{ marginLeft: '20px' }}>
@@ -93,18 +98,25 @@ function InsertBlogView({ changePage, handleUpdate }: InsertBlogProps) {
       Blog Banner
     </Typography>
 
-    <div style={{ width: '100%' }}>
-      <ImageInput 
-        width="100%" 
-        height="200px" 
-        onChange={(e) => {
-          const target = e.target as HTMLInputElement;
-          const file = target.files?.[0] || null;
-          setBannerImage(file)
-        }}
-        initialFile={bannerImage}
-        name="About Banner"
-      />
+    <div style={{ display: 'flex' }}>
+      <div>
+        <ImageInput 
+          width="1000px" 
+          height="500px" 
+          onChange={(e) => {
+            const target = e.target as HTMLInputElement;
+            const file = target.files?.[0] || null;
+            setBannerImage(file)
+          }}
+          initialFile={bannerImage}
+          name="About Banner"
+        />
+        <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+            2 : 1 resolution
+        </Typography>
+      </div>
+      </div>
+    <div>
     </div>
   </div>
 </div>

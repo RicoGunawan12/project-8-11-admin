@@ -247,10 +247,22 @@ export function PageView() {
                           <div style={{ width: '40%'}}>
                             <Typography variant='h5' mb={'10px'}>Background</Typography>
                             <ImageInput onChange={(e: any) => handleContentChange(index, "background", e.target.files[0])} imageString={con.background} name='Background' width='100%' height='250px' />
+                            <div>
+                                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                                    1920 : 1080 resolution for the best view
+                                </Typography>
+                            </div>
                           </div>
                           <div style={{ width: '40%'}}>
-                            <Typography variant='h5' mb={'10px'}>Right image</Typography>
-                            <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={con.photo} name='Right Photo' width='100%' height='250px' />
+                            <Typography variant='h5' textAlign={'center'} mb={'10px'}>Right image</Typography>
+                            <div style={{ display: 'flex', justifyContent: 'center'}}>
+                              <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={con.photo} name='Right Photo' width='250px' height='250px' />
+                            </div>
+                            <div>
+                                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                                    1 : 1 resolution
+                                </Typography>
+                            </div>
                           </div>
                         </div>
 
@@ -288,8 +300,14 @@ export function PageView() {
                         con.photo ?
                         <div style={{ margin: '20px 0 30px 0'}}>
                           <div style={{ width: '250px' }}>
-                            <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={con.photo} name='Background' width='100%' height='250px' />
+                            <ImageInput onChange={(e: any) => handleContentChange(index, "photo", e.target.files[0])} imageString={con.photo} name='Background' width='250px' height='250px' />
+                            <div>
+                                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                                    1 : 1 resolution
+                                </Typography>
+                            </div>
                           </div>
+                          
                           <Button variant="contained" style={{ marginTop: '20px', width: '140px' }} disabled={loading} onClick={() => handleBackgroundChange(index)}>
                             {loading ? <CircularProgress size={24} /> : "Update Photo"}
                           </Button>
