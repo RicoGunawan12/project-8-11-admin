@@ -33,7 +33,7 @@ export function FAQTableToolbar({ itemsSelected, numSelected, filterName, onFilt
           Authorization: `Bearer ${Cookies.get('tys-token')}`,
         },
       });
-      showSuccessToast("Successfully delete product(s)");
+      showSuccessToast("Successfully delete FAQ(s)");
       onUpdate();
     } catch (error) {
       showErrorToast(error.message);
