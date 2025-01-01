@@ -15,7 +15,7 @@ import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
+export type FAQProps = {
   id: string;
   name: string;
   role: string;
@@ -25,7 +25,7 @@ export type UserProps = {
   isVerified: boolean;
 };
 
-type UserTableRowProps = {
+type FAQTableRowProps = {
   row: { faqId: string, faqQuestion: string, faqAnswer: string };
   selected: boolean;
   onSelectRow: () => void;
@@ -33,7 +33,7 @@ type UserTableRowProps = {
   handleUpdate: (id: string, faqQuestion: string, faqAnswer: string) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: UserTableRowProps) {
+export function FAQTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: FAQTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   return (
