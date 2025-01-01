@@ -22,13 +22,13 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { FAQTableRow } from '../faq-table-row';
+import { FAQTableHead } from '../faq-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { FAQTableToolbar } from '../faq-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { UserProps } from '../user-table-row';
+import type { FAQProps } from '../faq-table-row';
 import { TextareaAutosize } from '@mui/material';
 
 // ----------------------------------------------------------------------
@@ -228,7 +228,7 @@ export function FAQView() {
       </Box>
 
       <Card>
-        <UserTableToolbar
+        <FAQTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,7 +240,7 @@ export function FAQView() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <FAQTableHead
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={_users.length}
@@ -254,7 +254,7 @@ export function FAQView() {
                 }
                 headLabel={[
                   // { id: 'categoryId', label: 'Category ID' },
-                  { id: 'faq', label: 'FAq' },
+                  { id: 'faq', label: 'FAQ' },
                   { id: 'answer', label: 'Answer' },
                   { id: 'action', label: 'Action' }
                 ]}
@@ -266,7 +266,7 @@ export function FAQView() {
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <UserTableRow
+                    <FAQTableRow
                       key={row.faqId}
                       row={row}
                       selected={table.selected.includes(row.faqId)}
