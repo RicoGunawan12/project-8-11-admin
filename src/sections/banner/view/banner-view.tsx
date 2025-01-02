@@ -34,6 +34,13 @@ export function BannerView() {
   const [faqPage, setFAQPage] = useState<File | null>(null);
   const [profilePage, setProfilePage] = useState<File | null>(null);
   const [blogPage, setBlogPage] = useState<File | null>(null);
+
+  const [productPageMobile, setProductPageMobile] = useState<File | null>(null);
+  const [aboutPageMobile, setAboutPageMobile] = useState<File | null>(null);
+  const [contactPageMobile, setContactPageMobile] = useState<File | null>(null);
+  const [faqPageMobile, setFAQPageMobile] = useState<File | null>(null);
+  const [profilePageMobile, setProfilePageMobile] = useState<File | null>(null);
+  const [blogPageMobile, setBlogPageMobile] = useState<File | null>(null);
   const [update, setUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showSuccessToast, showErrorToast } = useToaster();
@@ -60,6 +67,24 @@ export function BannerView() {
                 }
                 else if (banner.page === "Profile Page") {
                   setProfilePage(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "About Page Mobile") {
+                  setAboutPageMobile(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "Product Page Mobile") {
+                  setProductPageMobile(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "Contact Page Mobile") {
+                  setContactPageMobile(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "Blog Page Mobile") {
+                  setBlogPageMobile(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "FAQ Page Mobile") {
+                  setFAQPageMobile(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
+                }
+                else if (banner.page === "Profile Page Mobile") {
+                  setProfilePageMobile(await convertToFile(`${import.meta.env.VITE_BACKEND_API}${banner.image}`))
                 }
               })
             } catch (error) {
@@ -121,6 +146,36 @@ export function BannerView() {
             formData.append("image", blogPage)
           }
         }
+        else if (page === "About Page Mobile") {
+          if (aboutPageMobile) {
+            formData.append("image", aboutPageMobile)
+          }
+        }
+        else if (page === "Product Page Mobile") {
+          if (productPageMobile) {
+            formData.append("image", productPageMobile)
+          }
+        }
+        else if (page === "Contact Page Mobile") {
+          if (contactPageMobile) {
+            formData.append("image", contactPageMobile)
+          }
+        }
+        else if (page === "Profile Page Mobile") {
+          if (profilePageMobile) {
+            formData.append("image", profilePageMobile)
+          }
+        }
+        else if (page === "FAQ Page Mobile") {
+          if (faqPageMobile) {
+            formData.append("image", faqPageMobile)
+          }
+        }
+        else if (page === "Blog Page Mobile") {
+          if (blogPageMobile) {
+            formData.append("image", blogPageMobile)
+          }
+        }
         const response = await axios.put(`${import.meta.env.VITE_BACKEND_API}/api/banners`, formData, {
           headers: { 
               "Content-Type": "multipart/form-data",
@@ -158,6 +213,7 @@ export function BannerView() {
 
         <div style={{ width: '100%' }}>        
           <div>
+            <div style={{ textAlign: 'center', marginBottom: '10px'}}>Desktop View</div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <ImageInput 
                 width="1000px" 
@@ -184,6 +240,37 @@ export function BannerView() {
             </Button>
           </div>
         </div>
+
+
+        <div style={{ width: '100%', marginTop: '20px' }}>        
+          <div>
+            <div style={{ textAlign: 'center', marginBottom: '10px'}}>Mobile View</div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ImageInput 
+                width="400px" 
+                height="300px" 
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  const file = target.files?.[0] || null;
+                  setProductPageMobile(file)
+                }}
+                initialFile={productPageMobile}
+                name="Product Page Banner"
+              />
+            </div>
+
+            <div>
+                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                    4 : 3 resolution
+                </Typography>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Product Page Mobile")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div style={{ margin: '20px 0'}}>
@@ -193,6 +280,7 @@ export function BannerView() {
 
         <div style={{ width: '100%' }}>        
           <div>
+            <div style={{ textAlign: 'center', marginBottom: '10px'}}>Desktop View</div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <ImageInput 
                 width="1000px" 
@@ -220,6 +308,38 @@ export function BannerView() {
             </Button>
           </div>
         </div>
+
+
+        <div style={{ width: '100%', marginTop: '20px' }}>        
+          <div>
+            <div style={{ textAlign: 'center', marginBottom: '10px'}}>Mobile View</div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ImageInput 
+                width="400px" 
+                height="300px" 
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  const file = target.files?.[0] || null;
+                  setAboutPageMobile(file)
+                }}
+                initialFile={aboutPageMobile}
+                name="About Page Banner"
+              />
+            </div>
+
+            <div>
+                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                    4 : 3 resolution
+                </Typography>
+            </div>
+
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("About Page Mobile")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div style={{ margin: '20px 0'}}>
@@ -229,6 +349,7 @@ export function BannerView() {
 
         <div style={{ width: '100%' }}>        
           <div>
+            <div style={{ textAlign: 'center', marginBottom: '10px'}}>Desktop View</div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <ImageInput 
                 width="1000px" 
@@ -255,6 +376,37 @@ export function BannerView() {
             </Button>
           </div>
         </div>
+
+
+        <div style={{ width: '100%', marginTop: '20px' }}>        
+          <div>
+            <div style={{ textAlign: 'center', marginBottom: '10px'}}>Mobile View</div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <ImageInput 
+                width="400px" 
+                height="300px" 
+                onChange={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  const file = target.files?.[0] || null;
+                  setContactPageMobile(file)
+                }}
+                initialFile={contactPageMobile}
+                name="Contact Page Banner"
+              />
+            </div>
+            <div>
+                <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                    4 : 3 resolution
+                </Typography>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Contact Page Mobile")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div style={{ margin: '20px 0'}}>
@@ -262,7 +414,8 @@ export function BannerView() {
           FAQ Page
         </Typography>
 
-        <div style={{ width: '100%' }}>        
+        <div style={{ width: '100%' }}>     
+          <div style={{ textAlign: 'center', marginBottom: '10px'}}>Desktop View</div>   
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ImageInput 
               width="1000px" 
@@ -289,6 +442,35 @@ export function BannerView() {
             </Button>
           </div>
         </div>
+
+        <div style={{ width: '100%', marginTop: '20px' }}>     
+          <div style={{ textAlign: 'center', marginBottom: '10px'}}>Mobile View</div>   
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ImageInput 
+              width="400px" 
+              height="300px" 
+              onChange={(e) => {
+                const target = e.target as HTMLInputElement;
+                const file = target.files?.[0] || null;
+                setFAQPageMobile(file)
+              }}
+              initialFile={faqPageMobile}
+              name="FAQ Page Banner"
+            />
+          </div>
+
+          <div>
+              <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                  4 : 3 resolution
+              </Typography>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("FAQ Page Mobile")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div style={{ margin: '20px 0'}}>
@@ -296,7 +478,8 @@ export function BannerView() {
           Profile Page
         </Typography>
 
-        <div style={{ width: '100%' }}>        
+        <div style={{ width: '100%' }}>    
+          <div style={{ textAlign: 'center', marginBottom: '10px'}}>Desktop View</div>    
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ImageInput 
               width="1000px" 
@@ -323,6 +506,36 @@ export function BannerView() {
             </Button>
           </div>
         </div>
+
+
+        <div style={{ width: '100%', marginTop: '20px' }}>    
+          <div style={{ textAlign: 'center', marginBottom: '10px'}}>Mobile View</div>    
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ImageInput 
+              width="400px" 
+              height="300px" 
+              onChange={(e) => {
+                const target = e.target as HTMLInputElement;
+                const file = target.files?.[0] || null;
+                setProfilePageMobile(file)
+              }}
+              initialFile={profilePageMobile}
+              name="Profile Page Banner"
+            />
+          </div>
+          
+          <div>
+              <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                  4 : 3 resolution
+              </Typography>
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Profile Page Mobile")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div style={{ margin: '20px 0'}}>
@@ -330,7 +543,8 @@ export function BannerView() {
           Blog Page
         </Typography>
 
-        <div style={{ width: '100%' }}>        
+        <div style={{ width: '100%' }}>    
+          <div style={{ textAlign: 'center', marginBottom: '10px'}}>Desktop View</div>    
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <ImageInput 
               width="1000px" 
@@ -341,7 +555,7 @@ export function BannerView() {
                 setBlogPage(file)
               }}
               initialFile={blogPage}
-              name="Profile Banner"
+              name="Blog Banner"
             />
           </div>
           
@@ -353,6 +567,35 @@ export function BannerView() {
             
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Blog Page")}>
+                {loading ? <CircularProgress size={24} /> : "Update Page"}
+            </Button>
+          </div>
+        </div>
+
+        <div style={{ width: '100%', marginTop: '20px' }}>    
+          <div style={{ textAlign: 'center', marginBottom: '10px'}}>Mobile View</div>    
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ImageInput 
+              width="400px" 
+              height="300px" 
+              onChange={(e) => {
+                const target = e.target as HTMLInputElement;
+                const file = target.files?.[0] || null;
+                setBlogPageMobile(file)
+              }}
+              initialFile={blogPageMobile}
+              name="Blog Banner"
+            />
+          </div>
+          
+          <div>
+              <Typography id="modal-modal-title" variant="caption" marginTop={'10px'} textAlign={'center'} component="h2">
+                  4 : 3 resolution
+              </Typography>
+          </div>
+            
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="contained" disabled={loading} style={{ margin: '20px 0', width: '120px'}} onClick={() => handleUpdate("Blog Page Mobile")}>
                 {loading ? <CircularProgress size={24} /> : "Update Page"}
             </Button>
           </div>
