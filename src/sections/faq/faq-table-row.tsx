@@ -12,11 +12,10 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { VoucherProps } from './utils';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
+export type FAQProps = {
   id: string;
   name: string;
   role: string;
@@ -26,15 +25,15 @@ export type UserProps = {
   isVerified: boolean;
 };
 
-type UserTableRowProps = {
-  row: VoucherProps;
+type FAQTableRowProps = {
+  row: { faqId: string, faqQuestion: string, faqAnswer: string };
   selected: boolean;
   onSelectRow: () => void;
   handleDelete: (id: string) => void;
-  handleUpdate: (id: string, name: string) => void;
+  handleUpdate: (id: string, faqQuestion: string, faqAnswer: string) => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: UserTableRowProps) {
+export function FAQTableRow({ row, selected, onSelectRow, handleDelete, handleUpdate }: FAQTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   return (
@@ -44,22 +43,18 @@ export function UserTableRow({ row, selected, onSelectRow, handleDelete, handleU
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell>{row.voucherType}</TableCell>
-        <TableCell>{row.voucherCode}</TableCell>
-        <TableCell>{row.voucherStartDate.substring(0, 10)}</TableCell>
-        <TableCell>{row.voucherEndDate.substring(0, 10)}</TableCell>
-        <TableCell>{row.maxDiscount}</TableCell>
-        <TableCell>{row.discount}</TableCell>
-        <TableCell>{row.quota}</TableCell>
+        {/* <TableCell>{row.productCategoryId}</TableCell> */}
+        <TableCell>{row.faqQuestion}</TableCell>
+        <TableCell>{row.faqAnswer}</TableCell>
 
 
         <TableCell>
-          <MenuItem onClick={() => handleUpdate(row.voucherId, row.voucherCode)}>
+          <MenuItem onClick={() => handleUpdate(row.faqId, row.faqQuestion, row.faqAnswer)}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
 
-          <MenuItem onClick={() => handleDelete(row.voucherCode)} sx={{ color: 'error.main' }}>
+          <MenuItem onClick={() => handleDelete(row.faqId)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>

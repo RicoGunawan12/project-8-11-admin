@@ -1,4 +1,4 @@
-import type { UserProps } from './user-table-row';
+import type { FAQProps } from './faq-table-row';
 
 // ----------------------------------------------------------------------
 
